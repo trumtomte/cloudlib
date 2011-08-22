@@ -75,7 +75,7 @@ final class upload
      * @access  private
      * @var     array
      */
-    private $imagetypes;
+    private $imagetypes = array();
 
     /**
      * Constructor

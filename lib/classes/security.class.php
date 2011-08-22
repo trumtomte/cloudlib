@@ -79,6 +79,8 @@ final class security
             }
         }
 
-        return crypt($password, $prefix . $salt);
+        $crypt = crypt($password, $prefix . $salt);
+
+        return substr($crypt, 7);
     }
 }
