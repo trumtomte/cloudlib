@@ -64,90 +64,43 @@ final class query
         return self::$instance->commit();
     }
 
-    /**
-     * Database query
-     *
-     * @access  public
-     * @param   string      $statement
-     * @param   array       $variables
-     * @param   int         $fetchArgument
-     * @return  array|bool
-     */
-    public function q($statement, array $variables = array(), $fetchArgument = null)
-    {
-        $sth = self::$instance->prepare($statement);
-        
-        $sth->execute($variables);
-
-        if($sth->rowCount() > 0)
-        {
-            return $sth->fetchAll($fetchArgument);
-        }
-
-        return false;
-    }
-
-    /**
-     * Updates table data
-     *
-     * @access  public
-     * @param   string  $table
-     * @param   array   $variables
-     * @param   string  $conditions
-     * @return  bool
-     */
-    public function update($table, array $variables, $conditions = null)
-    {
-        $updates = null;
-        $values  = array();
-
-        foreach($variables as $key => $value)
-        {
-            $updates .= $key . ' = ?, ';
-            $values[] = $value;
-        }
-        
-        $updates = rtrim($updates, ', ');
-
-        $sth = self::$instance->prepare('UPDATE ' . $table . ' SET '
-                                      . $updates . ' ' . $conditions);
-
-        return (bool) $sth->execute($values);
-    }
-
-    public function delete($table, array $variables, $conditions = null)
+    public function select()
     {
 
     }
 
-    /**
-     * Insert data into a table
-     *
-     * @access  public
-     * @param   string  $table
-     * @param   array   $variables
-     * @return  bool
-     */
-    public function insert($table, array $variables)
+    public function from()
     {
-        $columns     = null;
-        $placeholder = null;
-        $values      = array();
 
-        foreach($variables as $key => $value)
-        {
-            $columns     .= $key . ', ';
-            $placeholder .= '?, ';
-            $values[]    .= $value;
-        } 
+    }
 
-        $columns = rtrim($columns, ', ');
-        $placeholder = rtrim($placeholder, ', ');
+    public function where()
+    {
 
-        $sth = self::$instance->prepare('INSERT INTO ' . $table
-                                      . ' (' . $columns . ') '
-                                      . 'VALUES (' . $placeholder . ')');
+    }
 
-        return (bool) $sth->execute($values);
+    public function order()
+    {
+
+    }
+
+    public function limit()
+    {
+
+    }
+
+    public function insert()
+    {
+
+    }
+
+    public function values()
+    {
+
+    }
+
+    public function update()
+    {
+
     }
 }
