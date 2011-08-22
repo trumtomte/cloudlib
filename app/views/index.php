@@ -13,6 +13,7 @@
     debug_print_backtrace();
     echo '</pre>';
     echo '<br>';
+    echo security::encrypt('asdqsaasdaswe', 'salt');
     
 ?>
 </body>

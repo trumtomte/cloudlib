@@ -3,3 +3,4 @@
 [22-Aug-2011 13:56:12] PHP Fatal error:  Call to undefined method router::§uri() in /Users/sebbe/www/cloudlib/lib/classes/core.class.php on line 65
 [22-Aug-2011 14:42:29] PHP Parse error:  syntax error, unexpected ';' in /Users/sebbe/www/cloudlib/lib/classes/config.class.php on line 69
 [22-Aug-2011 14:42:31] PHP Parse error:  syntax error, unexpected ';' in /Users/sebbe/www/cloudlib/lib/classes/config.class.php on line 69
+[22-Aug-2011 23:32:27] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in /Users/sebbe/www/cloudlib/lib/classes/security.class.php on line 61

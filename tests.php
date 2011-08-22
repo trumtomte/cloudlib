@@ -17,4 +17,4 @@ if(version_compare(PHP_VERSION, '5.3.0') < 0)
     exit('Please upgrade to a PHP version of at least 5.3.x - ' .
          'Current PHP version: ' . PHP_VERSION);
 }
-?>
+//check for mbstring, blowfish, pdo, gd2

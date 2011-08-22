@@ -19,5 +19,10 @@ return array
     /**
      * Known image extensions
      */
-    'imageExtensions' => 'jpg|jpeg|png|gif'
+    'imageExtensions' => 'jpg|jpeg|png|gif',
+
+    /**
+     * Security salt
+     */
+    'salt' => 'my super secret key'
 );
