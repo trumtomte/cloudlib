@@ -20,7 +20,13 @@
  */
 final class log
 {
-    public static function write()
+    private static $messages = array();
+
+    public static function write($message)
+    {
+    }
+
+    public static function append()
     {
     }
 }

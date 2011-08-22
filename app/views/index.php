@@ -10,8 +10,10 @@
     echo timer::boot();
     echo '<br>';
     echo '<pre>';
+    debug_print_backtrace();
     echo '</pre>';
     echo '<br>';
+    
 ?>
 </body>
 </html>

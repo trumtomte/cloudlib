@@ -20,5 +20,15 @@
  */
 final class security
 {
+    private static $salt;
 
+    public function __construct()
+    {
+
+    }
+
+    public static function encrypt($password, $salt, $rounds = 12)
+    {
+
+    }
 }
