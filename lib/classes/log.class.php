@@ -20,13 +20,5 @@
  */
 final class log
 {
-    private static $messages = array();
 
-    public static function write($message)
-    {
-    }
-
-    public static function append()
-    {
-    }
 }
