@@ -25,7 +25,7 @@ final class core
      *
      * @access  public
      */
-    const VERSION = '0.3.0';
+    const VERSION = '0.3.1';
 
     /**
      * Array of current activated modules
