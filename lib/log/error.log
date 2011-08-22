@@ -1,0 +1,5 @@
+[22-Aug-2011 13:53:14] PHP Parse error:  syntax error, unexpected ':' in /Users/sebbe/www/cloudlib/lib/classes/core.class.php on line 65
+[22-Aug-2011 13:53:54] PHP Parse error:  syntax error, unexpected '{' in /Users/sebbe/www/cloudlib/lib/classes/dispatcher.class.php on line 59
+[22-Aug-2011 13:56:12] PHP Fatal error:  Call to undefined method router::§uri() in /Users/sebbe/www/cloudlib/lib/classes/core.class.php on line 65
+[22-Aug-2011 14:42:29] PHP Parse error:  syntax error, unexpected ';' in /Users/sebbe/www/cloudlib/lib/classes/config.class.php on line 69
+[22-Aug-2011 14:42:31] PHP Parse error:  syntax error, unexpected ';' in /Users/sebbe/www/cloudlib/lib/classes/config.class.php on line 69
