@@ -20,5 +20,7 @@
  */
 final class log
 {
-
+    public static function write()
+    {
+    }
 }
