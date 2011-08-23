@@ -15,7 +15,7 @@ return array
     'timezone' => 'Europe/Stockholm',
 
     /**
-     * The local for currency etc..
+     * The locale information
      */
     'locale'   => null,
 
@@ -30,7 +30,7 @@ return array
     'imageExtensions' => 'jpg|jpeg|png|gif',
 
     /**
-     * Security salt
+     * Static security salt
      */
-    'salt' => 'my super secret key'
+    'salt' => 'asd23rERt0w./'
 );

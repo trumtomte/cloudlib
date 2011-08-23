@@ -7,6 +7,14 @@
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  * @package     cloudlib
  */
+
+/**
+ * Notes:
+ *  Add description of what doesnt exists and link to php.net
+ *  Make it more stylish
+ *  (Add more tests)
+ *  (Add button for removing this file and continue to the index(default) view)
+ */
 ?>
 <!DOCTYPE html>
 <html lang="en">
