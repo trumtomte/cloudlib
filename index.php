@@ -53,9 +53,9 @@ define('VIEWS_EXT', '.php');
  */
 
 /*
-if(file_exists('install.php'))
+if(file_exists('tests.php'))
 {
-    require 'install.php';
+    require 'tests.php';
     exit();
 }
 */

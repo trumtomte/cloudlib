@@ -7,40 +7,107 @@
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  * @package     cloudlib
  */
-
-if(version_compare(PHP_VERSION, '5.3.0') < 0)
-{
-    exit('Please upgrade to a PHP version of at least 5.3.x - ' .
-         'Current PHP version: ' . PHP_VERSION);
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Tests</title>
+<style type="text/css">
+html { background: #ddd; }
+body {
+  width: 600px;
+  margin: auto;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  padding: 5px;
+  background: #fff;
+  font-family: Tahoma;
 }
-
-if(function_exists('spl_autoload_register'))
-{
-
+h1 {
+  font-size: 18px;
+  text-align: center;
+  font-weight: normal;
 }
-
-if(ini_get('mbstring.func_overload') & MB_OVERLOAD_STRING)
-{
-
+table {
+  margin: auto;
 }
-
-if(function_exists('gd_info'))
-{
-
+th {
+  font-weight: normal;
+  background: #eee;
+  padding: 5px;
 }
-
-if(function_exists('mysql_connect'))
-{
-
+td {
+  padding: 5px;
 }
-
-if(class_exists('PDO'))
-{
-
+.passed {
+  background: #88dd88;
 }
-
-if(CRYPT_BLOWFISH == 1)
-{
-
+.failed {
+  background: #dd8888;
 }
-
+</style>
+</head>
+<body>
+<h1>Test to see if CloudLib will work properly</h1>
+<table>
+  <tr>
+    <th>Version</th>
+    <?php if(version_compare(PHP_VERSION, '5.3.0', '>=')) { ?>
+    <td class="passed">Passed</td>
+    <?php } else { ?>
+    <td class="failed">Failed</td>
+    <?php } ?>
+  </tr>
+  <tr>
+    <th>spl</th>
+    <?php if(function_exists('spl_autoload_register')) { ?>
+    <td class="passed">Passed</td>
+    <?php } else { ?>
+    <td class="failed">Failed</td>
+    <?php } ?>
+  </tr>
+  <tr>
+    <th>mbstring</th>
+    <?php if(extension_loaded('mbstring')) { ?>
+    <td class="passed">Passed</td>
+    <?php } else { ?>
+    <td class="failed">Failed</td>
+    <?php } ?>
+  </tr>
+  <tr>
+    <th>gd</th>
+    <?php if(function_exists('gd_info')) { ?>
+    <td class="passed">Passed</td>
+    <?php } else { ?>
+    <td class="failed">Failed</td>
+    <?php } ?>
+  </tr>
+  <tr>
+    <th>mysql</th>
+    <?php if(function_exists('mysql_connect')) { ?>
+    <td class="passed">Passed</td>
+    <?php } else { ?>
+    <td class="failed">Failed</td>
+    <?php } ?>
+  </tr>
+  <tr>
+    <th>pdo</th>
+    <?php if(class_exists('pdo')) { ?>
+    <td class="passed">Passed</td>
+    <?php } else { ?>
+    <td class="failed">Failed</td>
+    <?php } ?>
+  </tr>
+  <tr>
+    <th>blowfish</th>
+    <?php if(CRYPT_BLOWFISH == 1) { ?>
+    <td class="passed">Passed</td>
+    <?php } else { ?>
+    <td class="failed">Failed</td>
+    <?php } ?>
+  </tr>
+</table>
+</body>
+</html>
