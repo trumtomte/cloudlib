@@ -10,10 +10,18 @@
 return array
 (
     /**
-     * General settings
+     * Default timezone
      */
     'timezone' => 'Europe/Stockholm',
+
+    /**
+     * The local for currency etc..
+     */
     'locale'   => null,
+
+    /**
+     * Encoding for mb_string functions
+     */
     'mbstring' => 'UTF-8',
 
     /**

@@ -11,10 +11,12 @@
     echo '<br>';
     echo '<pre>';
     debug_print_backtrace();
-    echo '</pre>';
+    echo '<br>';
     echo '<br>';
     echo security::encrypt('asdqsaasdaswe', 'salt');
-    
+    echo '<br>';
+
+    echo '</pre>';
 ?>
 </body>
 </html>

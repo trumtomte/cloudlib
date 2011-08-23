@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class image
+final class resizeimage
 {
     /**
      * The image to be modified
@@ -26,7 +26,7 @@ final class image
      * @access  private
      * @var     string
      */
-    private $image;
+    private static $image;
 
     /**
      * Array of allowed extensions
@@ -34,7 +34,7 @@ final class image
      * @access  private
      * @var     array
      */
-    private $extensions = array();
+    private $extensions = array('jpg', 'jpeg', 'png', 'gif');
 
     /**
      * The error message
@@ -42,7 +42,7 @@ final class image
      * @access  private
      * @var     string
      */
-    private $error;
+    private static $error;
 
     /**
      * The constructor
@@ -50,12 +50,7 @@ final class image
      * @access  public
      * @return  void
      */
-    public function __construct()
-    {
-        $extensions = config::image('extensions');
-
-        $this->extensions = explode('|', $extensions);
-    }
+    public function __construct() {}
 
     /**
      * Load a file
@@ -66,30 +61,31 @@ final class image
      */
     public function load($file)
     {
+        $file = PUB . $file;
+
         $ext = pathinfo($file, PATHINFO_EXTENSION);
 
         if(!in_array($ext, $this->extensions))
         {
-            $this->error = 'Invalid file extension';
+            self::$error = 'Invalid file extension';
 
             return false;
         }
 
-        $type = getimagesize($file);
-
-        switch($type[2])
+        switch($ext)
         {
-            case IMAGETYPE_JPEG :
-                $this->image = imagecreatefromjpeg($file);
+            case 'jpg' :
+            case 'jpeg' :
+                self::$image = imagecreatefromjpeg($file);
                 break;
-            case IMAGETYPE_GIF :
-                $this->image = imagecreatefromgif($file);
+            case 'gif' :
+                self::$image = imagecreatefromgif($file);
                 break;
-            case IMAGETYPE_PNG :
-                $this->image = imagecreatefrompng($file);
+            case 'png' :
+                self::$image = imagecreatefrompng($file);
                 break;
             default :
-                $this->error = 'Could not load image';
+                self::$error = 'Could not load image';
                 break;
         }
     }
@@ -103,21 +99,26 @@ final class image
      * @param   int     $compression
      * @return  void
      */
-    public function save($file, $type = IMAGETYPE_JPEG, $compression = 75)
+    public function save($file, $compression = 75)
     {
-        switch($type)
+        $file = PUB . $file;
+
+        $ext = pathinfo($file, PATHINFO_EXTENSION);
+
+        switch($ext)
         {
-            case IMAGETYPE_JPEG :
-                imagejpeg($this->image, $file, $compression);
+            case 'jpg' :
+            case 'jpeg' :
+                imagejpeg(self::$image, $file, $compression);
                 break;
-            case IMAGETYPE_GIF :
-                imagegif($this->image, $file);
+            case 'gif' :
+                imagegif(self::$image, $file);
                 break;
-            case IMAGETYPE_PNG :
-                imagepng($this->image, $file);
+            case 'png' :
+                imagepng(self::$image, $file);
                 break;
             default :
-                $this->error = 'Could not save image';
+                self::$error = 'Could not save image';
                 break;
         }
     }
@@ -130,7 +131,7 @@ final class image
      */
     private function getWidth()
     {
-        return imagesx($this->image);
+        return imagesx(self::$image);
     }
 
     /**
@@ -141,7 +142,7 @@ final class image
      */
     private function getHeight()
     {
-        return imagesy($this->image);
+        return imagesy(self::$image);
     }
 
     /**
@@ -151,7 +152,7 @@ final class image
      * @param   int     $width
      * @retun   void
      */
-    public function resizeToWidth($width)
+    public function width($width)
     {
         $height = $this->getHeight() * ($width / $this->getWidth());
 
@@ -165,9 +166,9 @@ final class image
      * @param   int     $height
      * @return  void
      */
-    public function resizeToHeight($height)
+    public function height($height)
     {
-        $width = $this->getWidth * ($height / $this->getHeight());
+        $width = $this->getWidth() * ($height / $this->getHeight());
 
         $this->resize($width, $height);
     }
@@ -199,16 +200,16 @@ final class image
     {
         if(!($new = imagecreatetruecolor($width, $height)))
         {
-            $this->error = 'Imagecreatetruecolor did not work';
+            self::$error = 'Imagecreatetruecolor did not work';
         }
 
-        if(!imagecopyresampled($new, $this->image, 0, 0, 0, 0,
+        if(!imagecopyresampled($new, self::$image, 0, 0, 0, 0,
             $width, $height, $this->getWidth(), $this->getHeight()))
         {
-            $this->error = 'Imagecopyresampled did not work';
+            self::$error = 'Imagecopyresampled did not work';
         }
 
-        $this->image = $new;
+        self::$image = $new;
     }
 
     /**
@@ -224,8 +225,48 @@ final class image
     {
         $this->load($load);
 
-        
+        if(!array_key_exists('func', $options))
+        {
+            $options['func'] = 'scale';
+        }
 
+        if(!array_key_exists('value', $options))
+        {
+            $options['value'] = 100;
+        }
 
+        switch($options['func'])
+        {
+            case 'width' :
+                $this->width($options['value']);
+                break;
+            case 'height' :
+                $this->height($options['value']);
+                break;
+            case 'scale' : 
+                $this->scale($options['value']);
+                break;
+            default:
+                self::$error = 'Invalid function name, please use - width/height/scale.';
+                break;
+        }
+
+        if(!array_key_exists('compression', $options))
+        {
+            $compression = null;
+        }
+
+        $this->save($save, $compression);
+    }
+
+    /**
+     * Returns the error
+     *
+     * @access  public
+     * @return  string
+     */
+    public function error()
+    {
+        return self::$error;
     }
 }

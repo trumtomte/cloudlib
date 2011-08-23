@@ -11,12 +11,14 @@ return array
 (
     /**
      * Modules
+     *
+     * A value of false inactivates a module.
      */
-    'database'  => true,
-    'query'     => true,
-    'form'      => true,
-    'image'     => true,
-    'session'   => true,
-    'upload'    => true,
-    'validator' => true
+    'database'    => true,
+    'query'       => true,
+    'form'        => true,
+    'resizeimage' => true,
+    'session'     => true,
+    'upload'      => true,
+    'validator'   => true
 );

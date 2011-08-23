@@ -20,5 +20,17 @@
  */
 final class html
 {
-
+    /**
+     * CSS (<link>)
+     * SCRIPT (<script>)
+     * META (favicon/charset etc..)
+     * LINK (<a>)
+     * IMAGE (<img>)
+     * DOCTYPE (HTML5)
+     * CSS / SCRIPT codeblocks?
+     * DIV (<div>)
+     * PARAGRAPH (<p>)
+     * TABLES (<table>)
+     * HEADERS (<h1-6>)
+     */
 }

@@ -51,11 +51,14 @@ define('VIEWS_EXT', '.php');
 /**
  * Check PHP version and available extensions and functions.
  */
+
+/*
 if(file_exists('install.php'))
 {
     require 'install.php';
     exit();
 }
+*/
 
 /**
  * Require the bootstrap.
