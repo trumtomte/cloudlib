@@ -13,9 +13,8 @@
     debug_print_backtrace();
     echo '<br>';
     echo '<br>';
-    echo security::encrypt('asdqsaasdaswe', 'sasdasdijoqwe');
+    echo security::encrypt('sTd53GHos78', 'magnus');
     echo '<br>';
-
     echo '</pre>';
 ?>
 </body>
