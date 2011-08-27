@@ -20,8 +20,20 @@
  */
 final class query
 {
+    /**
+     * Current active SQL statement
+     *
+     * @access  private
+     * @var     string
+     */
     private static $statement;
 
+    /**
+     * Variables to be prepared
+     *
+     * @access  private
+     * @var     array
+     */
     private static $variables = array();
 
     /**

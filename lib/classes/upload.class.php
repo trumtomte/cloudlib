@@ -190,6 +190,7 @@ final class upload
         if(in_array($ext, $this->imagetypes))
         {
             $image = true;
+
             list($width, $height) = getimagesize($tmp);
 
             if(isset(self::$config['width']))

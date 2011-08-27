@@ -114,6 +114,7 @@ final class session
      * @access  public
      * @param   string          $name
      * @param   string|integer  $value
+     * @return  void
      */
     public function __set($name, $value)
     {
@@ -125,6 +126,7 @@ final class session
      *
      * @access  public
      * @param   string  $name
+     * @return  mixed
      */
     public function __get($name)
     {
@@ -151,6 +153,7 @@ final class session
      *
      * @access  public
      * @param   string $name
+     * @return  void
      */
     public function __unset($name)
     {

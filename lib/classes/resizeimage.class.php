@@ -269,4 +269,18 @@ final class resizeimage
     {
         return self::$error;
     }
+
+    /**
+     * Destructor
+     *
+     * @access  public
+     * @return  void
+     */
+    public function __destruct()
+    {
+        if(is_resource(self::$image))
+        {
+            imagedestroy(self::$image);
+        }
+    }
 }
