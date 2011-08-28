@@ -28,6 +28,8 @@ final class resizeimage
      */
     private static $image;
 
+    private static $ext;
+
     /**
      * Array of allowed extensions
      *
@@ -72,6 +74,8 @@ final class resizeimage
             return false;
         }
 
+        self::$ext = $ext;
+
         switch($ext)
         {
             case 'jpg' :
@@ -99,13 +103,14 @@ final class resizeimage
      * @param   int     $compression
      * @return  void
      */
-    public function save($file, $compression = 75)
+    public function save($file = null, $compression = 75)
     {
-        $file = PUB . $file;
+        if(isset($file))
+        {
+            $file = PUB . $file;
+        }
 
-        $ext = pathinfo($file, PATHINFO_EXTENSION);
-
-        switch($ext)
+        switch(self::$ext)
         {
             case 'jpg' :
             case 'jpeg' :
@@ -121,6 +126,8 @@ final class resizeimage
                 self::$error = 'Could not save image';
                 break;
         }
+
+        imagedestroy(self::$image);
     }
 
     /**
@@ -247,7 +254,7 @@ final class resizeimage
                 $this->scale($options['value']);
                 break;
             default:
-                self::$error = 'Invalid function name, please use - width/height/scale.';
+                self::$error = 'Invalid function name, use - width/height/scale.';
                 break;
         }
 
@@ -271,16 +278,22 @@ final class resizeimage
     }
 
     /**
-     * Destructor
+     * Returns the dimensions
      *
      * @access  public
-     * @return  void
+     * @return  string
      */
-    public function __destruct()
+    public function dimensions($file)
     {
-        if(is_resource(self::$image))
-        {
-            imagedestroy(self::$image);
-        }
+        $this->load($file);
+
+        $x = $this->getWidth();
+        $y = $this->getHeight();
+
+        $string = '(' . $x . ' x ' . $y . ')';
+
+        return $string;
+
+        imagedestroy(self::$image);
     }
 }

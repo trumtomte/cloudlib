@@ -82,7 +82,7 @@ final class number
 
             $value = $value[0];
 
-            $bytes = $value * pow(2, self::$byteSize[strtoupper($type]));
+            $bytes = $value * pow(2, self::$byteSize[strtoupper($type)]);
 
             return $bytes;
         }
