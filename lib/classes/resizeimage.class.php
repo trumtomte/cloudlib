@@ -294,6 +294,6 @@ final class resizeimage
 
         return $string;
 
-        imagedestroy(self::$image);
+        //imagedestroy(self::$image);
     }
 }
