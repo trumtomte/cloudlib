@@ -6,4 +6,5 @@ TODO:
 	Add more functions to the Number class
 	Add content to the Log class
 	Add helper functions to the HTML class
+	Add support for join() in the query class, also make the class better overall, current functions could be seen as placeholders
 	
