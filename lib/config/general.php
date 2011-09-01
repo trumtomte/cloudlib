@@ -36,5 +36,5 @@ return array
     /**
      * Static security salt
      */
-    'salt' => 'asd23rERt0w./'
+    'salt' => 'My Super Secret Salt'
 );
