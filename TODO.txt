@@ -1,0 +1,9 @@
+TODO:
+	Add support for models
+	Add upload function for multiple uploads in the Upload class
+	Add a Login class to simplify the proccess
+	Add contents to the Validator class
+	Add more functions to the Number class
+	Add content to the Log class
+	Add helper functions to the HTML class
+	
