@@ -109,6 +109,18 @@ final class query
     }
 
     /**
+     * JOIN tables
+     *
+     * @access  public
+     * @param
+     * @return  object
+     */
+    public function join()
+    {
+
+    }
+
+    /**
      * WHERE statement
      *
      * @access  public
