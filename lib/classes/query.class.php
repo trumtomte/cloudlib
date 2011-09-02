@@ -109,7 +109,7 @@ final class query
     }
 
     /**
-     * JOIN tables
+     * JOIN statement
      *
      * @access  public
      * @param
