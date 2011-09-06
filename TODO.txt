@@ -1,5 +1,6 @@
 TODO:
 	Add support for models
+	Add solution for Layouts
 	Add upload function for multiple uploads in the Upload class
 	Add a Login class to simplify the proccess
 	Add contents to the Validator class
