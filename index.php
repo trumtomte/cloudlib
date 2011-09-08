@@ -9,7 +9,7 @@
  */
 
 /**
- * Environment.
+ * Environment: False for Development and True for Production.
  */
 define('PRODUCTION', false);
 
@@ -28,10 +28,11 @@ define('APP', ROOT . DS . 'app' . DS);
 
 /**
  * Define sub-level directories of the Application directory,
- * directories for controllers and views.
+ * directories for controllers, views and models.
  */
 define('CTRLS', APP . 'controllers' . DS);
 define('VIEWS', APP . 'views' . DS);
+define('MODELS', APP . 'models' . DS);
 
 /**
  * Define sub-level directories of the Library directory,
@@ -51,14 +52,7 @@ define('VIEWS_EXT', '.php');
 /**
  * Check PHP version and available extensions and functions.
  */
-
-/*
-if(file_exists('tests.php'))
-{
-    require 'tests.php';
-    exit();
-}
-*/
+// if(file_exists('tests.php')) { require 'tests.php'; }
 
 /**
  * Require the bootstrap.

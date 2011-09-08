@@ -60,7 +60,7 @@ final class dispatcher
             $route['action'] = 'index';
         }
 
-        $controller = new $class();
+        $controller = new $class($route['controller']);
         $action     = $route['action'];
         $param      = $route['param'];
 

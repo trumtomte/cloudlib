@@ -123,6 +123,28 @@ final class database
     }
 
     /**
+     * Database query statement
+     *
+     * @access  public
+     * @return  object
+     */
+    public function query($statement)
+    {
+        return self::$instance->query($statement);
+    }
+
+    /**
+     * Database exec statement
+     *
+     * @access  public
+     * @return  integer
+     */
+    public function exec($statement)
+    {
+        return self::$instance->exec($statement);
+    }
+
+    /**
      * Magic method
      *
      * @access  private

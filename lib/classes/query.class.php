@@ -64,7 +64,7 @@ final class query
      * @access  public
      * @return  bool
      */
-    public function start()
+    public function begin()
     {
         return self::$instance->beginTransaction();
     }
@@ -75,7 +75,7 @@ final class query
      * @access  public
      * @return  bool
      */
-    public function end()
+    public function commit()
     {
         return self::$instance->commit();
     }

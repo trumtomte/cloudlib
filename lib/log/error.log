@@ -1,0 +1,3 @@
+[08-Sep-2011 22:59:32] PHP Fatal error:  Call to a member function test() on a non-object in /Users/sebbe/www/cloudlib/app/controllers/indexController.php on line 7
+[08-Sep-2011 22:59:51] PHP Fatal error:  Cannot access private property router::$controller in /Users/sebbe/www/cloudlib/lib/classes/controller.class.php on line 46
+[08-Sep-2011 23:00:10] PHP Fatal error:  controller::loadModel() [<a href='function.require'>function.require</a>]: Failed opening required '/Users/sebbe/www/cloudlib/app/models/Model.php' (include_path='.:/Applications/MAMP/bin/php/php5.3.6/lib/php') in /Users/sebbe/www/cloudlib/lib/classes/controller.class.php on line 48

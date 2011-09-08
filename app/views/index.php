@@ -12,6 +12,7 @@
     debug_print_backtrace();
     echo '<br>';
     echo '</pre>';
+    echo $test;
 ?>
 </body>
 </html>

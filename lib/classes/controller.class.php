@@ -28,20 +28,27 @@ abstract class controller
      */
     public $view;
 
+    public $model;
     /**
      * Constructor
      *
      * @access  public
      * @return  void
      */
-    public function __construct()
+    public function __construct($model)
     {
         $this->view = view::factory();
+
+        require MODELS . $model . 'Model.php';
+
+        $class = $model . 'Model';
+
+        $this->model = new $class();
     }
 
     /**
-     * Magic method,
-     * gets a module, initiates a new one if it doesnt exist
+     * Magic method
+     * Loads a module, initiates a new one if it doesnt exist
      *
      * @access  public
      * @param   string  $class
@@ -54,6 +61,8 @@ abstract class controller
 
     /**
      * Abstract method for controllers
+     *
+     * @access  public
      */
     abstract public function index();
 }
