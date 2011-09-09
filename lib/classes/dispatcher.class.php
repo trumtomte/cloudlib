@@ -42,25 +42,25 @@ final class dispatcher
             $route['controller'] = 'index';
         }
 
-        $file = CTRLS . $route['controller'] . CTRLS_EXT;
+        $file = CTRLS . $route['controller'] . CTRL_EXT;
 
         if(!is_readable($file))
         {
             header('HTTP/1.0 404 Not Found');
             require LIB . 'error/404.php';
-            exit();
+            exit(1);
         }
 
         require $file;
 
-        $class = $route['controller'] . 'Controller';
+        $class = $route['controller'] . '_controller';
 
         if(!is_callable(array($class, $route['action'])))
         {
             $route['action'] = 'index';
         }
 
-        $controller = new $class($route['controller']);
+        $controller = new $class();
         $action     = $route['action'];
         $param      = $route['param'];
 

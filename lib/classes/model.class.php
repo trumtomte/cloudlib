@@ -9,35 +9,15 @@
  */
 
 /**
- * The controller class.
- *
- * Abstract class for all the controllers
+ * The model class.
  *
  * @package     cloudlib
  * @subpackage  cloudlib.lib.classes
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-abstract class controller
+abstract class model
 {
-    /**
-     * View object
-     *
-     * @access  public
-     * @var     object
-     */
-    public $view;
-
-    /**
-     * Constructor
-     *
-     * @access  public
-     * @return  void
-     */
-    public function __construct()
-    {
-        $this->view = view::factory();
-    }
 
     /**
      * Magic method
@@ -51,11 +31,4 @@ abstract class controller
     {
         return core::loadModule($module);
     }
-
-    /**
-     * Abstract method for controllers
-     *
-     * @access  public
-     */
-    abstract public function index();
 }

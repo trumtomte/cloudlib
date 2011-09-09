@@ -66,7 +66,7 @@ final class core
     }
 
     /**
-     * Auto load classes
+     * Autoloader
      *
      * @access  public
      * @param   string  $class
@@ -74,9 +74,7 @@ final class core
      */
     public static function autoload($class)
     {
-        $file = CLASSES . strtolower($class) . CLASS_EXT;
-
-        if(!file_exists($file))
+        if(!file_exists($file = CLASSES . strtolower($class) . CLASS_EXT))
         {
             throw new cloud_exception('Unable to autoload class: ' . $class);
         }

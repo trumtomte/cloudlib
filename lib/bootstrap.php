@@ -52,7 +52,7 @@ set_error_handler(array('core', 'errorhandler'));
 set_exception_handler(array('cloud_exception', 'handler'));
 
 /**
- * Start the timer as 'boot'§
+ * Start the timer as 'boot'
  */
 timer::start('boot');
 

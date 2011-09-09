@@ -60,16 +60,16 @@ final class view
     {
         if(!is_string($view))
         {
-            throw new cloud_exception('render() requires first argument to be string');
+            throw new cloud_exception('Invalid parameter, string required for render()');
         }
 
-        $file = VIEWS . $view . VIEWS_EXT;
+        $file = VIEWS . $view . VIEW_EXT;
 
         if(!is_readable($file))
         {
             header('HTTP/1.0 404 Not Found');
             require LIB . 'error/404.php';
-            exit();
+            exit(1);
         }
 
         ob_start();

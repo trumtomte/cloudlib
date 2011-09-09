@@ -1,3 +1,13 @@
 [08-Sep-2011 22:59:32] PHP Fatal error:  Call to a member function test() on a non-object in /Users/sebbe/www/cloudlib/app/controllers/indexController.php on line 7
 [08-Sep-2011 22:59:51] PHP Fatal error:  Cannot access private property router::$controller in /Users/sebbe/www/cloudlib/lib/classes/controller.class.php on line 46
 [08-Sep-2011 23:00:10] PHP Fatal error:  controller::loadModel() [<a href='function.require'>function.require</a>]: Failed opening required '/Users/sebbe/www/cloudlib/app/models/Model.php' (include_path='.:/Applications/MAMP/bin/php/php5.3.6/lib/php') in /Users/sebbe/www/cloudlib/lib/classes/controller.class.php on line 48
+[09-Sep-2011 09:36:22] PHP Fatal error:  Class 'cloude_exception' not found in /Users/sebbe/www/cloudlib/lib/classes/core.class.php on line 91
+[09-Sep-2011 09:51:56] PHP Fatal error:  Uncaught exception 'ErrorException' with message 'Undefined variable: class' in /Users/sebbe/www/cloudlib/lib/classes/core.class.php:77
+Stack trace:
+#0 /Users/sebbe/www/cloudlib/lib/classes/core.class.php(77): core::errorhandler(8, 'Undefined varia...', '/Users/sebbe/ww...', 77, Array)
+#1 [internal function]: core::autoload('cloud_exception')
+#2 [internal function]: spl_autoload_call('cloud_exception')
+#3 /Users/sebbe/www/cloudlib/lib/bootstrap.php(52): set_exception_handler(Array)
+#4 /Users/sebbe/www/cloudlib/index.php(61): require('/Users/sebbe/ww...')
+#5 {main}
+  thrown in /Users/sebbe/www/cloudlib/lib/classes/core.class.php on line 77
