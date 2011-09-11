@@ -20,9 +20,13 @@
  */
 abstract class master
 {
-    public function __construct()
-    {
-    }
+    /**
+     * Constructor
+     *
+     * @access  public
+     * @return  void
+     */
+    public function __construct() {}
 
     public static function factory()
     {

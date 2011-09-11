@@ -13,6 +13,8 @@
     echo '<br>';
     echo '</pre>';
     echo $test;
+    echo '<br>';
+    echo substr('indexController', 0, -10);
 ?>
 </body>
 </html>

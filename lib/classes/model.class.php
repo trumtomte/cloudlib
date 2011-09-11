@@ -20,6 +20,13 @@
  */
 abstract class model extends master
 {
+    /**
+     * Constructor
+     *
+     * @access  public
+     * @return  void
+     */
+    public function __construct() {}
 
     /**
      * Magic method

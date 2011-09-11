@@ -28,6 +28,12 @@ abstract class controller extends master
      */
     public $view;
 
+    /**
+     * Model object
+     *
+     * @access  public
+     * @var     object
+     */
     public $model;
 
     /**
@@ -39,7 +45,10 @@ abstract class controller extends master
     public function __construct()
     {
         $this->view = view::factory();
-        $this->model = indexModel::factory();
+
+        $model = substr(get_class($this), 0, -10) . 'Model';
+
+        $this->model = $model::factory();
     }
 
     /**

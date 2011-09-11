@@ -42,6 +42,14 @@ final class number extends master
     private static $byteType = array('B', 'KB', 'MB', 'GB', 'TB');
 
     /**
+     * Constructor
+     *
+     * @access  public
+     * @return  void
+     */
+    public function __construct() {}
+
+    /**
      * Function for converting into bytes or a shorthand for the bytesize
      *
      * @access  public

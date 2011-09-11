@@ -46,7 +46,7 @@ final class database extends master
 
         $driverOptions = array(
                 PDO::ATTR_PERSISTENT         => $persistent,
-                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES $charset"
+                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . $charset
             );
 
         if(!isset(self::$instance))
