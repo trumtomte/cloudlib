@@ -4,13 +4,14 @@ Current main reason for developing this is to learn more about the MVC structure
 
 
 TODO:
-	Add support for models
-	Add solution for Layouts
-	Add upload function for multiple uploads in the Upload class
-	Add a Login class to simplify the proccess
-	Add contents to the Validator class
-	Add more functions to the Number class
-	Add content to the Log class
-	Add helper functions to the HTML class
-	Add support for join() in the query class, also make the class better overall, current functions could be seen as placeholders
+	Add some sort of layout system for static parts of pages
+    Add functions to empty classes
+    Add functionality to uploadFiles() in the upload class
+    Add better functionality to the query class (hint: inner joins, longer queries)
+    
+    - Header()!
+
+Notes:
+    Make resizeimage into an complete image class instead
+
 	

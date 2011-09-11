@@ -51,8 +51,6 @@ final class dispatcher extends master
             exit(1);
         }
 
-        require $file;
-
         $class = $route['controller'] . 'Controller';
 
         if(empty($route['action']))

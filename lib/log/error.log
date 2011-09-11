@@ -13,3 +13,20 @@ Stack trace:
   thrown in /Users/sebbe/www/cloudlib/lib/classes/core.class.php on line 77
 [10-Sep-2011 16:01:58] PHP Parse error:  syntax error, unexpected '{' in /Users/sebbe/www/cloudlib/lib/classes/dispatcher.class.php on line 63
 [10-Sep-2011 17:45:24] PHP Fatal error:  Declaration of index_controller::index() must be compatible with that of controller::index() in /Users/sebbe/www/cloudlib/app/controllers/index_controller.php on line 4
+[11-Sep-2011 20:50:43] PHP Fatal error:  Cannot instantiate abstract class master in /Users/sebbe/www/cloudlib/lib/classes/master.class.php on line 31
+[11-Sep-2011 20:54:42] PHP Parse error:  syntax error, unexpected ')', expecting T_PAAMAYIM_NEKUDOTAYIM in /Users/sebbe/www/cloudlib/lib/classes/master.class.php on line 32
+[11-Sep-2011 20:55:24] PHP Fatal error:  Cannot instantiate abstract class master in /Users/sebbe/www/cloudlib/lib/classes/master.class.php on line 32
+[11-Sep-2011 20:57:30] PHP Parse error:  syntax error, unexpected ')', expecting T_PAAMAYIM_NEKUDOTAYIM in /Users/sebbe/www/cloudlib/lib/classes/master.class.php on line 27
+[11-Sep-2011 20:57:37] PHP Parse error:  syntax error, unexpected T_STRING, expecting ',' or ';' in /Users/sebbe/www/cloudlib/app/views/index.php on line 15
+[11-Sep-2011 20:57:45] PHP Parse error:  syntax error, unexpected T_STRING, expecting ',' or ';' in /Users/sebbe/www/cloudlib/app/views/index.php on line 15
+[11-Sep-2011 20:57:47] PHP Parse error:  syntax error, unexpected T_STRING, expecting ',' or ';' in /Users/sebbe/www/cloudlib/app/views/index.php on line 15
+[11-Sep-2011 20:57:47] PHP Parse error:  syntax error, unexpected T_STRING, expecting ',' or ';' in /Users/sebbe/www/cloudlib/app/views/index.php on line 15
+[11-Sep-2011 20:57:48] PHP Parse error:  syntax error, unexpected T_STRING, expecting ',' or ';' in /Users/sebbe/www/cloudlib/app/views/index.php on line 15
+[11-Sep-2011 20:57:49] PHP Parse error:  syntax error, unexpected T_STRING, expecting ',' or ';' in /Users/sebbe/www/cloudlib/app/views/index.php on line 15
+[11-Sep-2011 20:57:50] PHP Parse error:  syntax error, unexpected T_STRING, expecting ',' or ';' in /Users/sebbe/www/cloudlib/app/views/index.php on line 15
+[11-Sep-2011 20:57:56] PHP Parse error:  syntax error, unexpected T_STRING, expecting ',' or ';' in /Users/sebbe/www/cloudlib/app/views/index.php on line 15
+[11-Sep-2011 20:57:57] PHP Parse error:  syntax error, unexpected T_STRING, expecting ',' or ';' in /Users/sebbe/www/cloudlib/app/views/index.php on line 15
+[11-Sep-2011 20:58:10] PHP Parse error:  syntax error, unexpected T_STATIC, expecting T_STRING or T_VARIABLE or '$' in /Users/sebbe/www/cloudlib/lib/classes/master.class.php on line 27
+[11-Sep-2011 20:58:17] PHP Parse error:  syntax error, unexpected T_STRING, expecting ',' or ';' in /Users/sebbe/www/cloudlib/app/views/index.php on line 15
+[11-Sep-2011 20:59:58] PHP Fatal error:  Class 'indexModel' not found in /Users/sebbe/www/cloudlib/lib/classes/controller.class.php on line 42
+[11-Sep-2011 21:02:22] PHP Parse error:  syntax error, unexpected T_STRING, expecting ',' or ';' in /Users/sebbe/www/cloudlib/app/views/index.php on line 15

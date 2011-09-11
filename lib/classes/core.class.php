@@ -25,7 +25,7 @@ final class core
      *
      * @access  public
      */
-    const VERSION = '0.3.1';
+    const VERSION = '0.3.8';
 
     /**
      * Array of current activated modules
@@ -74,11 +74,11 @@ final class core
      */
     public static function autoload($class)
     {
-        if(preg_match('/\bController\b/', $class))
+        if(preg_match('/Controller/', $class))
         {
             $file = CTRLS . $class . CLASS_EXT;
         }
-        elseif(preg_match('/\bModel\b/', $class))
+        elseif(preg_match('/Model/', $class))
         {
             $file = MODELS . $class . CLASS_EXT;
         }

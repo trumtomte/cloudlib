@@ -9,23 +9,16 @@
  */
 
 /**
- * The master class.
+ * The paginator class.
  *
- * Abstract class for all classes.
+ * <short description>
  *
  * @package     cloudlib
  * @subpackage  cloudlib.lib.classes
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-abstract class master
+final class paginator extends master
 {
-    public function __construct()
-    {
-    }
-
-    public static function factory()
-    {
-        return new static;
-    }
+    // Class for pagination
 }

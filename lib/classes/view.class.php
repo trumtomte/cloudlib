@@ -38,18 +38,6 @@ final class view extends master
     public function __construct() {}
 
     /**
-     * Factory
-     *
-     * @access  public
-     * @param   string  $path
-     * @return  void
-     */
-    public static function factory()
-    {
-        return new view();
-    }
-
-    /**
      * Renders the view
      *
      * @access  public

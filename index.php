@@ -51,7 +51,7 @@ define('CLASS_EXT', '.class.php');
 /**
  * Check PHP version and available extensions and functions.
  */
-// if(file_exists('tests.php')) { require 'tests.php'; }
+// if(file_exists('tests.php')) { require 'tests.php'; exit(); }
 
 /**
  * Require the bootstrap.
