@@ -11,14 +11,14 @@
 /**
  * The view class.
  *
- * Determines what view to be rendered.
+ * <short description>
  *
  * @package     cloudlib
  * @subpackage  cloudlib.lib.classes
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class view
+final class view extends master
 {
     /**
      * View variables
@@ -60,10 +60,10 @@ final class view
     {
         if(!is_string($view))
         {
-            throw new cloud_exception('Invalid parameter, string required for render()');
+            throw new cloudException('Invalid parameter, string required for render()');
         }
 
-        $file = VIEWS . $view . VIEW_EXT;
+        $file = VIEWS . $view . EXT;
 
         if(!is_readable($file))
         {
@@ -81,7 +81,7 @@ final class view
 
         require $file;        
 
-        return ob_get_clean();
+        echo ob_get_clean();
     }
 
     /**

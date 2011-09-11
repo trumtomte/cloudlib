@@ -1,3 +1,16 @@
 Minor (M)VC PHP Framework
 
 Current main reason for developing this is to learn more about the MVC structure with PHP.
+
+
+TODO:
+	Add support for models
+	Add solution for Layouts
+	Add upload function for multiple uploads in the Upload class
+	Add a Login class to simplify the proccess
+	Add contents to the Validator class
+	Add more functions to the Number class
+	Add content to the Log class
+	Add helper functions to the HTML class
+	Add support for join() in the query class, also make the class better overall, current functions could be seen as placeholders
+	

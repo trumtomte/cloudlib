@@ -66,14 +66,14 @@ final class config
     {
         if(!file_exists($file = CONFIG . strtolower($config) . '.php'))
         {
-            throw new cloud_exception('Unable to locate the config file: ' . $config);
+            throw new cloudException('Unable to locate the config file: ' . $config);
         }
 
         $array = require $file;
 
         if(!is_array($array))
         {
-            throw new cloud_exception('Config files must return an array');
+            throw new cloudException('Config files must return an array');
         }        
         
         new static($array, $config);
@@ -82,7 +82,7 @@ final class config
         {
             if(!array_key_exists($key, static::$items))
             {
-                throw new cloud_exception('Item: ' . $key . ' not found in ' . $config);
+                throw new cloudException('Item: ' . $key . ' not found in ' . $config);
             }
 
             return static::$items[$key];

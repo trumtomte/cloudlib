@@ -9,7 +9,7 @@
  */
 
 /**
- * The html class.
+ * The login class.
  *
  * <short description>
  *
@@ -18,24 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class html extends master
+final class login extends master
 {
-
-    /**
-     * HTML helper class
-     *
-     * Pointers on what could be implemented:
-     *
-     * CSS (<link>)
-     * SCRIPT (<script>)
-     * META (favicon/charset etc..)
-     * LINK (<a>)
-     * IMAGE (<img>)
-     * DOCTYPE (HTML5)
-     * CSS / SCRIPT codeblocks?
-     * DIV (<div>)
-     * PARAGRAPH (<p>)
-     * TABLES (<table>)
-     * HEADERS (<h1-6>)
-     */
+    // Login helper class
 }

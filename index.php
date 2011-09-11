@@ -43,12 +43,10 @@ define('CONFIG', LIB . 'config' . DS);
 define('LOGS', LIB . 'log' . DS);
 
 /**
- * File extensions for classes, controllers, models and views.
+ * File extensions for files and classes.
  */
+define('EXT', '.php');
 define('CLASS_EXT', '.class.php');
-define('CTRL_EXT', '_controller.php');
-define('MODEL_EXT', '_model.php');
-define('VIEW_EXT', '.php');
 
 /**
  * Check PHP version and available extensions and functions.

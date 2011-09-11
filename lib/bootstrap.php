@@ -44,12 +44,12 @@ spl_autoload_register(array('core', 'autoload'));
 /**
  * Set the error handler
  */
-set_error_handler(array('core', 'errorhandler'));
+set_error_handler(array('core', 'errorHandler'));
 
 /**
  * Set the exception handler
  */
-set_exception_handler(array('cloud_exception', 'handler'));
+set_exception_handler(array('cloudException', 'exceptionHandler'));
 
 /**
  * Start the timer as 'boot'

@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class session
+final class session extends master
 {
     /**
      * Constant for a started session
@@ -79,7 +79,7 @@ final class session
     {
         if(self::$session == self::SESSION_STARTED)
         {
-            throw new cloud_exception('A session has already been started');
+            throw new cloudException('A session has already been started');
         }
 
         self::$session = self::SESSION_STARTED;
@@ -98,7 +98,7 @@ final class session
     {
         if(self::$session == self::SESSION_NOT_STARTED)
         {
-            throw new cloud_exception('There is no session to be destroyed');
+            throw new cloudException('There is no session to be destroyed');
         }
 
         self::$session = self::SESSION_NOT_STARTED;

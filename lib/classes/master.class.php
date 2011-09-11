@@ -9,33 +9,25 @@
  */
 
 /**
- * The html class.
+ * The master class.
  *
- * <short description>
+ * Abstract class for all classes.
  *
  * @package     cloudlib
  * @subpackage  cloudlib.lib.classes
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class html extends master
+abstract class master
 {
+    public static $classname;
 
-    /**
-     * HTML helper class
-     *
-     * Pointers on what could be implemented:
-     *
-     * CSS (<link>)
-     * SCRIPT (<script>)
-     * META (favicon/charset etc..)
-     * LINK (<a>)
-     * IMAGE (<img>)
-     * DOCTYPE (HTML5)
-     * CSS / SCRIPT codeblocks?
-     * DIV (<div>)
-     * PARAGRAPH (<p>)
-     * TABLES (<table>)
-     * HEADERS (<h1-6>)
-     */
+    public function __construct()
+    {
+
+    }
+    public static function factory()
+    {
+        return new self();
+    }
 }

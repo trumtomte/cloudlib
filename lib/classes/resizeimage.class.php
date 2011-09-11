@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class resizeimage
+final class resizeimage extends master
 {
     /**
      * The image to be modified
@@ -28,6 +28,12 @@ final class resizeimage
      */
     private static $image;
 
+    /**
+     * The image extension
+     *
+     * @access  private
+     * @var     string
+     */
     private static $ext;
 
     /**

@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class timer
+final class timer extends master
 {
     /**
      * Array of start and stop times
@@ -69,7 +69,7 @@ final class timer
      * @access  public
      * @return  int
      */
-    public static function loadtime($time, $round = 5)
+    public static function time($time, $round = 5)
     {
         static::stop($time);
 
@@ -98,6 +98,6 @@ final class timer
             $round = 5;
         }
 
-        return static::loadtime($time, $round);
+        return static::time($time, $round);
     }
 }

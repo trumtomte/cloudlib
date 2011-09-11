@@ -74,9 +74,22 @@ final class core
      */
     public static function autoload($class)
     {
-        if(!file_exists($file = CLASSES . strtolower($class) . CLASS_EXT))
+        if(preg_match('/\bController\b/', $class))
         {
-            throw new cloud_exception('Unable to autoload class: ' . $class);
+            $file = CTRLS . $class . CLASS_EXT;
+        }
+        elseif(preg_match('/\bModel\b/', $class))
+        {
+            $file = MODELS . $class . CLASS_EXT;
+        }
+        else
+        {
+            $file = CLASSES . $class . CLASS_EXT;
+        }
+
+        if(!file_exists($file))
+        {
+            throw new cloudException('Unable to autoload: ' . $class);
         }
 
         require $file;
@@ -95,12 +108,12 @@ final class core
 
         if(!array_key_exists($module, $modules))
         {
-            throw new cloud_exception('Module does not exist: ' . $module);
+            throw new cloudException('Module does not exist: ' . $module);
         }
 
         if($modules[$module] == false)
         {
-            throw new cloud_exception('Module is set to inactive(false): ' . $module);
+            throw new cloudException('Module is set to inactive(false): ' . $module);
         }
 
         if(!in_array($module, self::$modules))
@@ -122,7 +135,7 @@ final class core
      * @throws  ErrorException
      * @return  void
      */
-    public static function errorhandler($errno, $errstr, $errfile, $errline)
+    public static function errorHandler($errno, $errstr, $errfile, $errline)
     {
         throw new ErrorException($errstr, $errno, $errno, $errfile, $errline);
     }

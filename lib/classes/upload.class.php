@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class upload
+final class upload extends master
 {
     /**
      * Config array
@@ -110,7 +110,7 @@ final class upload
 
         if(is_array($files[$first]['name']))
         {
-            throw new cloud_exception('Use uploadFiles() for multiple uploads');
+            throw new cloudException('Use uploadFiles() for multiple uploads');
         }
 
         if($files[$first]['error'] !== 0)
@@ -261,7 +261,7 @@ final class upload
 
         if(!is_array($files[$first]['name']))
         {
-            throw new cloud_exception('Use uploadFile() for single uploads');
+            throw new cloudException('Use uploadFile() for single uploads');
         }
 
 

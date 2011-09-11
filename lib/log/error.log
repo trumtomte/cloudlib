@@ -11,3 +11,5 @@ Stack trace:
 #4 /Users/sebbe/www/cloudlib/index.php(61): require('/Users/sebbe/ww...')
 #5 {main}
   thrown in /Users/sebbe/www/cloudlib/lib/classes/core.class.php on line 77
+[10-Sep-2011 16:01:58] PHP Parse error:  syntax error, unexpected '{' in /Users/sebbe/www/cloudlib/lib/classes/dispatcher.class.php on line 63
+[10-Sep-2011 17:45:24] PHP Fatal error:  Declaration of index_controller::index() must be compatible with that of controller::index() in /Users/sebbe/www/cloudlib/app/controllers/index_controller.php on line 4

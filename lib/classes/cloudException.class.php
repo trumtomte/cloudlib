@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class cloud_exception extends Exception
+class cloudException extends Exception
 {
     /**
      * Array of Readable errors
@@ -57,7 +57,7 @@ class cloud_exception extends Exception
      * @param   object  $e
      * @return  void
      */
-    public static function handler(Exception $e)
+    public static function exceptionHandler(Exception $e)
     {
         try
         {

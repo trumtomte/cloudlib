@@ -1,6 +1,6 @@
 <?php
 
-class index_model extends model
+class indexModel extends model
 {
     public function test()
     {

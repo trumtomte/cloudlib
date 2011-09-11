@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class dispatcher
+final class dispatcher extends master
 {
     /**
      * Constructor
@@ -42,7 +42,7 @@ final class dispatcher
             $route['controller'] = 'index';
         }
 
-        $file = CTRLS . $route['controller'] . CTRL_EXT;
+        $file = CTRLS . $route['controller'] . 'Controller' . CLASS_EXT;
 
         if(!is_readable($file))
         {
@@ -53,9 +53,13 @@ final class dispatcher
 
         require $file;
 
-        $class = $route['controller'] . '_controller';
+        $class = $route['controller'] . 'Controller';
 
-        if(!is_callable(array($class, $route['action'])))
+        if(empty($route['action']))
+        {
+            $route['action'] = 'index';
+        }
+        elseif(!is_callable(array($class, $route['action'])))
         {
             $route['action'] = 'index';
         }
