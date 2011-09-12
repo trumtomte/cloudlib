@@ -21,14 +21,6 @@
 abstract class master
 {
     /**
-     * Constructor
-     *
-     * @access  public
-     * @return  void
-     */
-    public function __construct() {}
-
-    /**
      * Centralized way of initiating classes
      *
      * @access  public

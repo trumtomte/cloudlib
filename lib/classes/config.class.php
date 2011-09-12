@@ -42,7 +42,7 @@ final class config extends master
      * @access  private
      * @return void
      */
-    private function __construct() {}
+    public function __construct() {}
 
     /**
      * Get a config file or item
