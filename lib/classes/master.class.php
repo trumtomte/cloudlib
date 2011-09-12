@@ -28,6 +28,12 @@ abstract class master
      */
     public function __construct() {}
 
+    /**
+     * Centralized way of initiating classes
+     *
+     * @access  public
+     * @return  object
+     */
     public static function factory()
     {
         return new static;

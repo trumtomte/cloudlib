@@ -7,34 +7,14 @@
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  * @package     cloudlib
  */
-
-/**
- * General configuration for CloudLib
- */
 return array
 (
     /**
-     * Default timezone
+     * General settings
      */
-    'timezone' => 'Europe/Stockholm',
-
-    /**
-     * The locale information
-     */
-    'locale'   => null,
-
-    /**
-     * Encoding for mb_string functions
-     */
-    'mbstring' => 'UTF-8',
-
-    /**
-     * Known image extensions
-     */
+    'timezone'        => 'Europe/Stockholm',
+    'locale'          => null,
+    'mbstring'        => 'UTF-8',
     'imageExtensions' => 'jpg|jpeg|png|gif',
-
-    /**
-     * Static security salt
-     */
-    'salt' => 'My Super Secret Salt'
+    'salt'            => 'My Super Secret Salt'
 );

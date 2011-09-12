@@ -38,6 +38,32 @@ final class view extends master
     public function __construct() {}
 
     /**
+     * Magic method,
+     * sets the view variables
+     *
+     * @access  public
+     * @param   string          $index
+     * @param   string|integer  $value
+     * @return  void
+     */
+    public function __set($index, $value)
+    {
+        $this->vars[$index] = $value;
+    }
+
+    /**
+     * Magic method used for loading modules
+     *
+     * @access  public
+     * @param   string  $class
+     * @return  object
+     */
+    public function __get($module)
+    {
+        return core::loadModule($module);
+    }
+
+    /**
      * Renders the view
      *
      * @access  public
@@ -70,32 +96,5 @@ final class view extends master
         require $file;        
 
         echo ob_get_clean();
-    }
-
-    /**
-     * Magic method,
-     * sets the view variables
-     *
-     * @access  public
-     * @param   string          $index
-     * @param   string|integer  $value
-     * @return  void
-     */
-    public function __set($index, $value)
-    {
-        $this->vars[$index] = $value;
-    }
-
-    /**
-     * Magic method,
-     * gets a module, initiates a new one if it doesnt exist
-     *
-     * @access  public
-     * @param   string  $class
-     * @return  object
-     */
-    public function __get($module)
-    {
-        return core::loadModule($module);
     }
 }

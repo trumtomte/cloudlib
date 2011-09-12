@@ -62,7 +62,7 @@ final class dispatcher extends master
             $route['action'] = 'index';
         }
 
-        $controller = new $class();
+        $controller = $class::factory();
         $action     = $route['action'];
         $param      = $route['param'];
 

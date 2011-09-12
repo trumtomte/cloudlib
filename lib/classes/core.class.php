@@ -118,7 +118,7 @@ final class core
 
         if(!in_array($module, self::$modules))
         {
-            self::$modules[$module] = new $module();
+            self::$modules[$module] = $module::factory();
         }
 
         return self::$modules[$module];
