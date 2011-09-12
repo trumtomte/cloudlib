@@ -13,5 +13,5 @@ TODO:
 
 Notes:
     Make resizeimage into an complete image class instead
-
+    Better encrypt function?
 	
