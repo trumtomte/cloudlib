@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class config
+final class config extends master
 {
     /**
      * Array of each config
@@ -40,19 +40,9 @@ final class config
      * Constructor
      *
      * @access  private
-     * @param   array   $array
-     * @param   string  $config
      * @return void
      */
-    private function __construct(array $array, $config)
-    {
-        foreach($array as $key => $value)
-        {
-            static::$items[$key] = $value;
-        }
-
-        static::$config[$config] = $array;
-    }
+    private function __construct() {}
 
     /**
      * Get a config file or item
@@ -76,7 +66,7 @@ final class config
             throw new cloudException('Config files must return an array');
         }        
         
-        new static($array, $config);
+        static::set($array, $config);
 
         if(isset($key))
         {
@@ -89,6 +79,24 @@ final class config
         }
 
         return static::$config[$config];
+    }
+
+    /**
+     * Sets the config item
+     *
+     * @access  private
+     * @param   $array
+     * @param   $config
+     * @return  void
+     */
+    private static function set(array $array, $config)
+    {
+        foreach($array as $key => $value)
+        {
+            static::$items[$key] = $value;
+        }
+
+        static::$config[$config] = $array;
     }
 
     /**
