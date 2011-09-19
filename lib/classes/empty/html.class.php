@@ -37,5 +37,7 @@ final class html extends master
      * PARAGRAPH (<p>)
      * TABLES (<table>)
      * HEADERS (<h1-6>)
+     *
+     * Default <head> block?, array of options?
      */
 }
