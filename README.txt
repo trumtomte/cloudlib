@@ -8,8 +8,10 @@ TODO:
     Add functions to empty classes
     Add functionality to uploadFiles() in the upload class
     Add better functionality to the query class (hint: inner joins, longer queries)
-    
+    - Caching!
+
     - Header()!
+    
 
 Notes:
     Make resizeimage into an complete image class instead
