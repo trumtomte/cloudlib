@@ -24,11 +24,11 @@ ini_set('error_log', LOGS . 'error.log');
  */
 if(PRODUCTION == true)
 {
-    ini_set('display_errors', 'Off');
+    ini_set('display_errors', 0);
 }
 else
 {
-    ini_set('display_errors', 'On');
+    ini_set('display_errors', 1);
 }
 
 /**
