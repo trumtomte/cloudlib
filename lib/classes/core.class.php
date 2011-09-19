@@ -74,11 +74,11 @@ final class core
      */
     public static function autoload($class)
     {
-        if(preg_match('/Controller/', $class))
+        if(preg_match('/Controller$/', $class))
         {
             $file = CTRLS . $class . CLASS_EXT;
         }
-        elseif(preg_match('/Model/', $class))
+        elseif(preg_match('/Model$/', $class))
         {
             $file = MODELS . $class . CLASS_EXT;
         }
