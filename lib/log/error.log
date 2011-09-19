@@ -1,1 +1,0 @@
-[12-Sep-2011 19:42:54] PHP Fatal error:  Access level to config::__construct() must be public (as in class master) in /Users/sebbe/www/cloudlib/lib/classes/config.class.php on line 0

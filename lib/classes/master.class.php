@@ -26,8 +26,10 @@ abstract class master
      * @access  public
      * @return  object
      */
-    public static function factory()
+    final public static function factory()
     {
-        return new static;
+        $reflection = new ReflectionClass(get_called_class());
+
+        return $reflection->newInstanceArgs(func_get_args());
     }
 }
