@@ -75,7 +75,7 @@ final class upload extends master
      * @access  private
      * @var     array
      */
-    private $imagetypes = array();
+    private $imagetypes = array('jpg', 'jpeg', 'png', 'gif');
 
     /**
      * Constructor
@@ -83,12 +83,7 @@ final class upload extends master
      * @access  public
      * @return  void
      */
-    public function __construct()
-    {
-        $imagetypes = config::general('imageExtensions');
-
-        $this->imagetypes = explode('|', $imagetypes);
-    }
+    public function __construct() {}
 
     /**
      * Upload a single file
@@ -100,133 +95,63 @@ final class upload extends master
     {
         if(empty($_FILES))
         {
-            //self::$error = '$_FILES array is empty';
+            self::$error = 'No file was selected';
 
             return false;
         }
 
         $files = $_FILES;
-        $first = key($_FILES);
+        $key = key($_FILES);
 
-        if(is_array($files[$first]['name']))
+        $file = $files[$key]['name'];
+        $tmp = $files[$key]['tmp_name'];
+
+        if(is_array($file))
         {
             throw new cloudException('Use uploadFiles() for multiple uploads');
         }
 
-        if($files[$first]['error'] !== 0)
+        if(is_string(self::$error = $this->hasError($files[$key]['error'])))
         {
-            self::$error = $this->fileErrors[$files[$first]['error']];
-
             return false;
         }
 
-        if(!is_uploaded_file($files[$first]['tmp_name']))
+        if(is_string(self::$error = $this->isUploaded($tmp)))
         {
-            self::$error = 'Not an HTTP upload';
-
             return false;
         }
 
-        $size = filesize($files[$first]['tmp_name']);
-
-        $maxsize = self::$config['filesize'];
-
-        if(is_string($maxsize))
+        if(is_string(self::$error = $this->checkFilesize($tmp)))
         {
-            $maxsize = number::byte($maxsize);
-        }
-
-        if($size > $maxsize)
-        {
-            self::$error = 'File is to large';
-
             return false;
         }
 
-        $ext = pathinfo($files[$first]['name'], PATHINFO_EXTENSION);
-
-        if(isset(self::$config['filetypes']))
+        if(is_string(self::$error = $this->checkFiletype($file)))
         {
-            $types = explode('|', self::$config['filetypes']);
-
-            if(!in_array($ext, $types))
-            {
-                self::$error = 'Invalid filetype';
-
-                return false;
-            }
+            return false;
         }
+
+        if(is_string(self::$error = $this->isImage($tmp)))
+        {
+            return false;
+        }
+        else
+        {
+            $imageinfo = $this->isImage($tmp);
+        }
+
+        $name = $this->setFilename($file);
 
         $dir = self::$config['directory'];
 
-        $pre = isset(self::$config['prefix']) ? self::$config['prefix'] : '';
-
-        if(isset(self::$config['filename']))
+        if(is_string(self::$error = $this->upload($tmp, $dir . $name)))
         {
-            $name = $pre . self::$config['filename'];
-        }
-        else
-        {
-            $name = $pre . $files[$first]['name'];
-        }
-
-        if(self::$config['overwrite'] == false)
-        {
-            $copy = '';
-            $counter = 1;
-
-            while(file_exists($dir . $copy . $name))
-            {
-                $copy = 'copy(' . $counter . ')_';
-                $counter++;
-            }
-
-            $name = $copy . $name;
-        }
-
-        $tmp = $files[$first]['tmp_name'];
-
-
-        if(in_array($ext, $this->imagetypes))
-        {
-            $image = true;
-
-            list($width, $height) = getimagesize($tmp);
-
-            if(isset(self::$config['width']))
-            {
-                if($width > self::$config['width'])
-                {
-                    self::$error = 'Invalid width';
-    
-                    return false;
-                }
-            }
-
-            if(isset(self::$config['height']))
-            {
-                if($height > self::$config['height'])
-                {
-                    self::$error = 'Invalid height';
-    
-                    return false;
-                }
-            }
-        }
-        else
-        {
-            $image  = 0;
-            $width  = 0;
-            $height = 0;
-        }
-
-        if(!move_uploaded_file($tmp, $dir . $name))
-        {
-            self::$error = 'Could not move the uploaded file';
-
             return false;
         }
 
+        /*
+         * TODO: fix way of setting the data
+         *
         self::$data = array(
             'name'     => $name,
             'path'     => $dir,
@@ -237,6 +162,7 @@ final class upload extends master
             'width'    => $width,
             'height'   => $height
         );
+         */
 
         return true;
     }
@@ -264,6 +190,148 @@ final class upload extends master
             throw new cloudException('Use uploadFile() for single uploads');
         }
 
+
+    }
+
+    private function hasError($file)
+    {
+        if($file !== 0)
+        {
+            return $this->fileErrors[$file];
+        }
+
+        return true;
+    }
+
+    private function isUploaded($file)
+    {
+        if(!is_uploaded_file($file))
+        {
+            return 'File was not uploaded via HTTP POST';
+        }
+
+        return true;
+    }
+
+    private function checkFilesize($file)
+    {
+        $size = filesize($file);
+        $max  = self::$config['filesize'];
+
+        if(is_string($max))
+        {
+            $max = number::byte($max);
+        }
+
+        if($size > $max)
+        {
+            return 'The file exceeds the max allowed filesize';
+        }
+
+        return true;
+    }
+
+    private function checkFiletype($file)
+    {
+        $ext = pathinfo($file, PATHINFO_EXTENSION);
+
+        if(isset(self::$config['filetypes']))
+        {
+            $types = explode('|', self::$config['filetypes']);
+
+            if(!in_array($ext, $types))
+            {
+                return 'Invalid filetype';
+            }
+
+            return true;
+        }
+
+        return true;
+    }
+
+    private function setFilename($file)
+    {
+        $pre = isset(self::$config['prefix']) ? self::$config['prefix'] : '';
+
+        if(isset(self::$config['filename']))
+        {
+            $name = $pre . self::$config['filename'];
+        }
+        else
+        {
+            $name = $pre . $file;
+        }
+
+        $name = string::replace(' ', '_', $name);
+
+        if(self::$config['overwrite'] == false)
+        {
+            $copy = '';
+            $counter = 1;
+
+            while(file_exists(self::$config['directory'] . $copy . $name))
+            {
+                $copy = 'copy(' . $counter . ')_';
+                $counter++;
+            }
+
+            $name = $copy . $name;
+        }
+
+        return $name;
+    }
+
+    private function isImage($file)
+    {
+        $ext = pathinfo($file, PATHINFO_EXTENSION);
+
+        if(in_array($ext, $this->imagetypes))
+        {
+            list($width, $height) = getimagesize($file);
+
+            if(isset(self::$config['width']))
+            {
+                if($width > self::$config['width'])
+                {
+                    return 'Invalid width';
+                }
+            }
+
+            if(isset(self::$config['height']))
+            {
+                if($height > self::$config['height'])
+                {
+                    return 'Invalid height';
+                }
+            }
+
+            return array(
+                'image' => 1,
+                'width' => $width,
+                'height' => $height
+            );
+        }
+
+        return array(
+            'image' => 0,
+            'width' => 0,
+            'height' => 0
+        );
+    }
+
+    private function upload($file, $path)
+    {
+        if(!move_uploaded_file($file, $path))
+        {
+            return 'Unable to upload the chosen file';
+        }
+
+        return true;
+    }
+
+    private function setData(array $data)
+    {
 
     }
 

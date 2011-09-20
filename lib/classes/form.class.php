@@ -117,7 +117,7 @@ final class form extends master
      * @param   array   $options
      * @return  string
      */
-    public function start($action = null, array $options = array())
+    public function open($action = null, array $options = array())
     {
         if(is_string($action))
         {

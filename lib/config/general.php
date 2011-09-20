@@ -15,6 +15,5 @@ return array
     'timezone'        => 'Europe/Stockholm',
     'locale'          => null,
     'mbstring'        => 'UTF-8',
-    'imageExtensions' => 'jpg|jpeg|png|gif',
     'salt'            => 'My Super Secret Salt'
 );
