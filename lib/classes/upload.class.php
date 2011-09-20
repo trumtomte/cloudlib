@@ -193,6 +193,12 @@ final class upload extends master
 
     }
 
+    /**
+     * Check if a file has an error
+     *
+     * @access  private
+     * @return  mixed
+     */
     private function hasError($file)
     {
         if($file !== 0)
@@ -203,6 +209,12 @@ final class upload extends master
         return true;
     }
 
+    /**
+     * Check if a file was uploaded via HTTP POST
+     *
+     * @access  private
+     * @return  mixed
+     */
     private function isUploaded($file)
     {
         if(!is_uploaded_file($file))
@@ -213,6 +225,12 @@ final class upload extends master
         return true;
     }
 
+    /**
+     * Check the filesize of a file
+     *
+     * @access  private
+     * @return  mixed
+     */
     private function checkFilesize($file)
     {
         $size = filesize($file);
@@ -231,6 +249,12 @@ final class upload extends master
         return true;
     }
 
+    /**
+     * Check the file extension
+     *
+     * @access  private
+     * @return  mixed
+     */
     private function checkFiletype($file)
     {
         $ext = pathinfo($file, PATHINFO_EXTENSION);
@@ -250,6 +274,12 @@ final class upload extends master
         return true;
     }
 
+    /**
+     * Sets the filename
+     *
+     * @access  private
+     * @return  string
+     */
     private function setFilename($file)
     {
         $pre = isset(self::$config['prefix']) ? self::$config['prefix'] : '';
@@ -282,6 +312,13 @@ final class upload extends master
         return $name;
     }
 
+    /**
+     * Check if a file is an image
+     * Check dimensions as well
+     *
+     * @access  private
+     * @return  mixed
+     */
     private function isImage($file)
     {
         $ext = pathinfo($file, PATHINFO_EXTENSION);
@@ -320,6 +357,12 @@ final class upload extends master
         );
     }
 
+    /**
+     * Upload a file
+     *
+     * @access  private
+     * @return  mixed
+     */
     private function upload($file, $path)
     {
         if(!move_uploaded_file($file, $path))
@@ -330,6 +373,12 @@ final class upload extends master
         return true;
     }
 
+    /**
+     * Set the array of file data
+     *
+     * @access  private
+     *
+     */
     private function setData(array $data)
     {
 
