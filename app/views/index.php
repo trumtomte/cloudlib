@@ -17,7 +17,7 @@
         echo $error;
     echo '<br>';
 
-    echo $this->form->open('/cloudlib/index/upload', array('type' => 'file'));
+    echo $this->form->create('/cloudlib/index/upload', array('type' => 'file'));
     echo $this->form->input('file', array('type' => 'file'));
     echo $this->form->button('upload', 'upload');
     echo $this->form->close();
