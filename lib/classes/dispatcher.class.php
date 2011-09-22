@@ -18,16 +18,8 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class dispatcher extends master
+class dispatcher extends master
 {
-    /**
-     * Constructor
-     *
-     * @access  public
-     * @return  void
-     */
-    public function __construct() {}
-
     /**
      * Dispatch
      *
@@ -62,7 +54,7 @@ final class dispatcher extends master
             $route['action'] = 'index';
         }
 
-        $controller = $class::factory();
+        $controller = $class::factory($route['controller']);
         $action     = $route['action'];
         $param      = $route['param'];
 
