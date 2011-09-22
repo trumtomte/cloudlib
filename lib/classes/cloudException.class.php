@@ -77,7 +77,10 @@ class cloudException extends Exception
                 ob_end_clean();
             }
 
-            require LIB . 'error/exception.php';
+            if(!PRODUCTION)
+            {
+                require LIB . 'error/exception.php';
+            }
         }
         catch(Exception $e)
         {
@@ -86,7 +89,10 @@ class cloudException extends Exception
                 ob_end_clean();
             }
 
-            echo $e->getMessage();
+            if(!PRODUCTION)
+            {
+                echo $e->getMessage();
+            }
         }
     }
 }
