@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class form extends master
+class form extends master
 {
     /**
      * Allowed form and tag attributes
@@ -102,14 +102,6 @@ final class form extends master
     );
 
     /**
-     * Constructor
-     *
-     * @access  public
-     * @return  void
-     */
-    public function __construct() {}
-
-    /**
      * Starts the form
      *
      * @access  public
@@ -117,7 +109,7 @@ final class form extends master
      * @param   array   $options
      * @return  string
      */
-    public function open($action = null, array $options = array())
+    public function create($action = null, array $options = array())
     {
         if(is_string($action))
         {
