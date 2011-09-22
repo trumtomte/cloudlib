@@ -20,5 +20,4 @@ return array
     'resizeimage' => true,
     'session'     => true,
     'upload'      => true,
-    'validator'   => true
 );
