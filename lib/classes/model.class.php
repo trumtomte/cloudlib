@@ -28,7 +28,7 @@ abstract class model extends master
      * @param   string  $class
      * @return  object
      */
-    public function __get($module)
+    final public function __get($module)
     {
         return core::loadModule($module);
     }
