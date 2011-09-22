@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class router extends master
+class router extends master
 {
     /**
      * The controller
@@ -43,15 +43,6 @@ final class router extends master
      * @var     string
      */
     private static $param = null;
-
-    /**
-     * Constructor
-     *
-     * @access  public
-     * @param   string  $path
-     * @return  void
-     */
-    public function __construct() {}
 
     /**
      * Gets the uri

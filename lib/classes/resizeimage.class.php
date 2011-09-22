@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class resizeimage extends master
+class resizeimage extends master
 {
     /**
      * The image to be modified
@@ -51,14 +51,6 @@ final class resizeimage extends master
      * @var     string
      */
     private static $error;
-
-    /**
-     * The constructor
-     *
-     * @access  public
-     * @return  void
-     */
-    public function __construct() {}
 
     /**
      * Load a file

@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class timer extends master
+class timer extends master
 {
     /**
      * Array of start and stop times
@@ -27,14 +27,6 @@ final class timer extends master
      * @var     array
      */
     private static $times = array();
-
-    /**
-     * Constructor
-     *
-     * @access  public
-     * @return  void
-     */
-    public function __construct() {}
 
     /**
      * Sets the start time

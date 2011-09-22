@@ -11,23 +11,15 @@
 /**
  * The string class.
  *
- * <short description>
+ * Shorthand class for string functions using mb_functions
  *
  * @package     cloudlib
  * @subpackage  cloudlib.lib.classes
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class string extends master
+class string extends master
 {
-    /**
-     * Constructor
-     *
-     * @access  public
-     * @return  void
-     */
-    public function __construct() {}
-
     /**
      * Shorthand for mb_strtoupper
      *

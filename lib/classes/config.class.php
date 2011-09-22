@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class config extends master
+class config extends master
 {
     /**
      * Array of each config
@@ -35,14 +35,6 @@ final class config extends master
      * @var     array
      */
     private static $items = array();
-
-    /**
-     * Constructor
-     *
-     * @access  private
-     * @return void
-     */
-    public function __construct() {}
 
     /**
      * Get a config file or item

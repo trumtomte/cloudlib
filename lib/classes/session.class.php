@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class session extends master
+class session extends master
 {
     /**
      * Constant for a started session
@@ -44,14 +44,6 @@ final class session extends master
      * @var     boolean
      */
     private static $session = self::SESSION_NOT_STARTED;
-
-    /**
-     * Constructor
-     *
-     * @access  public
-     * @return  void
-     */
-    public function __construct() {}
 
     /**
      * Magic method

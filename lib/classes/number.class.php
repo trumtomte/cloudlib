@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class number extends master
+class number extends master
 {
     /**
      * Array for pow()
@@ -40,14 +40,6 @@ final class number extends master
      * @var     array
      */
     private static $byteType = array('B', 'KB', 'MB', 'GB', 'TB');
-
-    /**
-     * Constructor
-     *
-     * @access  public
-     * @return  void
-     */
-    public function __construct() {}
 
     /**
      * Function for converting into bytes or a shorthand for the bytesize
