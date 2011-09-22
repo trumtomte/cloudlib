@@ -42,13 +42,10 @@ abstract class controller extends master
      * @access  public
      * @return  void
      */
-    public function __construct()
+    public function __construct($model)
     {
-        $this->view = view::factory();
-
-        $model = substr(get_class($this), 0, -10) . 'Model';
-
-        $this->model = $model::factory();
+        $this->loadView();
+        $this->loadModel($model);
     }
 
     /**
@@ -59,9 +56,34 @@ abstract class controller extends master
      * @param   string  $class
      * @return  object
      */
-    public function __get($module)
+    final public function __get($module)
     {
         return core::loadModule($module);
+    }
+
+    /**
+     * Loads the view object
+     *
+     * @access  public
+     * @return  void
+     */
+    final public function loadView()
+    {
+        $this->view = view::factory();
+    }
+
+    /**
+     * Loads the corresponding model
+     *
+     * @access  public
+     * @param   string  $model
+     * @return  void
+     */
+    final public function loadModel($model)
+    {
+        $model .= 'Model';
+
+        $this->model = $model::factory();
     }
 
     /**
