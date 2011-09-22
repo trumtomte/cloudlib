@@ -16,7 +16,7 @@ error_reporting(E_ALL);
 /**
  * Log all errors
  */
-ini_set('log_errors', 'On');
+ini_set('log_errors', 1);
 ini_set('error_log', LOGS . 'error.log');
 
 /**
