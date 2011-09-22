@@ -1,19 +1,9 @@
-Minor MVC PHP Framework
+##CloudLib - Minor MVC PHP Framework
 
-Current main reason for developing this is to learn more about the MVC structure with PHP.
+> _CloudLib is in heavy development_
 
+**TODOs**
 
-TODO:
-    ! Add some sort of layout system for static parts of pages
-    Add functions to empty classes
-    Add functionality to uploadFiles() in the upload class
-    Add better functionality to the query class (hint: inner joins, longer queries)
-    - Caching!
-
-    - Header()!
-    
-
-Notes:
-    Make resizeimage into an complete image class instead
-    Better encrypt function?
-	
+* Add some sort of a layout system
+* Add caching
+* Remake the resizeimage class into an complete image class
