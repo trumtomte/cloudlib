@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class view extends master
+class view extends master
 {
     /**
      * View variables
@@ -27,15 +27,6 @@ final class view extends master
      * @var     array
      */
     private $vars = array();
-
-    /**
-     * Constructor
-     *
-     * @access  public
-     * @param   string  $path
-     * @return  void
-     */
-    public function __construct() {}
 
     /**
      * Magic method,
