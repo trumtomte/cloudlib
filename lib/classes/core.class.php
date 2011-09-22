@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class core
+class core
 {
     /**
      * Current version of cloudlib
@@ -36,14 +36,6 @@ final class core
     private static $modules = array();
 
     /**
-     * Constructor
-     *
-     * @access  public
-     * @return  void
-     */
-    public function __construct() {}
-
-    /**
      * Initialize
      *
      * @access  public
@@ -53,16 +45,49 @@ final class core
     {
         $config = config::general();
 
-        // set the default timezone
-        date_default_timezone_set($config['timezone']);
+        static::setTimezone($config['timezone']);
 
-        // set the locale
-        setlocale(LC_ALL, $config['locale']);
+        static::setLocale($config['locale']);
 
-        // set the encoding for mb_string functions
-        mb_internal_encoding($config['mbstring']);
+        static::setMbEncoding($config['mbstring']);
 
         dispatcher::dispatch(router::uri());
+    }
+
+    /**
+     * Set the default timezone
+     *
+     * @access  public
+     * @param   string  $timezone
+     * @return  void
+     */
+    public static function setTimezone($timezone)
+    {
+        return date_default_timezone_set($timezone);
+    }
+
+    /**
+     * Set the locale
+     *
+     * @access  public
+     * @param   string  $locale
+     * @return  void
+     */
+    public static function setLocale($locale)
+    {
+        return setlocale(LC_ALL, $locale);
+    }
+
+    /**
+     * Set the internal encoding for mb_functions
+     *
+     * @access  public
+     * @param   string  $encoding
+     * @return  void
+     */
+    public static function setMbEncoding($encoding)
+    {
+        return mb_internal_encoding($encoding);
     }
 
     /**
