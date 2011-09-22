@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class upload extends master
+class upload extends master
 {
     /**
      * Config array
@@ -76,14 +76,6 @@ final class upload extends master
      * @var     array
      */
     private $imagetypes = array('jpg', 'jpeg', 'png', 'gif');
-
-    /**
-     * Constructor
-     *
-     * @access  public
-     * @return  void
-     */
-    public function __construct() {}
 
     /**
      * Upload a single file
