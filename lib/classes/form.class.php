@@ -102,6 +102,14 @@ class form extends master
     );
 
     /**
+     * Constructor
+     *
+     * @access  public
+     * @return  void
+     */
+    public function __construct() {}
+
+    /**
      * Starts the form
      *
      * @access  public

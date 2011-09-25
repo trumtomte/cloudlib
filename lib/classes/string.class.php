@@ -21,6 +21,14 @@
 class string extends master
 {
     /**
+     * Constructor
+     *
+     * @access  public
+     * @return  void
+     */
+    public function __construct() {}
+
+    /**
      * Shorthand for mb_strtoupper
      *
      * @access  public

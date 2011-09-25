@@ -21,43 +21,171 @@
 class dispatcher extends master
 {
     /**
+     * Request uri
+     *
+     * @access  private
+     * @var     string
+     */
+    private $uri = null;
+
+    /**
+     * Controller class
+     *
+     * @access  private
+     * @var     string
+     */
+    private $class = null;
+
+    /**
+     * Controller method
+     *
+     * @access  private
+     * @var     string
+     */
+    private $method = null;
+
+    /**
+     * Method parameter
+     *
+     * @access  private
+     * @var     string
+     */
+    private $param = null;
+    
+    /**
+     * Constructor
+     *
+     * @access  public
+     * @param   string  $uri
+     * @return  void
+     */
+    public function __construct($uri = null)
+    {
+        if($uri === null)
+        {
+            $uri = $this->requestURI();
+        }
+
+        $this->uri = $uri;
+    }
+
+    /**
      * Dispatch
      *
      * @access  public
-     * @param   array   $route
      * @return  void
      */
-    public static function dispatch(array $route)
+    public function dispatch()
     {
-        if(empty($route['controller']))
+        $this->setRoute();
+
+        $controller = $this->loadController();
+        $method = $this->getMethod($controller);
+        $param = $this->param;
+
+        $this->invoke($controller, $method, $param);
+    }
+
+    /**
+     * Sets the controller route
+     *
+     * @access  private
+     * @return  void
+     */
+    private function setRoute()
+    {
+        $route = explode('/', $this->uri);
+
+        if(isset($route[0]))
         {
-            $route['controller'] = 'index';
+            $this->class = $route[0];
+
+            if(isset($route[1]))
+            {
+                $this->method = $route[1];
+            
+                if(isset($route[2]))
+                {
+                    $this->param = $route[2];
+                }
+            }
         }
+    }
 
-        $file = CTRLS . $route['controller'] . 'Controller' . CLASS_EXT;
+    /**
+     * Loads a controller
+     *
+     * @access  private
+     * @return  object
+     */
+    private function LoadController()
+    {
+        $controller = $this->class . 'Controller';
 
-        if(!is_readable($file))
+        if(!is_readable(CTRLS . $controller . CLASS_EXT))
         {
-            header('HTTP/1.0 404 Not Found');
+            header('HTTP/1.1 404 Not Found');
             require LIB . 'error/404.php';
             exit(1);
         }
 
-        $class = $route['controller'] . 'Controller';
+        return $controller::factory($this->class);
+    }
 
-        if(empty($route['action']))
+    /**
+     * Gets the Method
+     *
+     * @access  private
+     * @param   string  $controller
+     * @return  string
+     */
+    private function getMethod($controller)
+    {
+        if(!method_exists($controller, $this->method))
         {
-            $route['action'] = 'index';
-        }
-        elseif(!is_callable(array($class, $route['action'])))
-        {
-            $route['action'] = 'index';
+            return 'index';
         }
 
-        $controller = $class::factory($route['controller']);
-        $action     = $route['action'];
-        $param      = $route['param'];
+        return $this->method;
+    }
 
-        $controller->$action($param);
+    /**
+     * Invoke the controller
+     *
+     * @access  private
+     * @param   object  $class
+     * @param   string  $method
+     * @param   string  $param
+     * @return  void
+     */
+    private function invoke($class, $method, $param)
+    {
+        $class->$method($param);
+    }
+
+    /**
+     * Gets the URI
+     *
+     * @access  private
+     * @return  string
+     */
+    private function requestURI()
+    {
+        $uri = empty($_GET['uri']) ? 'index/index' : $_GET['uri'];
+
+        return preg_replace('[^A-Za-z0-9\/\-_]', '', $uri);
+    }
+
+    /**
+     * Redirect
+     *
+     * @access  public
+     * @param   string  $uri
+     * @return  void
+     */
+    public static function redirect($uri = null)
+    {
+        $dispatcher = dispatcher::factory($uri);
+        $dispatcher->dispatch();
     }
 }

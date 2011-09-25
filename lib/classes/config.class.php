@@ -37,6 +37,14 @@ class config extends master
     private static $items = array();
 
     /**
+     * Constructor
+     *
+     * @access  public
+     * @return  void
+     */
+    public function __construct() {}
+
+    /**
      * Get a config file or item
      *
      * @access  public

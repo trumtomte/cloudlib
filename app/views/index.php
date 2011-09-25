@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>test</title>
+<title>index_test</title>
 </head>
 <body>
 <?php
@@ -16,11 +16,14 @@
     if(isset($error))
         echo $error;
     echo '<br>';
-
-    echo $this->form->create('/cloudlib/index/upload', array('type' => 'file'));
-    echo $this->form->input('file', array('type' => 'file'));
-    echo $this->form->button('upload', 'upload');
-    echo $this->form->close();
+    echo '<pre>';
+    echo print_r($_SERVER);
+    echo '</pre>';
+    echo '<pre>';
+    echo print_r($_REQUEST);
+    echo '</pre>';
+    echo '<br>';
+    echo $test;
 ?>
 </body>
 </html>

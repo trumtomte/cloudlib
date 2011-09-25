@@ -46,6 +46,14 @@ class session extends master
     private static $session = self::SESSION_NOT_STARTED;
 
     /**
+     * Constructor
+     *
+     * @access  public
+     * @return  void
+     */
+    public function __construct() {}
+
+    /**
      * Magic method
      *
      * @access  private

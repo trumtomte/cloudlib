@@ -25,7 +25,7 @@ class core
      *
      * @access  public
      */
-    const VERSION = '0.3.8.1';
+    const VERSION = '0.3.9.1';
 
     /**
      * Array of current activated modules
@@ -34,6 +34,14 @@ class core
      * @var     array
      */
     private static $modules = array();
+
+    /**
+     * Constructor
+     *
+     * @access  public
+     * @return  void
+     */
+    public function __construct() {}
 
     /**
      * Initialize
@@ -51,7 +59,8 @@ class core
 
         static::setMbEncoding($config['mbstring']);
 
-        dispatcher::dispatch(router::uri());
+        $dispatcher = dispatcher::factory();
+        $dispatcher->dispatch();
     }
 
     /**

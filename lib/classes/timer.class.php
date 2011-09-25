@@ -29,6 +29,14 @@ class timer extends master
     private static $times = array();
 
     /**
+     * Constructor
+     *
+     * @access  public
+     * @return  void
+     */
+    public function __construct() {}
+
+    /**
      * Sets the start time
      *
      * @access  public

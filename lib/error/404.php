@@ -8,10 +8,8 @@
  * @package     cloudlib
  */
 
-/**
- * 404 page.
- */
-header('HTTP/1.1 404 Not Found');
+// error class to handle messages then sending them
+// to this page for output?
 ?>
 <!DOCTYPE html>
 <html lang="en">

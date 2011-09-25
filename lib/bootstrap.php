@@ -9,13 +9,9 @@
  */
 
 /**
- * Set error reporting.
+ * Set error reporting and log all php-errors.
  */
 error_reporting(E_ALL);
-
-/**
- * Log all errors
- */
 ini_set('log_errors', 1);
 ini_set('error_log', LOGS . 'error.log');
 
@@ -32,31 +28,19 @@ else
 }
 
 /**
- * Require the core class
+ * Require the core class and set the autoload method.
  */
 require CLASSES . 'core' . CLASS_EXT;
-
-/**
- * Set the autoloader
- */
 spl_autoload_register(array('core', 'autoload'));
 
 /**
- * Set the error handler
+ * Set the error and exception handler
  */
 set_error_handler(array('core', 'errorHandler'));
-
-/**
- * Set the exception handler
- */
 set_exception_handler(array('cloudException', 'exceptionHandler'));
 
 /**
- * Start the timer as 'boot'
+ * Start the timer as 'boot' and then initialize
  */
 timer::start('boot');
-
-/**
- * Initialize everything
- */
 core::initialize();

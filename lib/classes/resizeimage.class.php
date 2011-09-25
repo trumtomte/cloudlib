@@ -53,6 +53,14 @@ class resizeimage extends master
     private static $error;
 
     /**
+     * Constructor
+     *
+     * @access  public
+     * @return  void
+     */
+    public function __construct() {}
+
+    /**
      * Load a file
      *
      * @access  public

@@ -10,19 +10,6 @@ class indexController extends controller
 
     public function upload()
     {
-        $this->upload->config(array(
-            'directory' => 'img/'
-        ));
-
-        if($this->upload->uploadFile())
-        {
-            $this->view->error = 'funkade';
-        }
-        else
-        {
-            $this->view->error = $this->upload->error();
-        }
-
-        $this->view->render('index');
+        dispatcher::redirect('test/test');
     }
 }

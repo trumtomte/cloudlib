@@ -29,6 +29,14 @@ class view extends master
     private $vars = array();
 
     /**
+     * Constructor
+     *
+     * @access  public
+     * @return  void
+     */
+    public function __construct() {}
+
+    /**
      * Magic method,
      * sets the view variables
      *

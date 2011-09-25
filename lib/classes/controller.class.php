@@ -49,14 +49,13 @@ abstract class controller extends master
     }
 
     /**
-     * Magic method
-     * Loads a module, initiates a new one if it doesnt exist
+     * Magic method for loading modules
      *
      * @access  public
      * @param   string  $class
      * @return  object
      */
-    final public function __get($module)
+    final public function __get($get)
     {
         return core::loadModule($module);
     }

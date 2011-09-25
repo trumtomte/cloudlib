@@ -78,6 +78,14 @@ class upload extends master
     private $imagetypes = array('jpg', 'jpeg', 'png', 'gif');
 
     /**
+     * Constructor
+     *
+     * @access  public
+     * @return  void
+     */
+    public function __construct() {}
+
+    /**
      * Upload a single file
      *
      * @access  public
