@@ -1,9 +1,7 @@
 ##CloudLib - Minor MVC PHP Framework
 
-> _CloudLib is in heavy development_
+> _CloudLib is a simple MVC style PHP Framework for learning purposes_
 
-**TODOs**
+_________________
 
-* Add some sort of a layout system
-* Add caching
-* Remake the resizeimage class into an complete image class
+In its most simplest form CloudLib takes the user input, loads the corresponding controller (which loads the corresponding model) - then renders the view

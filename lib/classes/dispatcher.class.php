@@ -29,7 +29,7 @@ class dispatcher extends master
     private $uri = null;
 
     /**
-     * Controller class
+     * Controller
      *
      * @access  private
      * @var     string
@@ -45,7 +45,7 @@ class dispatcher extends master
     private $method = null;
 
     /**
-     * Method parameter
+     * Controller method parameter
      *
      * @access  private
      * @var     string
@@ -63,10 +63,10 @@ class dispatcher extends master
     {
         if($uri === null)
         {
-            $uri = $this->requestURI();
+            $uri = $this->clean($this->requestURI());
         }
 
-        $this->uri = $uri;
+        $this->uri = $this->clean($uri);
     }
 
     /**
@@ -171,8 +171,18 @@ class dispatcher extends master
      */
     private function requestURI()
     {
-        $uri = empty($_GET['uri']) ? 'index/index' : $_GET['uri'];
+        return $uri = empty($_GET['uri']) ? 'index/index' : $_GET['uri'];
+    }
 
+    /**
+     * Remove unwanted characters from the uri
+     *
+     * @access  private
+     * @param   string  $uri
+     * @return  string
+     */
+    private function clean($uri)
+    {
         return preg_replace('[^A-Za-z0-9\/\-_]', '', $uri);
     }
 

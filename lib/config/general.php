@@ -15,5 +15,5 @@ return array
     'timezone'        => 'Europe/Stockholm',
     'locale'          => null,
     'mbstring'        => 'UTF-8',
-    'salt'            => 'My Super Secret Salt'
+    'salt'            => 'MySuperSecretSalt'
 );

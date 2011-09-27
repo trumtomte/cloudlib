@@ -36,7 +36,7 @@ define('MODELS', APP . 'models' . DS);
 
 /**
  * Define sub-level directories of the Library directory,
- * directories for classes,config and log files.
+ * directories for classes, config and log files.
  */
 define('CLASSES', LIB . 'classes' . DS);
 define('CONFIG', LIB . 'config' . DS);

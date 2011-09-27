@@ -65,9 +65,9 @@ class upload extends master
      * Error message
      *
      * @access  private
-     * @var     array|string
+     * @var     string|array
      */
-    private static $error;
+    private static $error = null;
 
     /**
      * Array of imagetypes for identifying if the file is an image
@@ -100,18 +100,17 @@ class upload extends master
             return false;
         }
 
-        $files = $_FILES;
-        $key = key($_FILES);
+        $files = array_shift($_FILES);
 
-        $file = $files[$key]['name'];
-        $tmp = $files[$key]['tmp_name'];
+        $file = $files['name'];
+        $tmp = $files['tmp_name'];
 
         if(is_array($file))
         {
             throw new cloudException('Use uploadFiles() for multiple uploads');
         }
 
-        if(is_string(self::$error = $this->hasError($files[$key]['error'])))
+        if(is_string(self::$error = $this->hasError($files['error'])))
         {
             return false;
         }
@@ -177,20 +176,29 @@ class upload extends master
     {
         if(empty($_FILES))
         {
-            //self::$error = '$_FILES array is empty';
+            self::$error = 'No file(s) was selected';
 
             return false;
         }
 
-        $files = $_FILES;
-        $first = key($_FILES);
+        $files = array_shift($_FILES);
+        $array = array_shift($files);
 
-        if(!is_array($files[$first]['name']))
+        if(!is_array($array))
         {
             throw new cloudException('Use uploadFile() for single uploads');
         }
 
+        
 
+
+
+
+    }
+
+    private function tryUpload($filename, $tmpname, $error)
+    {
+        
     }
 
     /**

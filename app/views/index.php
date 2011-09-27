@@ -15,7 +15,14 @@
     echo '</pre>';
     if(isset($error))
         echo $error;
+    echo '<br>' . PHP_EOL;
+    echo $this->form->create('/cloudlib/index/upload', array('type' => 'file'));
+    echo $this->form->input('file[]', array('type' => 'file'));
     echo '<br>';
+    echo $this->form->input('file[]', array('type' => 'file'));
+    echo '<br>';
+    echo $this->form->button('upload');
+    echo $this->form->close();
     echo '<pre>';
     echo print_r($_SERVER);
     echo '</pre>';
@@ -24,6 +31,7 @@
     echo '</pre>';
     echo '<br>';
     echo $test;
+    echo '<br>';
 ?>
 </body>
 </html>

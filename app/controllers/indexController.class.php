@@ -10,6 +10,12 @@ class indexController extends controller
 
     public function upload()
     {
-        dispatcher::redirect('test/test');
+        echo '<pre>';
+        echo print_r($_FILES);
+        echo '</pre>';
+        $test = array_shift($_FILES);
+        echo '<pre>';
+        echo print_r($test);
+        echo '</pre>';
     }
 }

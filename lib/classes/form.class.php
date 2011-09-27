@@ -13,6 +13,9 @@
  *
  * <short description>
  *
+ * note: instead of having array of attributes for each type,
+ *       have <attribute>->array(<allowed types>)
+ *
  * @package     cloudlib
  * @subpackage  cloudlib.lib.classes
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>

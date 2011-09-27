@@ -34,13 +34,12 @@ class security extends master
      * @access  public
      * @return  void
      */
-    public function __construct()
-    {
-        self::$salt = config::general('salt');
-    }
+    public function __construct() {}
 
     /**
      * Bcrypt
+     *
+     * (Function taken and modified from http://www.phpportalen.net)
      *
      * @access  public
      * @param   string  $password
@@ -50,6 +49,8 @@ class security extends master
      */
     public static function encrypt($password, $salt, $rounds = 6)
     {
+        self::$salt = config::general('salt');
+
         if($rounds < 4)
         {
             $rounds = 4;

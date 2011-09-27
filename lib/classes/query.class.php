@@ -11,7 +11,7 @@
 /**
  * The database class.
  *
- * <short description>
+ * Still a rough draft!
  *
  * @package     cloudlib
  * @subpackage  cloudlib.lib.classes
