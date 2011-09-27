@@ -55,7 +55,7 @@ abstract class controller extends master
      * @param   string  $class
      * @return  object
      */
-    final public function __get($get)
+    final public function __get($module)
     {
         return core::loadModule($module);
     }
@@ -83,6 +83,31 @@ abstract class controller extends master
         $model .= 'Model';
 
         $this->model = $model::factory();
+    }
+
+    /**
+     * Shorthand for setting a view variable
+     *
+     * @access  public
+     * @param   string|int  $index
+     * @param   mixed       $value
+     * @return  void
+     */
+    final public function set($index, $value)
+    {
+        $this->view->$index = $value;
+    }
+
+    /**
+     * Shorthand to render a view
+     *
+     * @access  public
+     * @param   string  $view
+     * @return  void
+     */
+    final public function render($view)
+    {
+        $this->view->render($view);
     }
 
     /**

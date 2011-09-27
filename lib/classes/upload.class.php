@@ -86,134 +86,138 @@ class upload extends master
     public function __construct() {}
 
     /**
-     * Upload a single file
+     * Upload function
      *
      * @access  public
-     * @return  boolean
+     * @return  bool
      */
-    public function uploadFile()
+    public function upload()
     {
         if(empty($_FILES))
         {
-            self::$error = 'No file was selected';
-
+            self::$error = 'No file(s) was selected';
             return false;
         }
 
         $files = array_shift($_FILES);
 
-        $file = $files['name'];
-        $tmp = $files['tmp_name'];
-
-        if(is_array($file))
+        if(is_array($files['name']))
         {
-            throw new cloudException('Use uploadFiles() for multiple uploads');
+            return $this->uploadFiles($files);
         }
 
-        if(is_string(self::$error = $this->hasError($files['error'])))
+        return $this->uploadFile($files);
+    }
+
+    /**
+     * Upload a single file
+     *
+     * @access  private
+     * @param   array   $files
+     * @return  bool
+     */
+    private function uploadFile($files)
+    {
+        $data = $this->doUpload($files['name'], $files['tmp_name'], $files['error']);
+
+        if(is_string($data))
         {
+            self::$error = $data;
             return false;
         }
 
-        if(is_string(self::$error = $this->isUploaded($tmp)))
-        {
-            return false;
-        }
-
-        if(is_string(self::$error = $this->checkFilesize($tmp)))
-        {
-            return false;
-        }
-
-        if(is_string(self::$error = $this->checkFiletype($file)))
-        {
-            return false;
-        }
-
-        if(is_string(self::$error = $this->isImage($tmp)))
-        {
-            return false;
-        }
-        else
-        {
-            $imageinfo = $this->isImage($tmp);
-        }
-
-        $name = $this->setFilename($file);
-
-        $dir = self::$config['directory'];
-
-        if(is_string(self::$error = $this->upload($tmp, $dir . $name)))
-        {
-            return false;
-        }
-
-        /*
-         * TODO: fix way of setting the data
-         *
-        self::$data = array(
-            'name'     => $name,
-            'path'     => $dir,
-            'fullpath' => $dir . $name,
-            'ext'      => $ext,
-            'size'     => number::byte($size),
-            'image'    => $image,
-            'width'    => $width,
-            'height'   => $height
-        );
-         */
-
+        self::$data = $data;
         return true;
     }
 
     /**
      * Upload multiple files
      *
-     * @access  public
-     * @return  boolean
+     * @access  private
+     * @param   array   $files
+     * @return  bool
      */
-    public function uploadFiles()
+    private function uploadFiles($files)
     {
-        if(empty($_FILES))
+        foreach($files['name'] as $key => $value)
         {
-            self::$error = 'No file(s) was selected';
+            $data = $this->doUpload($files['name'][$key], $files['tmp_name'][$key], 
+                                    $files['error'][$key]);
 
-            return false;
+            if(is_string($data))
+            {
+                self::$error[$files['name'][$key]] = $data;
+            }
+            else
+            {
+                self::$data[$files['name'][$key]] = $data;
+            }
         }
 
-        $files = array_shift($_FILES);
-        $array = array_shift($files);
-
-        if(!is_array($array))
+        if(self::$error === null)
         {
-            throw new cloudException('Use uploadFile() for single uploads');
+            return true;
         }
-
-        
-
-
-
-
-    }
-
-    private function tryUpload($filename, $tmpname, $error)
-    {
-        
+        return false;
     }
 
     /**
-     * Check if a file has an error
+     * Main function for uploading a file
      *
      * @access  private
-     * @return  mixed
+     * @param   string  $name
+     * @param   string  $tmp_name
+     * @param   int     $error
+     * @return  string|array
      */
-    private function hasError($file)
+    private function doUpload($name, $tmp_name, $error)
     {
-        if($file !== 0)
+        if(is_string($error = $this->getError($error)))
         {
-            return $this->fileErrors[$file];
+            return $error;
+        }
+        if(!$this->isUploaded($tmp_name))
+        {
+            return 'File was not uploaded via HTTP POST';
+        }
+        if(($size = $this->getSize($tmp_name)) == false)
+        {
+            return 'File exceeds the max allowed filesize';
+        }
+        if(($ext = $this->getType($name)) == false)
+        {
+            return 'Invalid file extension';
+        }
+        if(is_string($image = $this->isImage($tmp_name, $ext)))
+        {
+            return $image;
+        }
+        
+        $filename = $this->getName($name, $ext);
+
+        if(!$this->moveUpload($tmp_name, self::$config['directory'] . $filename))
+        {
+            return 'Unable to upload the chosen file';
         }
 
+        $dir = self::$config['directory'];
+
+        return $this->getData($name, $filename, $dir, $ext, $size, $image);
+    }
+
+    /**
+     * Gets the file error
+     * 
+     * @access  private
+     * @param   int     $error
+     * @return  mixed
+     */
+    private function getError($error)
+    {
+        if($error !== 0)
+        {
+            return $this->fileErrors[$error];
+        }
         return true;
     }
 
@@ -221,51 +225,51 @@ class upload extends master
      * Check if a file was uploaded via HTTP POST
      *
      * @access  private
-     * @return  mixed
+     * @param   string  $tmp_name
+     * @return  bool
      */
-    private function isUploaded($file)
+    private function isUploaded($tmp_name)
     {
-        if(!is_uploaded_file($file))
+        if(!is_uploaded_file($tmp_name))
         {
-            return 'File was not uploaded via HTTP POST';
+            return false;
         }
-
         return true;
     }
 
     /**
-     * Check the filesize of a file
+     * Get the filesize
      *
      * @access  private
+     * @param   string  $tmp_name
      * @return  mixed
      */
-    private function checkFilesize($file)
+    private function getSize($tmp_name)
     {
-        $size = filesize($file);
-        $max  = self::$config['filesize'];
+        $size = filesize($tmp_name);
+        $max = self::$config['filesize'];
 
         if(is_string($max))
         {
             $max = number::byte($max);
         }
-
         if($size > $max)
         {
-            return 'The file exceeds the max allowed filesize';
+            return false;
         }
-
-        return true;
+        return $size;
     }
 
     /**
-     * Check the file extension
-     *
+     * Get the file extension
+     * 
      * @access  private
+     * @param   string  $name
      * @return  mixed
      */
-    private function checkFiletype($file)
+    private function getType($name)
     {
-        $ext = pathinfo($file, PATHINFO_EXTENSION);
+        $ext = pathinfo($name, PATHINFO_EXTENSION);
 
         if(isset(self::$config['filetypes']))
         {
@@ -273,68 +277,27 @@ class upload extends master
 
             if(!in_array($ext, $types))
             {
-                return 'Invalid filetype';
+                return false;
             }
-
-            return true;
+            return $ext;
         }
-
-        return true;
+        return $ext;
     }
 
     /**
-     * Sets the filename
+     * Check if the file is an image
      *
      * @access  private
-     * @return  string
-     */
-    private function setFilename($file)
-    {
-        $pre = isset(self::$config['prefix']) ? self::$config['prefix'] : '';
-
-        if(isset(self::$config['filename']))
-        {
-            $name = $pre . self::$config['filename'];
-        }
-        else
-        {
-            $name = $pre . $file;
-        }
-
-        $name = string::replace(' ', '_', $name);
-
-        if(self::$config['overwrite'] == false)
-        {
-            $copy = '';
-            $counter = 1;
-
-            while(file_exists(self::$config['directory'] . $copy . $name))
-            {
-                $copy = 'copy(' . $counter . ')_';
-                $counter++;
-            }
-
-            $name = $copy . $name;
-        }
-
-        return $name;
-    }
-
-    /**
-     * Check if a file is an image
-     * Check dimensions as well
-     *
-     * @access  private
+     * @param   string  $tmp_name
+     * @param   string  $ext
      * @return  mixed
      */
-    private function isImage($file)
+    private function isImage($tmp_name, $ext)
     {
-        $ext = pathinfo($file, PATHINFO_EXTENSION);
-
         if(in_array($ext, $this->imagetypes))
         {
-            list($width, $height) = getimagesize($file);
-
+            list($width, $height) = getimagesize($tmp_name);
+        
             if(isset(self::$config['width']))
             {
                 if($width > self::$config['width'])
@@ -342,7 +305,6 @@ class upload extends master
                     return 'Invalid width';
                 }
             }
-
             if(isset(self::$config['height']))
             {
                 if($height > self::$config['height'])
@@ -350,14 +312,12 @@ class upload extends master
                     return 'Invalid height';
                 }
             }
-
             return array(
                 'image' => 1,
                 'width' => $width,
                 'height' => $height
             );
         }
-
         return array(
             'image' => 0,
             'width' => 0,
@@ -366,31 +326,87 @@ class upload extends master
     }
 
     /**
-     * Upload a file
+     * Get the filename
      *
      * @access  private
-     * @return  mixed
+     * @param   string  $name
+     * @param   string  $ext
+     * @return  string
      */
-    private function upload($file, $path)
+    private function getName($name, $ext)
     {
-        if(!move_uploaded_file($file, $path))
+        $prefix = isset(self::$config['prefix']) ? self::$config['prefix'] : '';
+
+        if(isset(self::$config['filename']))
         {
-            return 'Unable to upload the chosen file';
+            $filename = $prefix . self::$config['filename'] . $ext;
+        }
+        else
+        {
+            $filename = $prefix . $name;
         }
 
+        $filename = string::replace(' ', '_', $filename);
+
+        if(self::$config['overwrite'] == false)
+        {
+            $copy = '';
+            $counter = 1;
+
+            while(file_exists(self::$config['directory'] . $copy . $filename))
+            {
+                $copy = 'copy(' . $counter . ')_';
+                $counter++;
+            }
+            $filename = $copy . $filename;
+        }
+        return $filename;
+    }
+
+    /**
+     * Move the uploaded file
+     * 
+     * @access  private
+     * @param   string  $tmp_name
+     * @param   string  $path
+     * @return  bool
+     */
+    private function moveUpload($tmp_name, $path)
+    {
+        if(!move_uploaded_file($tmp_name, $path))
+        {
+            return false;
+        }
         return true;
     }
 
     /**
-     * Set the array of file data
-     *
+     * Get the file data as an array
+     * 
      * @access  private
-     *
+     * @param   string  $name
+     * @param   string  $filename
+     * @param   string  $dir
+     * @param   string  $ext
+     * @param   int     $size
+     * @param   array   $image
+     * @return  array
      */
-    private function setData(array $data)
+    private function getData($name, $filename, $dir, $ext, $size, $image)
     {
-
+        return array(
+            'origname' => $name,
+            'name'     => $filename,
+            'path'     => $dir,
+            'fullpath' => $dir . $filename,
+            'ext'      => $ext,
+            'size'     => number::byte($size),
+            'image'    => $image['image'],
+            'width'    => $image['width'],
+            'height'   => $image['height']
+        );
     }
+    
 
     /**
      * Set config items
