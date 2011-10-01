@@ -4,13 +4,13 @@ class indexController extends controller
 {
     public function index()
     {
-        $this->view->render('index');
+        $this->render('index');
     }
 
     public function upload()
     {
         $this->upload->config(array(
-            'filesize' => '5mb'
+            'filesize' => '3mb'
         ));
 
         if($this->upload->upload())

@@ -80,7 +80,7 @@ class view extends master
 
         if(!is_readable($file))
         {
-            header('HTTP/1.0 404 Not Found');
+            header('HTTP/1.1 404 Not Found');
             require LIB . 'error/404.php';
             exit(1);
         }
