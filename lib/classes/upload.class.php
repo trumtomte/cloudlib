@@ -146,7 +146,14 @@ class upload extends master
 
             if(is_string($data))
             {
-                self::$error[$files['name'][$key]] = $data;
+                if(empty($files['name'][$key]))
+                {
+                    self::$error[$key] = $data;
+                }
+                else
+                {
+                    self::$error[$files['name'][$key]] = $data;
+                }
             }
             else
             {
