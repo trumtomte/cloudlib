@@ -42,33 +42,11 @@ abstract class controller extends master
      * @access  public
      * @return  void
      */
-    public function __construct($model)
+    public function __construct($class)
     {
-        $this->loadView();
-        $this->loadModel($model);
-    }
-
-    /**
-     * Magic method for loading modules
-     *
-     * @access  public
-     * @param   string  $class
-     * @return  object
-     */
-    final public function __get($module)
-    {
-        return core::loadModule($module);
-    }
-
-    /**
-     * Loads the view object
-     *
-     * @access  public
-     * @return  void
-     */
-    final public function loadView()
-    {
-        $this->view = view::factory();
+        $this->classname = $class;
+        $this->loadModel($class);
+        $this->loadView($class);
     }
 
     /**
@@ -86,6 +64,17 @@ abstract class controller extends master
     }
 
     /**
+     * Loads the view object
+     *
+     * @access  public
+     * @return  void
+     */
+    final public function loadView($classname)
+    {
+        $this->view = view::factory($classname);
+    }
+
+    /**
      * Shorthand for setting a view variable
      *
      * @access  public
@@ -99,15 +88,39 @@ abstract class controller extends master
     }
 
     /**
+     * Shorthand to set the layout
+     *
+     * @access  public
+     * @param   string  $layout
+     * @return  object
+     */
+    final public function layout($layout = null)
+    {
+        return $this->view->layout($layout);
+    }
+
+    /**
      * Shorthand to render a view
      *
      * @access  public
      * @param   string  $view
      * @return  void
      */
-    final public function render($view)
+    final public function render($view = null)
     {
         $this->view->render($view);
+    }
+
+    /**
+     * Magic method to load modules
+     *
+     * @access  public
+     * @param   string  $class
+     * @return  object
+     */
+    final public function __get($module)
+    {
+        return core::loadModule($module);
     }
 
     /**

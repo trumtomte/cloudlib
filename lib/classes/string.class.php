@@ -104,4 +104,23 @@ class string extends master
     {
         return mb_substr($string, $start, $length);
     }
+
+    /**
+     * Repeat a string 
+     *
+     * @access  public
+     * @param   string  $string
+     * @param   int     $times
+     * @param   string  $separator
+     * @return  string
+     */
+    public static function repeat($string, $times = 2, $separator = null)
+    {
+        if(isset($separator))
+        {
+            return str_repeat($string . $separator, ($times - 1)) . $separator;
+        }
+
+        return str_repeat($string, $times);
+    }
 }

@@ -4,7 +4,7 @@ class indexController extends controller
 {
     public function index()
     {
-        $this->render('index');
+        $this->layout()->render();
     }
 
     public function upload()
@@ -23,6 +23,6 @@ class indexController extends controller
             $this->set('msg', $this->upload->error());
         }
 
-        $this->render('index');
+        $this->layout()->render();
     }
 }

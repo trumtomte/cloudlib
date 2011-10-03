@@ -58,7 +58,7 @@ class database extends master
             }
             catch(PDOException $e)
             {
-                throw new cloud_exception($e->getMessage());
+                throw new cloudException($e->getMessage());
             }
         }
 

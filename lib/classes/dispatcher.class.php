@@ -51,7 +51,7 @@ class dispatcher extends master
      * @var     string
      */
     private $param = null;
-    
+
     /**
      * Constructor
      *
@@ -63,10 +63,10 @@ class dispatcher extends master
     {
         if($uri === null)
         {
-            $uri = $this->clean($this->requestURI());
+            $uri = $this->getURI();
         }
 
-        $this->uri = $this->clean($uri);
+        $this->uri = $this->filter($uri);
     }
 
     /**
@@ -96,18 +96,15 @@ class dispatcher extends master
     {
         $route = explode('/', $this->uri);
 
-        if(isset($route[0]))
-        {
-            $this->class = $route[0];
+        $this->class = $route[0];
 
-            if(isset($route[1]))
+        if(isset($route[1]))
+        {
+            $this->method = $route[1];
+
+            if(isset($route[2]))
             {
-                $this->method = $route[1];
-            
-                if(isset($route[2]))
-                {
-                    $this->param = $route[2];
-                }
+                $this->param = $route[2];
             }
         }
     }
@@ -169,9 +166,11 @@ class dispatcher extends master
      * @access  private
      * @return  string
      */
-    private function requestURI()
+    private function getURI()
     {
-        return $uri = empty($_GET['uri']) ? 'index/index' : $_GET['uri'];
+        $uri = empty($_GET['uri']) ? 'index/index' : $_GET['uri'];
+
+        return $this->filter($uri);
     }
 
     /**
@@ -181,9 +180,9 @@ class dispatcher extends master
      * @param   string  $uri
      * @return  string
      */
-    private function clean($uri)
+    private function filter($uri)
     {
-        return preg_replace('[^A-Za-z0-9\/\-_]', '', $uri);
+        return filter_var($uri, FILTER_SANITIZE_URL);
     }
 
     /**

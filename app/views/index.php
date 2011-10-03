@@ -1,10 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<title>index_test</title>
-</head>
-<body>
 <?php
     echo '<br>';
     echo timer::boot();
@@ -36,12 +29,7 @@
     }
     echo '<br>' . PHP_EOL;
     echo $this->form->create('/cloudlib/index/upload', array('type' => 'file'));
-    echo $this->form->input('file[]', array('type' => 'file'));
-    echo '<br>';
-    echo $this->form->input('file[]', array('type' => 'file'));
-    echo '<br>';
-    echo $this->form->input('file[]', array('type' => 'file'));
-    echo '<br>';
+    echo string::repeat($this->form->input('file[]', array('type' => 'file')) . '<br>', 3);
     echo '<br>';
     echo $this->form->button('upload');
     echo $this->form->close();
@@ -58,6 +46,7 @@
 
     if(empty($_FILES))
         echo 'looool';
+    echo '<br>';
+
+
 ?>
-</body>
-</html>
