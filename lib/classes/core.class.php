@@ -173,4 +173,39 @@ class core
     {
         throw new ErrorException($errstr, $errno, $errno, $errfile, $errline);
     }
+
+    /**
+     * Delete a directory and its contents
+     *
+     * @access  public
+     * @param   string  $directory
+     * @return  void
+     */
+    public static function deleteDir($directory)
+    {
+        if(!file_exists($directory))
+        {
+            throw new cloudException($directory . ' does not exist');
+        }
+        if(!is_dir($directory))
+        {
+            throw new cloudException($directory . ' is not a valid directory');
+        }
+
+        foreach(scandir($directory) as $item)
+        {
+            if($item != '.' and $item != '..')
+            {
+                if(filetype($directory . '/' . $item) == 'dir')
+                {
+                    static::deleteDir($directory . '/' . $item);
+                }
+                else
+                {
+                    unlink($directory . '/' . $item);
+                }
+            }
+        }
+        rmdir($directory);
+    }
 }

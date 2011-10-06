@@ -168,9 +168,7 @@ class dispatcher extends master
      */
     private function getURI()
     {
-        $uri = empty($_GET['uri']) ? 'index/index' : $_GET['uri'];
-
-        return $this->filter($uri);
+        return empty($_GET['uri']) ? 'index/index' : $_GET['uri'];
     }
 
     /**
