@@ -30,17 +30,17 @@ else
 /**
  * Require the core class and set the autoload method.
  */
-require CLASSES . 'core' . CLASS_EXT;
-spl_autoload_register(array('core', 'autoload'));
+require CORE . 'Core' . EXT;
+spl_autoload_register(array('Core', 'autoload'));
 
 /**
  * Set the error and exception handler
  */
-set_error_handler(array('core', 'errorHandler'));
-set_exception_handler(array('cloudException', 'exceptionHandler'));
+set_error_handler(array('Core', 'errorHandler'));
+set_exception_handler(array('CloudException', 'exceptionHandler'));
 
 /**
  * Start the timer as 'boot' and then initialize
  */
-timer::start('boot');
-core::initialize();
+Timer::start('boot');
+Core::initialize();

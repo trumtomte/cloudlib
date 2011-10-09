@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class dispatcher extends master
+class Dispatcher extends Factory
 {
     /**
      * Request uri
@@ -119,7 +119,7 @@ class dispatcher extends master
     {
         $controller = $this->class . 'Controller';
 
-        if(!is_readable(CTRLS . $controller . CLASS_EXT))
+        if(!is_readable(CTRLS . $controller . EXT))
         {
             header('HTTP/1.1 404 Not Found');
             require LIB . 'error/404.php';
@@ -192,7 +192,7 @@ class dispatcher extends master
      */
     public static function redirect($uri = null)
     {
-        $dispatcher = dispatcher::factory($uri);
+        $dispatcher = Dispatcher::factory($uri);
         $dispatcher->dispatch();
     }
 }

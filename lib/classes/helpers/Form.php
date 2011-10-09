@@ -21,7 +21,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class form extends master
+class Form extends Factory
 {
     /**
      * Allowed form and tag attributes

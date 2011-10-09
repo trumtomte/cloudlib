@@ -1,6 +1,6 @@
 <?php
     echo '<br>';
-    echo timer::boot();
+    echo Timer::boot();
     echo '<br>';
     echo '<pre>';
     debug_print_backtrace();
@@ -28,10 +28,11 @@
         echo '</pre>';
     }
     echo '<br>' . PHP_EOL;
-    echo $this->form->create('/cloudlib/index/upload', array('type' => 'file'));
+    echo $this->Form->create('/testtest/index/upload', array('type' => 'file'));
     echo string::repeat($this->form->input('file[]', array('type' => 'file')) . '<br>', 3);
     echo '<br>';
     echo $this->form->button('upload');
+    echo $this->Form->button('asdasdasd');
     echo $this->form->close();
     echo '<pre>';
     echo print_r($_SERVER);
@@ -48,5 +49,8 @@
         echo 'looool';
     echo '<br>';
 
+    echo '<pre>';
+    echo print_r(scandir(ROOT));
+    echo '</pre>';
 
 ?>

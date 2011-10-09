@@ -9,7 +9,7 @@
  */
 
 /**
- * The exception class.
+ * The CloudException class.
  *
  * <short description>
  *
@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class cloudException extends Exception
+class CloudException extends Exception
 {
     /**
      * Array of Readable errors

@@ -1,0 +1,18 @@
+[05-Oct-2011 09:18:10] PHP Fatal error:  Call to undefined method Directory::deleteDir() in /Users/sebbe/www/cloudlib/app/views/index.php on line 54
+[05-Oct-2011 09:18:25] PHP Fatal error:  Call to undefined method Directory::deleteDir() in /Users/sebbe/www/cloudlib/app/views/index.php on line 54
+[05-Oct-2011 09:18:39] PHP Fatal error:  Call to undefined method Directory::deleteDir() in /Users/sebbe/www/cloudlib/app/views/index.php on line 54
+[05-Oct-2011 09:19:24] PHP Fatal error:  Class 'dir' not found in /Users/sebbe/www/cloudlib/app/views/index.php on line 54
+[05-Oct-2011 09:36:22] PHP Fatal error:  Call to undefined method Directory::delete() in /Users/sebbe/www/cloudlib/app/views/index.php on line 54
+[05-Oct-2011 09:36:41] PHP Fatal error:  Call to undefined method Directory::delete() in /Users/sebbe/www/cloudlib/app/views/index.php on line 54
+[09-Oct-2011 19:22:50] PHP Fatal error:  Constructor Factory::factory() cannot be static in /Users/sebbe/www/cloudlib copy/lib/classes/core/Factory.php on line 35
+[09-Oct-2011 19:24:06] PHP Fatal error:  Constructor Factory::factory() cannot be static in /Users/sebbe/www/cloudlib copy/lib/classes/core/Factory.php on line 35
+[09-Oct-2011 19:28:40] PHP Fatal error:  Constructor Factory::factory() cannot be static in /Users/sebbe/www/testtest/lib/classes/core/Factory.php on line 35
+[09-Oct-2011 19:29:20] PHP Fatal error:  Constructor Factory::factory() cannot be static in /Users/sebbe/www/testtest/lib/classes/core/Factory.php on line 35
+[09-Oct-2011 19:32:46] PHP Fatal error:  Constructor Factory::factory() cannot be static in /Users/sebbe/www/testtest/lib/classes/core/Factory.php on line 35
+[09-Oct-2011 19:32:47] PHP Fatal error:  Constructor Factory::factory() cannot be static in /Users/sebbe/www/testtest/lib/classes/core/Factory.php on line 35
+[09-Oct-2011 19:32:59] PHP Fatal error:  Constructor Factory::factory() cannot be static in /Users/sebbe/www/testtest/lib/classes/core/Factory.php on line 35
+[09-Oct-2011 19:33:00] PHP Fatal error:  Constructor Factory::factory() cannot be static in /Users/sebbe/www/testtest/lib/classes/core/Factory.php on line 35
+[09-Oct-2011 19:33:22] PHP Fatal error:  Class 'Factory' not found in /Users/sebbe/www/testtest/lib/classes/helpers/Timer.php on line 22
+[09-Oct-2011 19:33:55] PHP Fatal error:  Constructor Factory::factory() cannot be static in /Users/sebbe/www/testtest/lib/classes/core/Factory.php on line 35
+[09-Oct-2011 19:33:58] PHP Fatal error:  Constructor Factory::factory() cannot be static in /Users/sebbe/www/testtest/lib/classes/core/Factory.php on line 35
+[09-Oct-2011 19:35:51] PHP Fatal error:  Call to undefined method Core::loadModule() in /Users/sebbe/www/testtest/lib/classes/core/View.php on line 94

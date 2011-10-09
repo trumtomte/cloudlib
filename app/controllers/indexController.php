@@ -1,6 +1,6 @@
 <?php
 
-class indexController extends controller
+class indexController extends Controller
 {
     public function index()
     {
@@ -9,18 +9,18 @@ class indexController extends controller
 
     public function upload()
     {
-        $this->upload->config(array(
+        $this->Uploader->config(array(
             'filesize' => '3mb'
         ));
 
-        if($this->upload->upload())
+        if($this->Uploader->upload())
         {
             $this->set('msg', 'OK');
-            $this->set('info', $this->upload->data());
+            $this->set('info', $this->Uploader->data());
         }
         else
         {
-            $this->set('msg', $this->upload->error());
+            $this->set('msg', $this->Uploader->error());
         }
 
         $this->layout()->render();

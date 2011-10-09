@@ -9,7 +9,7 @@
  */
 
 /**
- * The login class.
+ * The log class.
  *
  * <short description>
  *
@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class login extends master
+final class Log extends Factory
 {
-    // Login helper class
+    // Class for logging everything that happens
 }

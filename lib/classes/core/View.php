@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class view extends master
+class View extends Factory
 {
     /**
      * Current controller classname
@@ -83,15 +83,15 @@ class view extends master
     }
 
     /**
-     * Magic method used for loading modules
+     * Magic method used for loading helper classes
      *
      * @access  public
      * @param   string  $class
      * @return  object
      */
-    public function __get($module)
+    public function __get($helper)
     {
-        return core::loadModule($module);
+        return core::loadHelper($helper);
     }
 
     /**

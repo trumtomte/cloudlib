@@ -44,10 +44,16 @@ define('CONFIG', LIB . 'config' . DS);
 define('LOGS', LIB . 'log' . DS);
 
 /**
+ * Define sub-level directories of the Class directory,
+ * directories for core and helper classes.
+ */
+define('CORE', CLASSES . 'core' . DS);
+define('HELPERS', CLASSES . 'helpers' . DS);
+
+/**
  * File extensions for files and classes.
  */
 define('EXT', '.php');
-define('CLASS_EXT', '.class.php');
 
 /**
  * Check PHP version and available extensions and functions.

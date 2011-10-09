@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class upload extends master
+class Uploader extends Factory
 {
     /**
      * Config array
@@ -258,7 +258,7 @@ class upload extends master
 
         if(is_string($max))
         {
-            $max = number::byte($max);
+            $max = Number::byte($max);
         }
         if($size > $max)
         {
@@ -407,7 +407,7 @@ class upload extends master
             'path'     => $dir,
             'fullpath' => $dir . $filename,
             'ext'      => $ext,
-            'size'     => number::byte($size),
+            'size'     => Number::byte($size),
             'image'    => $image['image'],
             'width'    => $image['width'],
             'height'   => $image['height']

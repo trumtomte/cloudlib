@@ -9,27 +9,16 @@
  */
 
 /**
- * The model class.
+ * The validator class.
  *
- * Abstract class for all models.
+ * <short description>
  *
  * @package     cloudlib
  * @subpackage  cloudlib.lib.classes
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-abstract class model extends master
+final class Validator extends Factory
 {
-    /**
-     * Magic method
-     * Loads a module, initiates a new one if it doesnt exist
-     *
-     * @access  public
-     * @param   string  $class
-     * @return  object
-     */
-    final public function __get($module)
-    {
-        return core::loadModule($module);
-    }
+    // Class for validating data/input
 }

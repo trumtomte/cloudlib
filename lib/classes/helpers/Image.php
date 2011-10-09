@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class resizeimage extends master
+class Image extends Factory
 {
     /**
      * The image to be modified
@@ -142,7 +142,7 @@ class resizeimage extends master
      * @access  private
      * @return  int
      */
-    private function getWidth()
+    public function getWidth()
     {
         return imagesx(self::$image);
     }
@@ -153,7 +153,7 @@ class resizeimage extends master
      * @access  private
      * @return  int
      */
-    private function getHeight()
+    public function getHeight()
     {
         return imagesy(self::$image);
     }
@@ -209,15 +209,21 @@ class resizeimage extends master
      * @param   int     $height
      * @return  void
      */
-    private function resize($width, $height)
+    private function resize($dstW, $dstH, $srcW = null, $srcH = null, $x = 0, $y = 0)
     {
-        if(!($new = imagecreatetruecolor($width, $height)))
+        if($srcW === null) 
+        {
+            $srcW = $this->getWidth();
+        }
+        if($srcH === null)
+        {
+            $srcH = $this->getHeight();
+        }
+        if(!($new = imagecreatetruecolor($dstW, $dstH)))
         {
             self::$error = 'Imagecreatetruecolor did not work';
         }
-
-        if(!imagecopyresampled($new, self::$image, 0, 0, 0, 0,
-            $width, $height, $this->getWidth(), $this->getHeight()))
+        if(!imagecopyresampled($new, self::$image, 0, 0, $x, $y, $dstW, $dstH, $srcW, $srcH))
         {
             self::$error = 'Imagecopyresampled did not work';
         }
@@ -273,6 +279,35 @@ class resizeimage extends master
     }
 
     /**
+     * Function for cropping an image
+     *
+     * @access  public
+     * @param   string  $load
+     * @param   string  $save
+     * @param   int     $dimension
+     * @return  void
+     */
+    public function crop($load, $save, $dimension = 200)
+    {
+        $this->load($load);
+
+        $width = $this->getWidth();
+        $height = $this->getHeight();
+                     
+        $max = max($width, $height);
+
+        $cropW = $max * .5;
+        $cropH = $max * .5;
+                     
+        $x = ($width - $cropW) / 2;
+        $y = ($height - $cropH) / 2;
+
+        $this->resize($dimension, $dimension, $cropW, $cropH, $x, $y);
+
+        $this->save($save);
+    }
+
+    /**
      * Returns the error
      *
      * @access  public
@@ -282,24 +317,5 @@ class resizeimage extends master
     {
         return self::$error;
     }
-
-    /**
-     * Returns the dimensions
-     *
-     * @access  public
-     * @return  string
-     */
-    public function dimensions($file)
-    {
-        $this->load($file);
-
-        $x = $this->getWidth();
-        $y = $this->getHeight();
-
-        $string = '(' . $x . ' x ' . $y . ')';
-
-        return $string;
-
-        //imagedestroy(self::$image);
-    }
 }
+

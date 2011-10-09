@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class query extends master
+class Query extends Factory
 {
     /**
      * Current active SQL statement
@@ -206,23 +206,31 @@ class query extends master
      *
      * @access  public
      * @param   string  $statement
-     * @param   array   @variables
+     * @param   array   $variables
+     * @param   string  $update
      * @return  object
      */
-    public function update($table, array $variables)
+    public function update($table, array $variables = array(), $update = null)
     {
-        $updates = null;
-
-        foreach($variables as $key => $value)
+        if(isset($variables))
         {
-            self::$variables[] = $value;
+            $updates = null;
 
-            $updates .= $key . ' = ?, ';
+            foreach($variables as $key => $value)
+            {
+                self::$variables[] = $value;
+
+                $updates .= $key . ' = ?, ';
+            }
+
+            $updates = rtrim($updates, ', ');
+
+            self::$statement = 'UPDATE ' . $table . ' SET ' . $updates;
         }
-
-        $updates = rtrim($updates, ', ');
-
-        self::$statement = 'UPDATE ' . $table . ' SET ' . $updates;
+        if(isset($update))
+        {
+            self::$statement = 'UPDATE ' . $table . ' SET ' . $update;
+        }
 
         return $this;
     }

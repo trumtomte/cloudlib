@@ -9,7 +9,7 @@
  */
 
 /**
- * The validator class.
+ * The html class.
  *
  * <short description>
  *
@@ -18,7 +18,26 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class validator extends master
+final class Html extends Factory
 {
-    // Class for validating data/input
+
+    /**
+     * HTML helper class
+     *
+     * Pointers on what could be implemented:
+     *
+     * CSS (<link>)
+     * SCRIPT (<script>)
+     * META (favicon/charset etc..)
+     * LINK (<a>)
+     * IMAGE (<img>)
+     * DOCTYPE (HTML5)
+     * CSS / SCRIPT codeblocks?
+     * DIV (<div>)
+     * PARAGRAPH (<p>)
+     * TABLES (<table>)
+     * HEADERS (<h1-6>)
+     *
+     * Default <head> block?, array of options?
+     */
 }

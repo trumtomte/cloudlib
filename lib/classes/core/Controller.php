@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-abstract class controller extends master
+abstract class Controller extends Factory
 {
     /**
      * View object
@@ -71,7 +71,7 @@ abstract class controller extends master
      */
     final public function loadView($classname)
     {
-        $this->view = view::factory($classname);
+        $this->view = View::factory($classname);
     }
 
     /**
@@ -112,15 +112,15 @@ abstract class controller extends master
     }
 
     /**
-     * Magic method to load modules
+     * Magic method to load helpers
      *
      * @access  public
      * @param   string  $class
      * @return  object
      */
-    final public function __get($module)
+    final public function __get($helper)
     {
-        return core::loadModule($module);
+        return Core::loadHelper($helper);
     }
 
     /**

@@ -9,27 +9,16 @@
  */
 
 /**
- * The master class.
+ * The paginator class.
  *
- * Abstract class for all classes.
+ * <short description>
  *
  * @package     cloudlib
  * @subpackage  cloudlib.lib.classes
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-abstract class master
+final class Paginator extends Factory
 {
-    /**
-     * Centralized way of initiating classes
-     *
-     * @access  public
-     * @return  object
-     */
-    final public static function factory()
-    {
-        $reflection = new ReflectionClass(get_called_class());
-
-        return $reflection->newInstanceArgs(func_get_args());
-    }
+    // Class for pagination
 }

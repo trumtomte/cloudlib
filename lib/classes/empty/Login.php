@@ -9,7 +9,7 @@
  */
 
 /**
- * The paginator class.
+ * The login class.
  *
  * <short description>
  *
@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-final class paginator extends master
+final class Login extends Factory
 {
-    // Class for pagination
+    // Login helper class
 }

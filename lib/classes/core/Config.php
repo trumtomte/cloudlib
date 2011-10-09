@@ -9,7 +9,7 @@
  */
 
 /**
- * The config class.
+ * The Config class.
  *
  * <short description>
  *
@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class config extends master
+class Config extends Factory
 {
     /**
      * Array of each config
@@ -54,16 +54,16 @@ class config extends master
      */
     public static function get($config, $key = null)
     {
-        if(!file_exists($file = CONFIG . strtolower($config) . '.php'))
+        if(!file_exists($file = CONFIG . $config . EXT))
         {
-            throw new cloudException('Unable to locate the config file: ' . $config);
+            throw new CloudException('Unable to locate the config file: ' . $config);
         }
 
         $array = require $file;
 
         if(!is_array($array))
         {
-            throw new cloudException('Config files must return an array');
+            throw new CloudException('Config files must return an array');
         }        
         
         static::set($array, $config);
@@ -72,7 +72,7 @@ class config extends master
         {
             if(!array_key_exists($key, static::$items))
             {
-                throw new cloudException('Item: ' . $key . ' not found in ' . $config);
+                throw new CloudException('Item: ' . $key . ' not found in ' . $config);
             }
 
             return static::$items[$key];

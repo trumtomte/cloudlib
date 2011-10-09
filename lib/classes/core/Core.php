@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class core
+class Core
 {
     /**
      * Current version of cloudlib
@@ -33,7 +33,7 @@ class core
      * @access  private
      * @var     array
      */
-    private static $modules = array();
+    private static $helpers = array();
 
     /**
      * Constructor
@@ -52,14 +52,13 @@ class core
     public static function initialize()
     {
         $config = config::general();
-
         static::setTimezone($config['timezone']);
-
         static::setLocale($config['locale']);
-
         static::setMbEncoding($config['mbstring']);
 
-        $dispatcher = dispatcher::factory();
+        static::removeMagicQuotes();
+
+        $dispatcher = Dispatcher::factory();
         $dispatcher->dispatch();
     }
 
@@ -100,6 +99,42 @@ class core
     }
 
     /**
+     * Checks if magic quotes is enabled
+     *
+     * @access  private
+     * @return  void
+     */
+    private static function removeMagicQuotes()
+    {
+        if(get_magic_quotes_gpc())
+        {
+            $_GET = static::stripslashRecursive($_GET);
+            $_POST = static::stripslashRecursive($_POST);
+            $_COOKIE = static::stripslashRecursive($_COOKIE);
+            $_REQUEST = static::stripslashRecursive($_REQUEST);
+        }
+    }
+
+    /**
+     * Apply stripslashes() on each item in an array
+     *
+     * @access  private
+     * @param   array   $array
+     * @return  array
+     */
+    private static function stripslashRecursive($array)
+    {
+        foreach($array as $key => $value)
+        {
+            $array[$key] = is_array($value) ?
+                static::stripslashRecursive($value) :
+                stripslashes($value);
+        }
+
+        return $array;
+    }
+
+    /**
      * Autoloader
      *
      * @access  public
@@ -108,54 +143,45 @@ class core
      */
     public static function autoload($class)
     {
-        if(preg_match('/Controller$/', $class))
+        switch(true)
         {
-            $file = CTRLS . $class . CLASS_EXT;
-        }
-        elseif(preg_match('/Model$/', $class))
-        {
-            $file = MODELS . $class . CLASS_EXT;
-        }
-        else
-        {
-            $file = CLASSES . $class . CLASS_EXT;
+            case preg_match('/Controller$/', $class):
+                $directory = CTRLS;
+                break;
+            case preg_match('/Model$/', $class):
+                $directory = MODELS;
+                break;
+            default:
+                $directory = HELPERS;
+                break;
         }
 
-        if(!file_exists($file))
+        if(!file_exists($file = $directory . $class . EXT))
         {
-            throw new cloudException('Unable to autoload: ' . $class);
+            if(!file_exists($file = CORE . $class . EXT))
+            {
+                throw new CloudException('Unable to autolad: ' . $class);
+            }
         }
 
         require $file;
     }
 
     /**
-     * Loads a module
+     * Loads a helper
      *
      * @access  public
-     * @param   string  $module
+     * @param   string  $helper
      * @return  object
      */
-    public static function loadModule($module)
+    public static function loadHelper($helper)
     {
-        $modules = config::modules();
-
-        if(!array_key_exists($module, $modules))
+        if(!in_array($helper, self::$helpers))
         {
-            throw new cloudException('Module does not exist: ' . $module);
+            self::$helpers[$helper] = $helper::factory();
         }
 
-        if($modules[$module] == false)
-        {
-            throw new cloudException('Module is set to inactive(false): ' . $module);
-        }
-
-        if(!in_array($module, self::$modules))
-        {
-            self::$modules[$module] = $module::factory();
-        }
-
-        return self::$modules[$module];
+        return self::$helpers[$helper];
     }
 
     /**
@@ -185,11 +211,11 @@ class core
     {
         if(!file_exists($directory))
         {
-            throw new cloudException($directory . ' does not exist');
+            throw new CloudException($directory . ' does not exist');
         }
         if(!is_dir($directory))
         {
-            throw new cloudException($directory . ' is not a valid directory');
+            throw new CloudException($directory . ' is not a valid directory');
         }
 
         foreach(scandir($directory) as $item)
