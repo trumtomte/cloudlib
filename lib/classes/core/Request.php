@@ -21,159 +21,186 @@
 class Request extends Factory
 {
     /**
-     * Shorthand function
+     * Shorthand names for $_SERVER keys
+     *
+     * @access  private
+     * @var     array
+     */
+    private static $serverKeys = array(
+        'host' => 'HTTP_HOST',
+        'agent' => 'HTTP_USER_AGENT',
+        'servername' => 'SERVER_NAME',
+        'serverport' => 'SERVER_PORT',
+        'filename' => 'SCRIPT_FILENAME',
+        'protocol' => 'SERVER_PROTOCOL',
+        'method' => 'REQUEST_METHOD',
+        'query' => 'QUERY_STRING',
+        'uri' => 'REQUEST_URI',
+        'scriptname' => 'SCRIPT_NAME',
+        'self' => 'PHP_SELF',
+        'time' => 'REQUEST_TIME',
+        'ip' => 'REMOTE_ADDR'
+    );
+
+    /**
+     * Constructor
      *
      * @access  public
-     * @return  string
+     * @return  void
      */
-    public static function host()
+    public function __construct() {}
+    
+    /**
+     * Get a $_GET variable
+     *
+     * @access  public
+     * @param   string  $key
+     * @return  mixed
+     */
+    public static function _get($key = null)
     {
-        return static::get('HTTP_HOST');
+        if($key === null)
+        {
+            return $_GET;
+        }
+
+        return isset($_GET[$key]) ? $_GET[$key] : false;
     }
 
     /**
-     * Shorthand function
+     * Get a $_POST variable
      *
      * @access  public
-     * @return  string
+     * @param   string  $key
+     * @return  mixed
      */
-    public static function agent()
+    public static function _post($key = null)
     {
-        return static::get('HTTP_USER_AGENT');
+        if($key === null)
+        {
+            return $_POST;
+        }
+
+        return isset($_POST[$key]) ? $_POST[$key] : false;
     }
 
     /**
-     * Shorthand function
+     * Get a $_COOKIE variable
      *
      * @access  public
-     * @return  string
+     * @param   string  $key
+     * @return  mixed
      */
-    public static function servername()
+    public static function _cookie($key = null)
     {
-        return static::get('SERVER_NAME');
+        if($key === null)
+        {
+            return $_COOKIE;
+        }
+
+        return isset($_COOKIE[$key]) ? $_COOKIE[$key] : false;
     }
 
     /**
-     * Shorthand function
+     * Get a $_REQUEST variable
      *
      * @access  public
-     * @return  string
+     * @param   string  $key
+     * @return  mixed
      */
-    public static function serverport()
+    public static function _request($key = null)
     {
-        return static::get('SERVER_PORT');
+        if($key === null)
+        {
+            return $_REQUEST;
+        }
+
+        return isset($_REQUEST[$key]) ? $_REQUEST[$key] : false;
     }
 
     /**
-     * Shorthand function
+     * Get a $_SERVER variable
      *
      * @access  public
-     * @return  string
+     * @param   string  $key
+     * @return  mixed
      */
-    public static function filename()
+    public static function _server($key = null)
     {
-        return static::get('SCRIPT_FILENAME');
+        if($key === null)
+        {
+            return $_SERVER;
+        }
+
+        if(array_key_exists($key, static::$serverKeys)
+        {
+            $value = static::$serverKeys[$key];
+            return isset($_SERVER[$value]) ? $_SERVER[$value] : false;
+        }
+
+        return isset($_SERVER[$key]) ? $_SERVER[$key] : false;
     }
 
     /**
-     * Shorthand function
+     * Get the current request method
      *
      * @access  public
-     * @return  string
-     */
-    public static function protocol()
-    {
-        return static::get('SERVER_PROTOCOL');
-    }
-
-    /**
-     * Shorthand function
-     *
-     * @access  public
-     * @return  string
+     * @return  mixed
      */
     public static function method()
     {
-        return static::get('REQUEST_METHOD');
+        return static::_server('REQUEST_METHOD');
     }
 
     /**
-     * Shorthand function
+     * Shorthand function to get a variable from one of the global arrays
      *
      * @access  public
-     * @return  string
+     * @param   string  $key
+     * @param   string  $array
+     * @return  mixed
      */
-    public static function query()
+    public static function get($key, $array)
     {
-        return static::get('QUERY_STRING');
+        switch(strtoupper($array))
+        {
+            case 'GET':
+                return static::_get($key);
+                break;
+            case 'POST':
+                return static::_post($key);
+                break;
+            case 'COOKIE':
+                return static::_cookie($key);
+                break;
+            case 'REQUEST':
+                return static::_request($key);
+                break;
+            case 'SERVER':
+                return static::_server($key);
+                break
+            default:
+                return false;
+                break;
+        }
     }
 
     /**
-     * Shorthand function
+     * Shorthand function for get()
      *
      * @access  public
-     * @return  string
-     */
-    public static function uri()
-    {
-        return static::get('REQUEST_URI');
-    }
-
-    /**
-     * Shorthand function
-     *
-     * @access  public
-     * @return  string
-     */
-    public static function scriptname()
-    {
-        return static::get('SCRIPT_NAME');
-    }
-
-    /**
-     * Shorthand function
-     *
-     * @access  public
-     * @return  string
-     */
-    public static function self()
-    {
-        return static::get('PHP_SELF');
-    }
-
-    /**
-     * Shorthand function
-     *
-     * @access  public
-     * @return  string
-     */
-    public static function time()
-    {
-        return static::get('REQUEST_TIME');
-    }
-
-    /**
-     * Get server index value
-     *
-     * @access  public
-     * @param   string  $index
-     * @return  string
-     */
-    public static function get($index)
-    {
-        return $_SERVER[$index];
-    }
-
-    /**
-     * CallStatic function for shorter get calls
-     *
-     * @access  public
-     * @param   string  $index
+     * @param   string  $key
      * @param   array   $args
-     * @return  void
+     * @return  mixed
      */
-    public static function __callStatic($index, array $args = array())
+    public static function __callStatic($key, array $args)
     {
-        return static::get($index);
+        $array = array_shift($args);
+
+        if(isset($key) and isset($args))
+        {
+            return static::get($key, $array);
+        }
     }
 }
+
