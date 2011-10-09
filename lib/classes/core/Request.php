@@ -64,7 +64,7 @@ class Request extends Factory
             return $_GET;
         }
 
-        return isset($_GET[$key]) ? $_GET[$key] : false;
+        return (isset($_GET[$key])) ? $_GET[$key] : false;
     }
 
     /**
@@ -132,7 +132,7 @@ class Request extends Factory
             return $_SERVER;
         }
 
-        if(array_key_exists($key, static::$serverKeys)
+        if(array_key_exists($key, static::$serverKeys))
         {
             $value = static::$serverKeys[$key];
             return isset($_SERVER[$value]) ? $_SERVER[$value] : false;
@@ -160,25 +160,25 @@ class Request extends Factory
      * @param   string  $array
      * @return  mixed
      */
-    public static function get($key, $array)
+    public static function get($key)
     {
-        switch(strtoupper($array))
+        switch(true)
         {
-            case 'GET':
-                return static::_get($key);
+            case isset($_GET[$key]):
+                return $_GET[$key];
                 break;
-            case 'POST':
-                return static::_post($key);
+            case isset($_POST[$key]):
+                return $_POST[$key];
                 break;
-            case 'COOKIE':
-                return static::_cookie($key);
+            case isset($_COOKIE[$key]):
+                return $_COOKIE[$key];
                 break;
-            case 'REQUEST':
-                return static::_request($key);
+            case isset($_REQUEST[$key]):
+                return $_REQUEST[$key];
                 break;
-            case 'SERVER':
+            case isset($_SERVER[$key]):
                 return static::_server($key);
-                break
+                break;
             default:
                 return false;
                 break;
@@ -193,14 +193,9 @@ class Request extends Factory
      * @param   array   $args
      * @return  mixed
      */
-    public static function __callStatic($key, array $args)
+    public static function __callStatic($key, array $args = array())
     {
-        $array = array_shift($args);
-
-        if(isset($key) and isset($args))
-        {
-            return static::get($key, $array);
-        }
+        return static::get($key);
     }
 }
 
