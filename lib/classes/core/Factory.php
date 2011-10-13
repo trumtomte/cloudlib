@@ -9,7 +9,7 @@
  */
 
 /**
- * The master class.
+ * The factory class.
  *
  * Abstract class for all classes.
  *

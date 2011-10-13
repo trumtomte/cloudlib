@@ -31,9 +31,13 @@ define('APP', ROOT . DS . 'app' . DS);
  * directories for controllers, views, models and layouts.
  */
 define('CTRLS', APP . 'controllers' . DS);
-define('VIEWS', APP . 'views' . DS);
 define('MODELS', APP . 'models' . DS);
-define('LAYOUTS', APP . 'layouts' . DS);
+define('VIEWS', APP . 'views' . DS);
+
+/**
+ * Sub-level directory of views.
+ */
+define('LAYOUTS', VIEWS . 'layouts' . DS);
 
 /**
  * Define sub-level directories of the Library directory,

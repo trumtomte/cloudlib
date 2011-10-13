@@ -44,7 +44,10 @@ class Timer extends Factory
      */
     public static function start($time)
     {
-        self::$times['start:' . $time] = static::getTime();
+        if(!isset(self::$times['start:' . $time]))
+        {
+            self::$times['start:' . $time] = static::getTime();
+        }
     }
 
     /**
@@ -66,7 +69,7 @@ class Timer extends Factory
      */
     private static function getTime()
     {
-        list($usec, $sec) = explode(" ", microtime());
+        list($usec, $sec) = explode(' ', microtime());
 
         return ((float)$usec + (float)$sec);
     }
@@ -81,16 +84,11 @@ class Timer extends Factory
     {
         static::stop($time);
 
-        $stop = static::$times['stop:' . $time];
-        $start = static::$times['start:' . $time];
-
-        $loadtime = $stop - $start;
-
-        return round($loadtime, $round);
+        return round((static::$times['stop:' . $time] - static::$times['start:' . $time]), $round);
     }
 
     /**
-     * Shorthand for timer::loadtime()
+     * Shorthand for timer::time()
      *
      * @access  public
      * @param   string  $time

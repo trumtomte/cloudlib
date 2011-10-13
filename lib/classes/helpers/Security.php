@@ -21,14 +21,6 @@
 class Security extends Factory
 {
     /**
-     * The static salt from the general config file
-     *
-     * @access  private
-     * @var     string
-     */
-    private static $salt;
-
-    /**
      * Constructor
      *
      * @access  public
@@ -49,8 +41,6 @@ class Security extends Factory
      */
     public static function encrypt($password, $salt, $rounds = 6)
     {
-        self::$salt = config::general('salt');
-
         if($rounds < 4)
         {
             $rounds = 4;
@@ -62,7 +52,7 @@ class Security extends Factory
 
         $prefix = sprintf('$2a$%02d$', $rounds);
 
-        $salt .= self::$salt;
+        $salt .= config::general('salt');
 
         if(!preg_match('#^[A-Za-z0-9./]{22}$#', $salt))
         {

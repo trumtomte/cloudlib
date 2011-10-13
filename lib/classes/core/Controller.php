@@ -44,7 +44,6 @@ abstract class Controller extends Factory
      */
     public function __construct($class)
     {
-        $this->classname = $class;
         $this->loadModel($class);
         $this->loadView($class);
     }

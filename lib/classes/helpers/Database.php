@@ -26,7 +26,7 @@ class Database extends Factory
      * @access  private
      * @var     object
      */
-    private static $instance;
+    private static $instance = null;
 
    /**
      * Constructor
@@ -38,22 +38,18 @@ class Database extends Factory
     {
         $config = config::database();
 
-        $dsn        = $config['dsn'];
-        $username   = $config['username'];
-        $password   = $config['password'];
-        $charset    = $config['charset'];
-        $persistent = $config['persistent'];
-
         $driverOptions = array(
-                PDO::ATTR_PERSISTENT         => $persistent,
-                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . $charset
+                PDO::ATTR_PERSISTENT         => $config['persistent'],
+                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . $config['charset']
             );
 
         if(!isset(self::$instance))
         {
             try
             {
-                self::$instance = new PDO($dsn, $username, $password, $driverOptions);
+                self::$instance = new PDO($config['dsn'], $config['username'],
+                                          $config['password'], $driverOptions);
+
                 self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             }
             catch(PDOException $e)

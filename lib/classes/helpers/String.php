@@ -11,7 +11,7 @@
 /**
  * The string class.
  *
- * Shorthand class for string functions using mb_functions
+ * <short description>
  *
  * @package     cloudlib
  * @subpackage  cloudlib.lib.classes

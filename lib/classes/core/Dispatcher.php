@@ -81,9 +81,8 @@ class Dispatcher extends Factory
 
         $controller = $this->loadController();
         $method = $this->getMethod($controller);
-        $param = $this->param;
 
-        $this->invoke($controller, $method, $param);
+        $this->invoke($controller, $method, $this->param);
     }
 
     /**
@@ -119,7 +118,7 @@ class Dispatcher extends Factory
     {
         $controller = $this->class . 'Controller';
 
-        if(!is_readable(CTRLS . $controller . EXT))
+        if(!is_readable(CTRLS . $this->class . 'Controller' . EXT))
         {
             header('HTTP/1.1 404 Not Found');
             require LIB . 'error/404.php';

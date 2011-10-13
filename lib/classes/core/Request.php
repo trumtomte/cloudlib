@@ -9,7 +9,7 @@
  */
 
 /**
- * The server class.
+ * The request class.
  *
  * <short description>
  *
@@ -27,19 +27,19 @@ class Request extends Factory
      * @var     array
      */
     private static $serverKeys = array(
-        'host' => 'HTTP_HOST',
-        'agent' => 'HTTP_USER_AGENT',
+        'host'       => 'HTTP_HOST',
+        'agent'      => 'HTTP_USER_AGENT',
         'servername' => 'SERVER_NAME',
         'serverport' => 'SERVER_PORT',
-        'filename' => 'SCRIPT_FILENAME',
-        'protocol' => 'SERVER_PROTOCOL',
-        'method' => 'REQUEST_METHOD',
-        'query' => 'QUERY_STRING',
-        'uri' => 'REQUEST_URI',
+        'filename'   => 'SCRIPT_FILENAME',
+        'protocol'   => 'SERVER_PROTOCOL',
+        'method'     => 'REQUEST_METHOD',
+        'query'      => 'QUERY_STRING',
+        'uri'        => 'REQUEST_URI',
         'scriptname' => 'SCRIPT_NAME',
-        'self' => 'PHP_SELF',
-        'time' => 'REQUEST_TIME',
-        'ip' => 'REMOTE_ADDR'
+        'self'       => 'PHP_SELF',
+        'time'       => 'REQUEST_TIME',
+        'ip'         => 'REMOTE_ADDR'
     );
 
     /**
@@ -177,7 +177,7 @@ class Request extends Factory
                 return $_REQUEST[$key];
                 break;
             case isset($_SERVER[$key]):
-                return static::_server($key);
+                return $_SERVER[$key];
                 break;
             default:
                 return false;

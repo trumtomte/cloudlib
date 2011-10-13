@@ -9,7 +9,6 @@
     echo '<br>';
     echo timer::boot();
     echo '<br>';
-    echo 'testing test test';
 ?>
 </body>
 </html>

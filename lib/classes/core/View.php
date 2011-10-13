@@ -65,7 +65,7 @@ class View extends Factory
      */
     public function set($index, $value)
     {
-        $this->$index = $value;
+        $this->__set($index, $value);
     }
 
     /**
@@ -108,14 +108,12 @@ class View extends Factory
             $layout = $this->classname;
         }
 
-        $file = LAYOUTS . $layout . EXT;
-
-        if(!file_exists($file))
+        if(!file_exists(LAYOUTS . $layout . EXT))
         {
             throw new cloudException('Layout "' . $layout . '" does not exist');
         }
 
-        $this->layout = $file;
+        $this->layout = LAYOUTS . $layout . EXT;
 
         return $this;
     }
