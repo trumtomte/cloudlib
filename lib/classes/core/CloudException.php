@@ -77,6 +77,8 @@ class CloudException extends Exception
                 ob_end_clean();
             }
 
+            Logger::log($message, Logger::ERROR);
+
             if(!PRODUCTION)
             {
                 require LIB . 'error/exception.php';
