@@ -170,9 +170,7 @@ class Form extends Factory
 
         $attrString = $this->getAttrAsString($attributes);
 
-        $form = '<form' . $attrString . '>' . PHP_EOL;
-
-        return $form;
+        return '<form' . $attrString . '>' . PHP_EOL;
     }
 
     /**
@@ -201,9 +199,7 @@ class Form extends Factory
 
         $label = $this->getLabel($options, $name);
 
-        $input = $label . '<input' . $attrString . ' />' . PHP_EOL;
-
-        return $input;
+        return $label . '<input' . $attrString . ' />' . PHP_EOL;
     }
 
     /**
@@ -242,12 +238,10 @@ class Form extends Factory
 
         $label = $this->getLabel($options, $name);
 
-        $button = $label
+        return $label
                 . '<button' . $attrString . '>' . PHP_EOL
                 . ' ' . $text . PHP_EOL
                 . '</button>' . PHP_EOL;
-
-        return $button;
     }
 
     /**
@@ -343,12 +337,10 @@ class Form extends Factory
 
         $label = $this->getLabel($options, $name);
 
-        $select = $label
+        return $label
                 . '<select' . $attrString . '>' . PHP_EOL
                 . $list
                 . '</select>' . PHP_EOL;
-
-        return $select;
     }
 
     /**
@@ -381,10 +373,8 @@ class Form extends Factory
 
         $attrString = $this->getAttrAsString($attributes);
 
-        $label = '<label' . $attrString . '>'
+        return '<label' . $attrString . '>'
                . $text . '</label>' . PHP_EOL;
-
-        return $label;
     }
 
     /**
@@ -395,9 +385,7 @@ class Form extends Factory
      */
     public function close()
     {
-        $close = '</form>' . PHP_EOL;
-
-        return $close;
+        return '</form>' . PHP_EOL;
     }
 
     /**
@@ -465,14 +453,12 @@ class Form extends Factory
      */
     private function getLabel(array $options, $name)
     {
-        $label = null;
-
         if(isset($options['label']) and is_string($options['label']) and isset($name))
         {
-            $label = '<label for="' . $name . '">'
+            return '<label for="' . $name . '">'
                 . $options['label'] . '</label>' . PHP_EOL;
         }
 
-        return $label;
+        return null;
     }
 }
