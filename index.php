@@ -24,6 +24,11 @@ define('CONF', 'default');
 define('LOGGING', true);
 
 /**
+ * RewriteBase from .htaccess.
+ */
+define('RWBASE', '/cloudlib/');
+
+/**
  * Define the root directory and the directory separator.
  */
 define('DS', DIRECTORY_SEPARATOR);
