@@ -40,6 +40,13 @@ if(PRODUCTION == true) {
 }
 
 /**
+ * If no RewriteBase is not defined, define it as root.
+ */
+if(!defined('RWBASE')) {
+    define('RWBASE', '/');
+}
+
+/**
  * If no default configuration is defined, define it as default.
  */
 if(!defined('CONF')) {
