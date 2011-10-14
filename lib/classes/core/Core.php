@@ -51,87 +51,14 @@ class Core
      */
     public static function initialize()
     {
-        $config = config::general();
-        static::setTimezone($config['timezone']);
-        static::setLocale($config['locale']);
-        static::setMbEncoding($config['mbstring']);
+        date_default_timezone_set(Config::general('timezone'));
+        setlocale(LC_ALL, Config::general('locale'));
+        mb_internal_encoding(Config::general('mbstring'));
 
-        static::removeMagicQuotes();
+        Request::removeMagicQuotes();
 
         $dispatcher = Dispatcher::factory();
         $dispatcher->dispatch();
-    }
-
-    /**
-     * Set the default timezone
-     *
-     * @access  public
-     * @param   string  $timezone
-     * @return  void
-     */
-    public static function setTimezone($timezone)
-    {
-        return date_default_timezone_set($timezone);
-    }
-
-    /**
-     * Set the locale
-     *
-     * @access  public
-     * @param   string  $locale
-     * @return  void
-     */
-    public static function setLocale($locale)
-    {
-        return setlocale(LC_ALL, $locale);
-    }
-
-    /**
-     * Set the internal encoding for mb_functions
-     *
-     * @access  public
-     * @param   string  $encoding
-     * @return  void
-     */
-    public static function setMbEncoding($encoding)
-    {
-        return mb_internal_encoding($encoding);
-    }
-
-    /**
-     * Checks if magic quotes is enabled
-     *
-     * @access  private
-     * @return  void
-     */
-    private static function removeMagicQuotes()
-    {
-        if(get_magic_quotes_gpc())
-        {
-            $_GET = static::stripslashRecursive($_GET);
-            $_POST = static::stripslashRecursive($_POST);
-            $_COOKIE = static::stripslashRecursive($_COOKIE);
-            $_REQUEST = static::stripslashRecursive($_REQUEST);
-        }
-    }
-
-    /**
-     * Apply stripslashes() on each item in an array
-     *
-     * @access  private
-     * @param   array   $array
-     * @return  array
-     */
-    private static function stripslashRecursive($array)
-    {
-        foreach($array as $key => $value)
-        {
-            $array[$key] = is_array($value) ?
-                static::stripslashRecursive($value) :
-                stripslashes($value);
-        }
-
-        return $array;
     }
 
     /**
@@ -163,7 +90,7 @@ class Core
                 throw new CloudException('Unable to autolad: ' . $class);
             }
         }
-
+        
         require $file;
     }
 
