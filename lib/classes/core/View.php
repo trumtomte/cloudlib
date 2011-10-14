@@ -147,9 +147,11 @@ class View extends Factory
 
         if(isset($this->layout))
         {
-            ob_start();
+            $body = ob_get_contents();
 
-            $body = ob_get_clean();
+            ob_end_clean();
+
+            ob_start();
 
             require $this->layout;
 
