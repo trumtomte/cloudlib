@@ -38,7 +38,7 @@ abstract class Factory
     {
         $reflection = new ReflectionClass(get_called_class());
 
-        Logger::log('Initiating class: ' . get_called_class(), Logger::INFO);
+        Logger::log('Initiating class: ' . get_called_class(), Logger::DEBUG);
 
         return $reflection->newInstanceArgs(func_get_args());
     }
