@@ -14,23 +14,6 @@
 error_reporting(E_ALL);
 
 /**
- * Set file logging.
- */
-if(!defined('LOGGING')) {
-    define('LOGGING', true);
-}
-
-if(LOGGING)
-{
-    // Log all PHP errors
-    ini_set('log_errors', 1);
-    ini_set('error_log', LOGS . 'error.log');
-
-    // Log from the Logger class
-    register_shutdown_function(array('Logger', 'write'));
-}
-
-/**
  * If we are in production, do not display errors.
  */
 if(PRODUCTION == true) {
@@ -58,6 +41,23 @@ if(!defined('CONF')) {
  */
 require CORE . 'Core' . EXT;
 spl_autoload_register(array('Core', 'autoload'));
+
+/**
+ * Set file logging.
+ */
+if(!defined('LOGGING')) {
+    define('LOGGING', true);
+}
+
+if(LOGGING)
+{
+    // Log all PHP errors
+    ini_set('log_errors', 1);
+    ini_set('error_log', LOGS . 'error.log');
+
+    // Log from the Logger class
+    register_shutdown_function(array('Logger', 'write'));
+}
 
 /**
  * Set the error and exception handler
