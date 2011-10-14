@@ -93,10 +93,13 @@ class Uploader extends Factory
      */
     public function upload()
     {
-        if(empty($_FILES))
+        if(Request::method() === 'POST')
         {
-            self::$error = 'No file(s) was selected';
-            return false;
+            if(empty($_FILES))
+            {
+                self::$error = 'No file(s) was selected';
+                return false;
+            }
         }
 
         $files = array_shift($_FILES);
