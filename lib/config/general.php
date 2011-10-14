@@ -12,8 +12,11 @@ return array
     /**
      * General settings
      */
-    'timezone'        => 'Europe/Stockholm',
-    'locale'          => null,
-    'mbstring'        => 'UTF-8',
-    'salt'            => 'MySuperSecretSalt'
+
+    'default' => array(
+        'timezone'  => 'Europe/Stockholm',
+        'locale'    => null,
+        'mbstring'  => 'UTF-8',
+        'salt'      => 'MySuperSecretSalt'
+    )
 );
