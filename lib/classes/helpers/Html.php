@@ -37,6 +37,16 @@
 final class Html extends Factory
 {
     /**
+     * Array of html tags
+     *
+     * @access  private
+     * @var     array
+     */
+    private $tags = array(
+        'css' => '<link rel="stylesheet" href="%s" />'
+    );
+
+    /**
      * Constructor
      *
      * @access  public
@@ -44,9 +54,23 @@ final class Html extends Factory
      */
     public function __construct() {}
 
-    public function css()
+    public function css($path)
     {
+        if(is_string($path))
+        {
+            return sprintf($this->tags['css'], RWBASE . $path . '.css') . PHP_EOL;
+        }
+        if(is_array($path))
+        {
+            $stylesheets = null;
 
+            foreach($path as $value)
+            {
+                $stylesheets .= sprintf($this->tags['css'], RWBASE . $value . '.css') . PHP_EOL;
+            }
+
+            return $stylesheets;
+        }
     }
 
     public function script()
