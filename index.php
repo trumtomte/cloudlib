@@ -14,6 +14,16 @@
 define('PRODUCTION', false);
 
 /**
+ * Default configuration.
+ */
+define('CONF', 'default');
+
+/**
+ * Logging: True allows logging and false does not.
+ */
+define('LOGGING', true);
+
+/**
  * Define the root directory and the directory separator.
  */
 define('DS', DIRECTORY_SEPARATOR);
@@ -35,7 +45,7 @@ define('MODELS', APP . 'models' . DS);
 define('VIEWS', APP . 'views' . DS);
 
 /**
- * Sub-level directory of views.
+ * Sub-level directory of views for layouts.
  */
 define('LAYOUTS', VIEWS . 'layouts' . DS);
 
