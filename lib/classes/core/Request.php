@@ -1,6 +1,6 @@
 <?php
 /**
- * Cloudlib :: Minor PHP (M)VC Framework
+ * CloudLib :: Lightweight MVC PHP Framework
  *
  * @author      Sebastian Book <sebbebook@gmail.com>
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
@@ -134,8 +134,9 @@ class Request extends Factory
 
         if(array_key_exists($key, static::$serverKeys))
         {
-            $value = static::$serverKeys[$key];
-            return isset($_SERVER[$value]) ? $_SERVER[$value] : false;
+            return isset($_SERVER[static::$serverKeys[$key]])
+                    ? $_SERVER[static::$serverKeys[$key]]
+                    : false;
         }
 
         return isset($_SERVER[$key]) ? $_SERVER[$key] : false;

@@ -1,6 +1,6 @@
 <?php
 /**
- * Cloudlib :: Minor PHP (M)VC Framework
+ * CloudLib :: Lightweight MVC PHP Framework
  *
  * @author      Sebastian Book <sebbebook@gmail.com>
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>

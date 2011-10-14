@@ -1,6 +1,6 @@
 <?php
 /**
- * Cloudlib :: Minor PHP (M)VC Framework
+ * CloudLib :: Lightweight MVC PHP Framework
  *
  * @author      Sebastian Book <sebbebook@gmail.com>
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
@@ -49,7 +49,6 @@ class Database extends Factory
             {
                 self::$instance = new PDO($config['dsn'], $config['username'],
                                           $config['password'], $driverOptions);
-
                 self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             }
             catch(PDOException $e)
