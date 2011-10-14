@@ -12,9 +12,20 @@ return array
     /**
      * Database configuration
      */
-    'dsn'           => 'mysql:host=localhost;dbname=seb_proj',
-    'username'      => 'root',
-    'password'      => 'root',
-    'charset'       => 'utf8',
-    'persistent'    => true
+
+    'default' => array(
+        'dsn'           => 'mysql:host=localhost;dbname=seb_proj',
+        'username'      => 'root',
+        'password'      => 'root',
+        'charset'       => 'utf8',
+        'persistent'    => true
+    ),
+
+    'test' => array(
+        'dsn'           => 'mysql:host=localhost;dbname=seb_proj',
+        'username'      => 'root',
+        'password'      => 'roo',
+        'charset'       => 'utf8',
+        'persistent'    => true
+    )
 );
