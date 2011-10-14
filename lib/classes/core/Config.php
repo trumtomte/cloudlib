@@ -21,20 +21,12 @@
 class Config extends Factory
 {
     /**
-     * Array of each config
+     * Associative Array of each config
      *
      * @access  private
      * @var     array
      */
-    private static $config = array();
-
-    /**
-     * Array of each config item
-     *
-     * @access  private
-     * @var     array
-     */
-    private static $items = array();
+    private static $configs = array();
 
     /**
      * Constructor
@@ -52,7 +44,7 @@ class Config extends Factory
      * @param   string  $key
      * @return  mixed
      */
-    public static function get($config, $key = null)
+    public static function get($config, $key = null, $default = null)
     {
         if(!file_exists($file = CONFIG . $config . EXT))
         {
@@ -66,37 +58,55 @@ class Config extends Factory
             throw new CloudException('Config files must return an array');
         }        
         
-        static::set($array, $config);
+        if($default === null)
+        {
+            $default = CONF;
+        }
+
+        if(!array_key_exists($default, $array))
+        {
+            $default = 'default';
+
+            if(!array_key_exists($default, $array))
+            {
+                throw new CloudException('Unable to locate any default config item');
+            }
+        }
+
+        if(!is_array($array = $array[$default]))
+        {
+            throw new CloudException('Config items must an array');
+        }
+
+        static::set($config, $array);
 
         if(isset($key))
         {
-            if(!array_key_exists($key, static::$items))
+            if(!array_key_exists($key, static::$configs[$config]))
             {
-                throw new CloudException('Item: ' . $key . ' not found in ' . $config);
+                throw new CloudException($key . ' not found in config: ' . $config);
             }
 
-            return static::$items[$key];
+            return static::$configs[$config][$key];
         }
 
-        return static::$config[$config];
+        return static::$configs[$config];
     }
 
     /**
-     * Sets the config item
+     * Sets an config array
      *
      * @access  private
      * @param   $array
      * @param   $config
      * @return  void
      */
-    private static function set(array $array, $config)
+    private static function set($config, array $array)
     {
-        foreach($array as $key => $value)
+        if(!isset(static::$configs[$config]))
         {
-            static::$items[$key] = $value;
+            static::$configs[$config] = $array;
         }
-
-        static::$config[$config] = $array;
     }
 
     /**
@@ -109,13 +119,15 @@ class Config extends Factory
      */
     public static function __callStatic($config, array $args)
     {
-        $key = array_shift($args);
-
-        if(empty($key))
+        if(!isset($args[0]))
         {
-            $key = null;
+            $args[0] = null;
+        }
+        if(!isset($args[1]))
+        {
+            $args[1] = null;
         }
 
-        return static::get($config, $key);
+        return static::get($config, $args[0], $args[1]);
     }
 }
