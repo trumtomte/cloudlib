@@ -88,7 +88,7 @@ class Timer extends Factory
     }
 
     /**
-     * Shorthand for timer::time()
+     * Shorthand for Timer::time()
      *
      * @access  public
      * @param   string  $time
@@ -97,13 +97,11 @@ class Timer extends Factory
      */
     public static function __callStatic($time, array $args)
     {
-        $round = array_shift($args);
-
-        if(empty($round))
+        if(!isset($args[0]))
         {
-            $round = 5;
+            $args[0] = 5;
         }
 
-        return static::time($time, $round);
+        return static::time($time, $args[0]);
     }
 }
