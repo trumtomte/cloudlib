@@ -9,22 +9,41 @@
  */
 
 /**
- * Set error reporting and log all php-errors.
+ * Set error reporting.
  */
 error_reporting(E_ALL);
-ini_set('log_errors', 1);
-ini_set('error_log', LOGS . 'error.log');
+
+/**
+ * Set file logging.
+ */
+if(!defined('LOGGING')) {
+    define('LOGGING', true);
+}
+
+if(LOGGING)
+{
+    // Log all PHP errors
+    ini_set('log_errors', 1);
+    ini_set('error_log', LOGS . 'error.log');
+
+    // Log from the Logger class
+    register_shutdown_function(array('Logger', 'write'));
+}
 
 /**
  * If we are in production, do not display errors.
  */
-if(PRODUCTION == true)
-{
+if(PRODUCTION == true) {
     ini_set('display_errors', 0);
-}
-else
-{
+} else {
     ini_set('display_errors', 1);
+}
+
+/**
+ * If no default configuration is defined, define it as default.
+ */
+if(!defined('CONF')) {
+    define('CONF', 'default');
 }
 
 /**
