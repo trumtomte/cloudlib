@@ -1,6 +1,6 @@
 <?php
 /**
- * Cloudlib :: Minor PHP (M)VC Framework
+ * CloudLib :: Lightweight MVC PHP Framework
  *
  * @author      Sebastian Book <sebbebook@gmail.com>
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
@@ -141,21 +141,19 @@ class View extends Factory
 
         ob_start();
 
-        if(isset($this->vars))
-        {
-            foreach($this->vars as $key => $value)
-            {
-                $$key = $value;
-            }
-        }
+        extract($this->vars);
 
         require $file;        
 
         if(isset($this->layout))
         {
+            ob_start();
+
             $body = ob_get_clean();
 
             require $this->layout;
+
+            echo ob_get_clean();
         }
         else
         {
