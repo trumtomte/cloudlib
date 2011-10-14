@@ -187,6 +187,42 @@ class Request extends Factory
     }
 
     /**
+     * Checks if magic quotes is enabled
+     *
+     * @access  private
+     * @return  void
+     */
+    public static function removeMagicQuotes()
+    {
+        if(get_magic_quotes_gpc())
+        {
+            $_GET = static::stripslashRecursive($_GET);
+            $_POST = static::stripslashRecursive($_POST);
+            $_COOKIE = static::stripslashRecursive($_COOKIE);
+            $_REQUEST = static::stripslashRecursive($_REQUEST);
+        }
+    }
+
+    /**
+     * Apply stripslashes() on each item in an array
+     *
+     * @access  private
+     * @param   array   $array
+     * @return  array
+     */
+    private static function stripslashRecursive($array)
+    {
+        foreach($array as $key => $value)
+        {
+            $array[$key] = is_array($value) ?
+                static::stripslashRecursive($value) :
+                stripslashes($value);
+        }
+
+        return $array;
+    }
+
+    /**
      * Shorthand function for get()
      *
      * @access  public
