@@ -14,7 +14,7 @@ return array
      */
 
     'default' => array(
-        'dsn'           => 'mysql:host=localhost;dbname=seb_proj',
+        'dsn'           => 'mysql:host=localhost;dbname=default',
         'username'      => 'root',
         'password'      => 'root',
         'charset'       => 'utf8',
@@ -22,9 +22,9 @@ return array
     ),
 
     'test' => array(
-        'dsn'           => 'mysql:host=localhost;dbname=seb_proj',
+        'dsn'           => 'mysql:host=localhost;dbname=test',
         'username'      => 'root',
-        'password'      => 'roo',
+        'password'      => 'root',
         'charset'       => 'utf8',
         'persistent'    => true
     )
