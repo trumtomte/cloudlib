@@ -25,7 +25,7 @@ class Core
      *
      * @access  public
      */
-    const VERSION = '0.3.9.1';
+    const VERSION = '0.3.10.1';
 
     /**
      * Array of current activated modules
