@@ -54,7 +54,7 @@ class Query extends Factory
     {
         if(!isset(self::$instance))
         {
-            self::$instance = core::loadModule('database');
+            self::$instance = Core::loadHelper('database');
         }
     }
 
