@@ -36,7 +36,7 @@ class Database extends Factory
      */
     public function __construct()
     {
-        $config = config::database();
+        $config = Config::database();
 
         $driverOptions = array(
                 PDO::ATTR_PERSISTENT         => $config['persistent'],
