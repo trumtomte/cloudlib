@@ -210,27 +210,46 @@ class Query extends Factory
      * @param   string  $update
      * @return  object
      */
-    public function update($table, array $variables = array(), $update = null)
+    public function update($table, array $variables = array())
     {
-        if(isset($variables))
+        $updates = null;
+
+        foreach($variables as $key => $value)
         {
-            $updates = null;
+            self::$variables[] = $value;
 
-            foreach($variables as $key => $value)
-            {
-                self::$variables[] = $value;
-
-                $updates .= $key . ' = ?, ';
-            }
-
-            $updates = rtrim($updates, ', ');
-
-            self::$statement = 'UPDATE ' . $table . ' SET ' . $updates;
+            $updates .= $key . ' = ?, ';
         }
-        if(isset($update))
+
+        $updates = rtrim($updates, ', ');
+
+        self::$statement = 'UPDATE ' . $table . ' SET ' . $updates;
+
+        return $this;
+    }
+
+    /**
+     * UPDATE multiple
+     *
+     * @access  public
+     * @param   string  $table
+     * @param   string  $column
+     * @param   string  $case
+     * @param   array   $variables
+     * @return  object
+     */
+    public function updateMulti($table, $column, $case, array $variables = array())
+    {
+        self::$statement = 'UPDATE ' . $table . ' SET ' . $column . ' = CASE ' . $case;
+
+        $cases = null;
+
+        foreach($variables as $key => $value)
         {
-            self::$statement = 'UPDATE ' . $table . ' SET ' . $update;
+            $cases .= ' WHEN \'' . $key . '\' THEN \'' . $value . '\'';
         }
+
+        self::$statement .= $cases . ' ELSE ' . $column . ' END';
 
         return $this;
     }
@@ -245,6 +264,20 @@ class Query extends Factory
     public function delete($table)
     {
         self::$statement = 'DELETE FROM ' . $table;
+
+        return $this;
+    }
+
+    /**
+     * Custom query for debugging/testing
+     *
+     * @access  public
+     * @param   string  $statement
+     * @return  object
+     */
+    public function custom($statement)
+    {
+        self::$statement = $statement;
 
         return $this;
     }
@@ -271,3 +304,4 @@ class Query extends Factory
         return $sth->$function($parameter);
     }
 }
+
