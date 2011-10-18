@@ -79,7 +79,7 @@ class Session extends Factory
     {
         if(self::$session == self::SESSION_STARTED)
         {
-            throw new cloudException('A session has already been started');
+            return false;
         }
 
         self::$session = self::SESSION_STARTED;
@@ -98,7 +98,7 @@ class Session extends Factory
     {
         if(self::$session == self::SESSION_NOT_STARTED)
         {
-            throw new cloudException('There is no session to be destroyed');
+            return false;
         }
 
         self::$session = self::SESSION_NOT_STARTED;

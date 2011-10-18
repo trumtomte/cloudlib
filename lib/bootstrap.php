@@ -69,4 +69,4 @@ set_exception_handler(array('CloudException', 'exceptionHandler'));
  * Start the timer as 'boot' and then initialize
  */
 Timer::start('boot');
-Core::initialize();
+Core::main();

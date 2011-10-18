@@ -44,12 +44,12 @@ class Core
     public function __construct() {}
 
     /**
-     * Initialize
+     * Main
      *
      * @access  public
      * @return  void
      */
-    public static function initialize()
+    public static function main()
     {
         date_default_timezone_set(Config::general('timezone'));
         setlocale(LC_ALL, Config::general('locale'));

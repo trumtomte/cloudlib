@@ -149,17 +149,11 @@ class View extends Factory
         {
             $body = ob_get_contents();
 
-            ob_end_clean();
-
-            ob_start();
+            ob_clean();
 
             require $this->layout;
+        }
 
-            echo ob_get_clean();
-        }
-        else
-        {
-            echo ob_get_clean();
-        }
+        echo ob_get_clean();
     }
 }

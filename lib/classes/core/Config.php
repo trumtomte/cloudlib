@@ -21,7 +21,7 @@
 class Config extends Factory
 {
     /**
-     * Associative Array of each config
+     * Array of each config
      *
      * @access  private
      * @var     array
@@ -75,7 +75,7 @@ class Config extends Factory
 
         if(!is_array($array = $array[$default]))
         {
-            throw new CloudException('Config items must an array');
+            throw new CloudException('Config items must return an array');
         }
 
         static::set($config, $array);

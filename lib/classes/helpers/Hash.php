@@ -41,13 +41,9 @@ class Hash extends Factory
      */
     public static function encrypt($password, $salt, $rounds = 6)
     {
-        if($rounds < 4)
+        if($rounds < 4 or $rounds > 31)
         {
-            $rounds = 4;
-        }
-        elseif($rounds > 31)
-        {
-            $rounds = 31;
+            $rounds = 6;
         }
 
         $prefix = sprintf('$2a$%02d$', $rounds);
