@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>index_test</title>
+<title>Test</title>
 </head>
 <body>
 <?php
