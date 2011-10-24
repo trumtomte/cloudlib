@@ -7,9 +7,6 @@
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  * @package     cloudlib
  */
-
-// error class to handle messages then sending them
-// to this page for output?
 ?>
 <!DOCTYPE html>
 <html lang="en">
