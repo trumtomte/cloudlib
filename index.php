@@ -19,12 +19,17 @@ define('PRODUCTION', false);
 define('CONF', 'default');
 
 /**
+ * Default controller.
+ */
+define('CONTROLLER', 'index');
+
+/**
  * Logging: True allows logging and false does not.
  */
 define('LOGGING', true);
 
 /**
- * RewriteBase from .htaccess.
+ * RewriteBase from .htaccess. Default should be '/'
  */
 define('RWBASE', '/cloudlib/');
 
@@ -43,7 +48,7 @@ define('APP', ROOT . DS . 'app' . DS);
 
 /**
  * Define sub-level directories of the Application directory,
- * directories for controllers, views, models and layouts.
+ * directories for controllers, models and views.
  */
 define('CTRLS', APP . 'controllers' . DS);
 define('MODELS', APP . 'models' . DS);
@@ -83,3 +88,9 @@ define('EXT', '.php');
  * Require the bootstrap.
  */
 require LIB . 'bootstrap.php';
+
+/**
+ * Start the timer as 'boot' and then run Core::main()
+ */
+Timer::start('boot');
+Core::main();

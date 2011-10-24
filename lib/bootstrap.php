@@ -37,13 +37,20 @@ if(!defined('CONF')) {
 }
 
 /**
+ * If no default controller has been defined, define it as index.
+ */
+if(!defined('CONTROLLER')) {
+    define('CONTROLLER', 'index');
+}
+
+/**
  * Require the core class and set the autoload method.
  */
 require CORE . 'Core' . EXT;
 spl_autoload_register(array('Core', 'autoload'));
 
 /**
- * Set file logging.
+ * If Logging has not been defined, define it as true.
  */
 if(!defined('LOGGING')) {
     define('LOGGING', true);
@@ -55,18 +62,17 @@ if(LOGGING)
     ini_set('log_errors', 1);
     ini_set('error_log', LOGS . 'error.log');
 
-    // Log from the Logger class
+    // Log all exceptions
     register_shutdown_function(array('Logger', 'write'));
 }
 
 /**
  * Set the error and exception handler
  */
-set_error_handler(array('Core', 'errorHandler'));
+set_error_handler(array('CloudException', 'errorHandler'));
 set_exception_handler(array('CloudException', 'exceptionHandler'));
 
 /**
- * Start the timer as 'boot' and then initialize
+ * Set mb internal enoding
  */
-Timer::start('boot');
-Core::main();
+mb_internal_encoding('UTF-8');
