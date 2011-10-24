@@ -30,7 +30,7 @@
  * Default <head> block?, array of options?
  *
  * @package     cloudlib
- * @subpackage  cloudlib.lib.classes
+ * @subpackage  cloudlib.lib.classes.helpers
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -43,7 +43,8 @@ final class Html extends Factory
      * @var     array
      */
     private $tags = array(
-        'css' => '<link rel="stylesheet" href="%s" />'
+        'css' => '<link rel="stylesheet" href="%s" />',
+        'script' => '<script src="%s"></script>'
     );
 
     /**
@@ -78,12 +79,17 @@ final class Html extends Factory
 
     }
 
-    public function link()
+    public function a()
     {
 
     }
 
     public function img()
+    {
+
+    }
+
+    private function tag($input, $type, $ext)
     {
 
     }

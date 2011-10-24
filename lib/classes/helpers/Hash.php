@@ -14,7 +14,7 @@
  * <short description>
  *
  * @package     cloudlib
- * @subpackage  cloudlib.lib.classes
+ * @subpackage  cloudlib.lib.classes.helpers
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -39,7 +39,7 @@ class Hash extends Factory
      * @param   int     $rounds
      * @return  string
      */
-    public static function encrypt($password, $salt, $rounds = 6)
+    public static function bcrypt($password, $salt, $rounds = 6)
     {
         if($rounds < 4 or $rounds > 31)
         {
