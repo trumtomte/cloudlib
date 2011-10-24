@@ -14,7 +14,7 @@
  * <short description>
  *
  * @package     cloudlib
- * @subpackage  cloudlib.lib.classes
+ * @subpackage  cloudlib.lib.classes.helpers
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -27,6 +27,22 @@ class Database extends Factory
      * @var     object
      */
     private static $instance = null;
+
+    /**
+     * Current SQL statement
+     *
+     * @access  private
+     * @var     string
+     */
+    private $statement = null;
+
+    /**
+     * Array of to be prepared variables
+     *
+     * @access  private
+     * @var     array
+     */
+    private $variables = array();
 
    /**
      * Constructor
@@ -61,82 +77,275 @@ class Database extends Factory
     }
 
     /**
-     * Prepare an SQL statement
+     * Initiate a transaction
      *
      * @access  public
-     * @param   string  $statement
-     * @param   array   $driver
-     * @return  PDOstatement
+     * @return  void
      */
-    public function prepare($statement, array $driver = array())
-    {
-        return self::$instance->prepare($statement, $driver);
-    }
-
-    /**
-     * Starts a transaction
-     *
-     * @access  public
-     * @return  bool
-     */
-    public function beginTransaction()
+    public function begin()
     {
         return self::$instance->beginTransaction();
     }
 
     /**
-     * Commits a transactions
-     *
+     * Commit a transaction
+     * 
      * @access  public
-     * @return  bool
+     * @return  void
      */
     public function commit()
     {
-        return self::$instance->commit();
+        return self::$instance->begin();
     }
 
     /**
-     * Get the error code
+     * Roll back a transaction
      *
      * @access  public
-     * @return  string
+     * @return  void
      */
-    public function errorCode()
+    public function rollback()
     {
-        return self::$instance->errorCode();
+        return self::$instance->rollBack();
     }
 
     /**
-     * Get the error info
+     * Custom query statement
      *
      * @access  public
-     * @return  array
-     */
-    public function errorInfo()
-    {
-        return self::$instance->errorInfo();
-    }
-
-    /**
-     * Database query statement
-     *
-     * @access  public
+     * @param   string  $statement
      * @return  object
      */
     public function query($statement)
     {
-        return self::$instance->query($statement);
+        $this->statement = $statement;
+        return $this;
     }
 
     /**
-     * Database exec statement
+     * SELECT statement
      *
      * @access  public
-     * @return  integer
+     * @param   string  $statement
+     * @return  object
      */
-    public function exec($statement)
+    public function select($statement = '*')
     {
-        return self::$instance->exec($statement);
+        $this->statement = 'SELECT ' . $statement;
+        return $this;
+    }
+
+    /**
+     * FROM statement
+     *
+     * @access  public
+     * @param   string  $statement
+     * @return  void
+     */
+    public function from($statement)
+    {
+        $this->statement .= ' FROM ' . $statement;
+        return $this;
+    }
+
+    /**
+     * WHERE statement
+     *
+     * @access  public
+     * @param   string  $statement
+     * @param   array   $variables
+     * @return  object
+     */
+    public function where($statement, array $variables = array())
+    {
+        $this->statement .= ' WHERE ' . $statement;
+
+        if(isset($variables))
+        {
+            foreach($variables as $variable)
+            {
+                $this->variables[] = $variable;
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * ORDER statement
+     *
+     * @access  public
+     * @param   string  $statement
+     * @return  object
+     */
+    public function order($statement = 'ASC')
+    {
+        $this->statement .= ' ORDER BY ' . $statement;
+        return $this;
+    }
+
+    /**
+     * GROUP statement
+     *
+     * @access  public
+     * @param   string  $statement
+     * @return  object
+     */
+    public function group($statement)
+    {
+        $this->statement .= ' GROUP BY ' . $statement;
+        return $this;
+    } 
+
+    /**
+     * LIMIT statement
+     * 
+     * @access  public
+     * @param   int     $statement
+     * @return  object
+     */
+    public function limit($statement = 1)
+    {
+        $this->statement .= ' LIMIT ' . $statement;
+        return $this;
+    }
+
+    /**
+     * JOIN statement
+     *
+     * @access  public
+     * @return  object
+     */
+    public function join()
+    {
+        // TBD
+    }
+
+    /**
+     * INSERT statement
+     *
+     * @access  public
+     * @param   string  $table
+     * @param   array   $columns
+     * @param   array   $variables
+     * @return  object
+     */
+    public function insert($table, array $columns, array $variables)
+    {
+        $this->statement = 'INSERT INTO ' . $table . ' ';
+
+        $cols = null;
+
+        for($i = 0; $i < (count($columns) - 1); $i++)
+        {
+            $cols .= $columns[$i] . ', ';
+        }
+
+        $cols .= end($columns);
+
+        $values = '(' . str_repeat('?, ', (count($columns) - 1)) . '?)';
+        $values = str_repeat($values . ', ', ((count($variables) / count($columns)) - 1)) . $values;
+
+        $this->statement .= $cols . ' VALUES ' . $values;
+
+        foreach($variables as $variable)
+        {
+            $this->variables[] = $variable;
+        }
+
+        return $this;
+    }
+
+    /**
+     * UPDATE statement
+     * 
+     * @access  public
+     * @param   string  $table
+     * @param   array   $columns
+     * @param   array   $variables
+     * @return  object
+     */
+    public function update($table, array $columns, array $variables)
+    {
+        $this->statement = 'UPDATE ' . $table . ' SET ';
+
+        $updates = null;
+
+        for($i = 0; $i < (count($columns) - 1); $i++)
+        {
+            $updates .= $columns[$i] . ' = ?, ';
+        }
+
+        $updates .= end($columns) . ' = ? ';
+
+        $this->statement .= $updates;
+
+        foreach($variables as $variable)
+        {
+            $this->variables[] = $variable;
+        }
+
+        return $this;
+    }
+
+    /**
+     * UPDATE statement, with CASE
+     *
+     * @access  public
+     * @param   string  $table
+     * @param   string  $column
+     * @param   string  $case
+     * @param   array   $variables
+     * @return  object
+     */
+    public function updateMulti($table, $column, $case, array $variables)
+    {
+        $this->statement = 'UPDATE ' . $table . ' SET ' . $column . ' = CASE ' . $case;
+
+        $cases = null;
+
+        foreach($variables as $key => $value)
+        {
+            $cases .= ' WHEN \'' . $key . '\' THEN \'' . $value . '\'';
+        }
+
+        $this->statement .= $cases . ' ELSE ' . $column . ' END';
+
+        return $this;
+    }
+
+    /**
+     * DELETE statement
+     *
+     * @access  public
+     * @param   string  $table
+     * @return  object
+     */
+    public function delete($table)
+    {
+        $this->statement = 'DELETE FROM ' . $table;
+        return $this;
+    }
+
+    /**
+     * Execute a prepared statement
+     *
+     * @access  public
+     * @param   string  $function
+     * @param   string  $parameter
+     * @return  mixed
+     */
+    public function execute($function = null, $parameter = null)
+    {
+        $sth = self::$instance->prepare($this->statement);
+
+        if(empty($function))
+        {
+            return $sth->execute($this->variables);
+        }
+
+        $sth->execute($this->variables);
+
+        return $sth->$function($parameter);
     }
 
     /**
