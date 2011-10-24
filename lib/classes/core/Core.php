@@ -14,7 +14,7 @@
  * <short description>
  *
  * @package     cloudlib
- * @subpackage  cloudlib.lib.classes
+ * @subpackage  cloudlib.lib.classes.core
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,7 +25,7 @@ class Core
      *
      * @access  public
      */
-    const VERSION = '0.3.10.1';
+    const VERSION = '0.3.11.0';
 
     /**
      * Array of current activated modules
@@ -53,12 +53,10 @@ class Core
     {
         date_default_timezone_set(Config::general('timezone'));
         setlocale(LC_ALL, Config::general('locale'));
-        mb_internal_encoding(Config::general('mbstring'));
 
         Request::removeMagicQuotes();
 
-        $dispatcher = Dispatcher::factory();
-        $dispatcher->dispatch();
+        $dispatcher = Dispatcher::factory()->dispatch();
     }
 
     /**
@@ -109,22 +107,6 @@ class Core
         }
 
         return self::$helpers[$helper];
-    }
-
-    /**
-     * Error handler throws a new ErrorException
-     *
-     * @access  public
-     * @param   int     $errno
-     * @param   string  $errstr
-     * @param   string  $errfile
-     * @param   string  $errline
-     * @throws  ErrorException
-     * @return  void
-     */
-    public static function errorHandler($errno, $errstr, $errfile, $errline)
-    {
-        throw new ErrorException($errstr, $errno, $errno, $errfile, $errline);
     }
 
     /**

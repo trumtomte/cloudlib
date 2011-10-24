@@ -14,34 +14,12 @@
  * <short description>
  *
  * @package     cloudlib
- * @subpackage  cloudlib.lib.classes
+ * @subpackage  cloudlib.lib.classes.core
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class Request extends Factory
 {
-    /**
-     * Shorthand names for $_SERVER keys
-     *
-     * @access  private
-     * @var     array
-     */
-    private static $serverKeys = array(
-        'host'       => 'HTTP_HOST',
-        'agent'      => 'HTTP_USER_AGENT',
-        'servername' => 'SERVER_NAME',
-        'serverport' => 'SERVER_PORT',
-        'filename'   => 'SCRIPT_FILENAME',
-        'protocol'   => 'SERVER_PROTOCOL',
-        'method'     => 'REQUEST_METHOD',
-        'query'      => 'QUERY_STRING',
-        'uri'        => 'REQUEST_URI',
-        'scriptname' => 'SCRIPT_NAME',
-        'self'       => 'PHP_SELF',
-        'time'       => 'REQUEST_TIME',
-        'ip'         => 'REMOTE_ADDR'
-    );
-
     /**
      * Constructor
      *
@@ -63,7 +41,6 @@ class Request extends Factory
         {
             return $_GET;
         }
-
         return (isset($_GET[$key])) ? $_GET[$key] : false;
     }
 
@@ -80,7 +57,6 @@ class Request extends Factory
         {
             return $_POST;
         }
-
         return isset($_POST[$key]) ? $_POST[$key] : false;
     }
 
@@ -97,7 +73,6 @@ class Request extends Factory
         {
             return $_COOKIE;
         }
-
         return isset($_COOKIE[$key]) ? $_COOKIE[$key] : false;
     }
 
@@ -114,7 +89,6 @@ class Request extends Factory
         {
             return $_REQUEST;
         }
-
         return isset($_REQUEST[$key]) ? $_REQUEST[$key] : false;
     }
 
@@ -131,14 +105,6 @@ class Request extends Factory
         {
             return $_SERVER;
         }
-
-        if(array_key_exists($key, static::$serverKeys))
-        {
-            return isset($_SERVER[static::$serverKeys[$key]])
-                    ? $_SERVER[static::$serverKeys[$key]]
-                    : false;
-        }
-
         return isset($_SERVER[$key]) ? $_SERVER[$key] : false;
     }
 
@@ -146,11 +112,33 @@ class Request extends Factory
      * Get the current request method
      *
      * @access  public
-     * @return  mixed
+     * @return  string
      */
     public static function method()
     {
         return static::_server('REQUEST_METHOD');
+    }
+
+    /**
+     * Check if the request method is get
+     *
+     * @access  public
+     * @return  boolean
+     */
+    public static function isGet()
+    {
+        return (static::method() === 'GET') ? true : false;
+    }
+
+    /**
+     * Check if the request method is post
+     *
+     * @access  public
+     * @return  boolean
+     */
+    public static function isPost()
+    {
+        return (static::method() === 'POST') ? true : false;
     }
 
     /**

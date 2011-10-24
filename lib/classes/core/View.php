@@ -14,7 +14,7 @@
  * <short description>
  *
  * @package     cloudlib
- * @subpackage  cloudlib.lib.classes
+ * @subpackage  cloudlib.lib.classes.core
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -43,6 +43,14 @@ class View extends Factory
      * @var     array
      */
     private $vars = array();
+
+    /**
+     * The output body
+     *
+     * @access  public
+     * @var     string
+     */
+    public $body = null;
 
     /**
      * Constructor
@@ -132,18 +140,19 @@ class View extends Factory
             $view = $this->classname;
         }
 
-        $file = VIEWS . $view . EXT;
-
-        if(!file_exists($file))
+        if(!file_exists(VIEWS . $view . EXT))
         {
             throw new cloudException('View "' . $view . '" does not exist');
         }
 
         ob_start();
 
-        extract($this->vars);
+        if(isset($this->vars))
+        {
+            extract($this->vars);
+        }
 
-        require $file;        
+        require VIEWS . $view . EXT;        
 
         if(isset($this->layout))
         {
@@ -153,7 +162,7 @@ class View extends Factory
 
             require $this->layout;
         }
-
-        echo ob_get_clean();
+        
+        $this->body = ob_get_clean();
     }
 }

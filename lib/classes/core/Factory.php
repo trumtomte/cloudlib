@@ -14,7 +14,7 @@
  * <short description>
  *
  * @package     cloudlib
- * @subpackage  cloudlib.lib.classes
+ * @subpackage  cloudlib.lib.classes.core
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */

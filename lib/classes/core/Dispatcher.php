@@ -14,7 +14,7 @@
  * <short description>
  *
  * @package     cloudlib
- * @subpackage  cloudlib.lib.classes
+ * @subpackage  cloudlib.lib.classes.core
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -53,6 +53,14 @@ class Dispatcher extends Factory
     private $param = null;
 
     /**
+     * Current view object
+     *
+     * @access  private
+     * @var     object
+     */
+    private $view = null;
+
+    /**
      * Constructor
      *
      * @access  public
@@ -80,9 +88,15 @@ class Dispatcher extends Factory
         $this->setRoute();
 
         $controller = $this->loadController();
-        $method = $this->getMethod($controller);
 
-        $this->invoke($controller, $method, $this->param);
+        if(!method_exists($controller, $this->method))
+        {
+            $this->method = 'index';
+        }
+
+        $this->invoke($controller, $this->method, $this->param);
+        
+        $response = Response::factory()->body($this->view->body)->send();
     }
 
     /**
@@ -109,7 +123,7 @@ class Dispatcher extends Factory
     }
 
     /**
-     * Loads a controller
+     * Loads a controller with a view object and the corresponding model
      *
      * @access  private
      * @return  object
@@ -118,31 +132,16 @@ class Dispatcher extends Factory
     {
         $controller = $this->class . 'Controller';
 
-        if(!is_readable(CTRLS . $this->class . 'Controller' . EXT))
+        if(!is_readable(CTRLS . $controller . EXT))
         {
-            header('HTTP/1.1 404 Not Found');
-            require LIB . 'error/404.php';
-            exit(1);
+            $response = Response::factory()->notFound();
         }
 
-        return $controller::factory($this->class);
-    }
+        $this->view = View::factory($this->class);
 
-    /**
-     * Gets the Method
-     *
-     * @access  private
-     * @param   string  $controller
-     * @return  string
-     */
-    private function getMethod($controller)
-    {
-        if(!method_exists($controller, $this->method))
-        {
-            return 'index';
-        }
+        $model = $this->class . 'Model';
 
-        return $this->method;
+        return $controller::factory($this->view, $model::factory());
     }
 
     /**
@@ -167,7 +166,7 @@ class Dispatcher extends Factory
      */
     private function getURI()
     {
-        return empty($_GET['uri']) ? 'index/index' : $_GET['uri'];
+        return empty($_GET['uri']) ? CONTROLLER : $_GET['uri'];
     }
 
     /**
@@ -191,7 +190,6 @@ class Dispatcher extends Factory
      */
     public static function redirect($uri = null)
     {
-        $dispatcher = Dispatcher::factory($uri);
-        $dispatcher->dispatch();
+        $dispatcher = Dispatcher::factory($uri)->dispatch();
     }
 }

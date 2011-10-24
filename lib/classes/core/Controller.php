@@ -14,7 +14,7 @@
  * Abstract class for all the controllers
  *
  * @package     cloudlib
- * @subpackage  cloudlib.lib.classes
+ * @subpackage  cloudlib.lib.classes.core
  * @copyright   Copyright (c) 2011 Sebastian Book <sebbebook@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -40,37 +40,14 @@ abstract class Controller extends Factory
      * Constructor
      *
      * @access  public
+     * @param   object  $view
+     * @param   object  $model
      * @return  void
      */
-    public function __construct($class)
+    public function __construct(View $view, Model $model)
     {
-        $this->loadModel($class);
-        $this->loadView($class);
-    }
-
-    /**
-     * Loads the corresponding model
-     *
-     * @access  public
-     * @param   string  $model
-     * @return  void
-     */
-    final public function loadModel($model)
-    {
-        $model .= 'Model';
-
-        $this->model = $model::factory();
-    }
-
-    /**
-     * Loads the view object
-     *
-     * @access  public
-     * @return  void
-     */
-    final public function loadView($classname)
-    {
-        $this->view = View::factory($classname);
+        $this->view = $view;
+        $this->model = $model;
     }
 
     /**
