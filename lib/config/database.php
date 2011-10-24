@@ -21,8 +21,8 @@ return array
         'persistent'    => true
     ),
 
-    'test' => array(
-        'dsn'           => 'mysql:host=localhost;dbname=test',
+    'custom' => array(
+        'dsn'           => 'mysql:host=localhost;dbname=custom',
         'username'      => 'root',
         'password'      => 'root',
         'charset'       => 'utf8',
