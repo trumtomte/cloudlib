@@ -44,7 +44,9 @@ final class Html extends Factory
      */
     private $tags = array(
         'css' => '<link rel="stylesheet" href="%s" />',
-        'script' => '<script src="%s"></script>'
+        'script' => '<script src="%s"></script>',
+        'a' => '<a href="%s" %s>%s</a>',
+        'img' => '<img src="%s" %s />'
     );
 
     /**
@@ -55,11 +57,18 @@ final class Html extends Factory
      */
     public function __construct() {}
 
+    /**
+     * Create a stylesheet
+     *
+     * @access  public
+     * @param   string  $path
+     * @return  string
+     */
     public function css($path)
     {
         if(is_string($path))
         {
-            return sprintf($this->tags['css'], RWBASE . $path . '.css') . PHP_EOL;
+            return sprintf($this->tags['css'], CSS . $path . '.css') . PHP_EOL;
         }
         if(is_array($path))
         {
@@ -67,30 +76,82 @@ final class Html extends Factory
 
             foreach($path as $value)
             {
-                $stylesheets .= sprintf($this->tags['css'], RWBASE . $value . '.css') . PHP_EOL;
+                $stylesheets .= sprintf($this->tags['css'], CSS . $value . '.css') . PHP_EOL;
             }
 
             return $stylesheets;
         }
     }
 
-    public function script()
+    /**
+     * Create a script tag
+     *
+     * @access  public
+     * @param   string  $path
+     * @return  string
+     */
+    public function script($path)
     {
+        if(is_string($path))
+        {
+            return sprintf($this->tags['script'], JS . $path . '.js') . PHP_EOL;
+        }
+        if(is_array($path))
+        {
+            $scripts = null;
 
+            foreach($path as $value)
+            {
+                $scripts .= sprintf($this->tags['script'], JS . $path . '.js') . PHP_EOL;
+            }
+
+            return $scripts;
+        }
     }
 
-    public function a()
+    /**
+     * Create an anchor
+     *
+     * @access  public
+     * @param   string  $path
+     * @param   string  $content
+     * @param   array   $attributes
+     * @return  string
+     */
+    public function a($path, $content, array $attributes = array())
     {
-
+        return sprintf($this->tags['a'], RWBASE . $path, $this->getAttrStr($attributes), $content) . PHP_EOL;
     }
 
-    public function img()
+    /**
+     * Create an image
+     *
+     * @access  public
+     * @param   string  $path
+     * @param   array   $attributes
+     * @return  string
+     */
+    public function img($path, array $attributes = array())
     {
-
+        return sprintf($this->tags['img'], IMG . $path, $this->getAttrStr($attributes)) . PHP_EOL;
     }
 
-    private function tag($input, $type, $ext)
+    /**
+     * Take an array of attributes and return it as a string
+     *
+     * @access  private
+     * @param   array   $attributes
+     * @return  string
+     */
+    private function getAttrStr(array $attributes)
     {
+        $string = null;
 
+        foreach($attributes as $key => $value)
+        {
+            $string .= $key . '="' . $value . '" ';
+        }
+
+        return $string;
     }
 }
