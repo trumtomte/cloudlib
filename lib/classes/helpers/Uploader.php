@@ -75,7 +75,7 @@ class Uploader extends Factory
      * @access  private
      * @var     array
      */
-    private $imagetypes = array('jpg', 'jpeg', 'png', 'gif');
+    private $imagetypes = array('jpg', 'jpeg', 'png', 'gif', 'bmp');
 
     /**
      * Constructor
@@ -356,7 +356,7 @@ class Uploader extends Factory
             $filename = $prefix . $name;
         }
 
-        $filename = string::replace(' ', '_', $filename);
+        $filename = mb_ereg_replace(' ', '_', $filename);
 
         if(self::$config['overwrite'] == false)
         {
