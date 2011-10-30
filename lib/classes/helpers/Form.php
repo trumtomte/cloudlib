@@ -124,7 +124,7 @@ class Form extends Factory
     {
         if(is_string($action))
         {
-            $attributes['action'] = $action;
+            $attributes['action'] = RWBASE . $action;
         }
         else
         {
