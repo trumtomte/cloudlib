@@ -29,6 +29,78 @@ abstract class Model extends Factory
     public function __construct() {}
 
     /**
+     * Gets the first value from a SELECT query
+     *
+     * @access  public
+     * @param   string  $select
+     * @param   string  $from
+     * @param   int     $id
+     * @return  string
+     */
+    public function getFirstById($select, $from, $id)
+    {
+        $array = $this->database
+                    ->select($select)
+                    ->from($from)
+                    ->where('id = ?', array($id))
+                    ->execute('fetch');
+
+        return $array[0];
+    }
+
+    /**
+     * Gets the first row from a SELECT query
+     *
+     * @access  public
+     * @param   string  $select
+     * @param   string  $from
+     * @param   int     $id
+     * @return  array
+     */
+    public function getRowById($select, $from, $id)
+    {
+        return $this->database
+                ->select($select)
+                ->from($from)
+                ->where('id = ?', array($id))
+                ->execute('fetch');
+    }
+
+    /**
+     * Delete an item based on an ID
+     *
+     * @access  public
+     * @param   string  $from
+     * @param   int     $id
+     * @return  void
+     */
+    public function deleteById($from, $id)
+    {
+        $this->database
+            ->delete($from)
+            ->where('id = ?', array($id))
+            ->execute();
+    }
+
+    /**
+     * Update a single column by ID
+     *
+     * @access  public
+     * @param   string  $table
+     * @param   string  $column
+     * @param   string  $value
+     * @param   int     $id
+     * @return  void
+     */
+    public function updateColById($table, $column, $value, $id)
+    {
+        $this->database
+            ->update($table, array($column), array($value))
+            ->where('id = ?', array($id))
+            ->execute();
+    }
+
+    /**
      * Magic method for loading helper classes
      *
      * @access  public
