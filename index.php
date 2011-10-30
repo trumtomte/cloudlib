@@ -75,6 +75,13 @@ define('CORE', CLASSES . 'core' . DS);
 define('HELPERS', CLASSES . 'helpers' . DS);
 
 /**
+ * Define directory paths for CSS, JavaScript and Image files.
+ */
+define('CSS', RWBASE . 'pub/css' . DS);
+define('JS', RWBASE . 'pub/js' . DS);
+define('IMG', RWBASE . 'pub/img' . DS);
+
+/**
  * File extensions for files and classes.
  */
 define('EXT', '.php');
