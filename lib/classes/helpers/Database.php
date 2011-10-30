@@ -245,7 +245,7 @@ class Database extends Factory
         $values = '(' . str_repeat('?, ', (count($columns) - 1)) . '?)';
         $values = str_repeat($values . ', ', ((count($variables) / count($columns)) - 1)) . $values;
 
-        $this->statement .= $cols . ' VALUES ' . $values;
+        $this->statement .= '(' . $cols . ') VALUES ' . $values;
 
         foreach($variables as $variable)
         {
