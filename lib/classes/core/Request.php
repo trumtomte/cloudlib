@@ -142,6 +142,17 @@ class Request extends Factory
     }
 
     /**
+     * Check if the request method is AJAX
+     *
+     * @access  public
+     * @return  boolean
+     */
+    public static function isAjax()
+    {
+        return (static::_server('HTTP_X_REQUESTED_WITH') === 'xmlhttprequest') ? true : false;
+    }
+
+    /**
      * Shorthand function to get a variable from one of the global arrays
      *
      * @access  public
