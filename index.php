@@ -29,11 +29,6 @@ define('CONTROLLER', 'index');
 define('LOGGING', true);
 
 /**
- * RewriteBase from .htaccess. Default should be '/'
- */
-define('RWBASE', '/cloudlib/');
-
-/**
  * Define the root directory and the directory separator.
  */
 define('DS', DIRECTORY_SEPARATOR);
@@ -75,11 +70,17 @@ define('CORE', CLASSES . 'core' . DS);
 define('HELPERS', CLASSES . 'helpers' . DS);
 
 /**
- * Define directory paths for CSS, JavaScript and Image files.
+ * Define the URL path.
  */
-define('CSS', RWBASE . 'pub/css' . DS);
-define('JS', RWBASE . 'pub/js' . DS);
-define('IMG', RWBASE . 'pub/img' . DS);
+define('URLPATH', substr(substr($_SERVER['SCRIPT_FILENAME'], 0, -9),
+        strlen($_SERVER['DOCUMENT_ROOT'])));
+
+/**
+ * Define paths for CSS, JavaScript and Image files.
+ */
+define('CSS', URLPATH . 'pub/css' . DS);
+define('JS', URLPATH . 'pub/js' . DS);
+define('IMG', URLPATH . 'pub/img' . DS);
 
 /**
  * File extensions for files and classes.
