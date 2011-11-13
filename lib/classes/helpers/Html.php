@@ -37,16 +37,16 @@
 final class Html extends Factory
 {
     /**
-     * Array of html tags
+     * Array of strings for formatting
      *
      * @access  private
      * @var     array
      */
     private $tags = array(
-        'css' => '<link rel="stylesheet" href="%s" />',
+        'css'    => '<link rel="stylesheet" href="%s" />',
         'script' => '<script src="%s"></script>',
-        'a' => '<a href="%s" %s>%s</a>',
-        'img' => '<img src="%s" %s />'
+        'a'      => '<a href="%s" %s>%s</a>',
+        'img'    => '<img src="%s" %s />'
     );
 
     /**
@@ -58,17 +58,17 @@ final class Html extends Factory
     public function __construct() {}
 
     /**
-     * Create a stylesheet
+     * <link> element for CSS
      *
      * @access  public
-     * @param   string  $path
+     * @param   string|array  $path
      * @return  string
      */
     public function css($path)
     {
         if(is_string($path))
         {
-            return sprintf($this->tags['css'], CSS . $path . '.css') . PHP_EOL;
+            return sprintf($this->tags['css'], CSS . $path . '.css');
         }
         if(is_array($path))
         {
@@ -76,7 +76,7 @@ final class Html extends Factory
 
             foreach($path as $value)
             {
-                $stylesheets .= sprintf($this->tags['css'], CSS . $value . '.css') . PHP_EOL;
+                $stylesheets .= sprintf($this->tags['css'], CSS . $value . '.css');
             }
 
             return $stylesheets;
@@ -84,17 +84,17 @@ final class Html extends Factory
     }
 
     /**
-     * Create a script tag
+     * <script> element
      *
      * @access  public
-     * @param   string  $path
+     * @param   string|array  $path
      * @return  string
      */
     public function script($path)
     {
         if(is_string($path))
         {
-            return sprintf($this->tags['script'], JS . $path . '.js') . PHP_EOL;
+            return sprintf($this->tags['script'], JS . $path . '.js');
         }
         if(is_array($path))
         {
@@ -102,7 +102,7 @@ final class Html extends Factory
 
             foreach($path as $value)
             {
-                $scripts .= sprintf($this->tags['script'], JS . $path . '.js') . PHP_EOL;
+                $scripts .= sprintf($this->tags['script'], JS . $path . '.js');
             }
 
             return $scripts;
@@ -110,7 +110,7 @@ final class Html extends Factory
     }
 
     /**
-     * Create an anchor
+     * <a> element
      *
      * @access  public
      * @param   string  $path
@@ -120,11 +120,12 @@ final class Html extends Factory
      */
     public function a($path, $content, array $attributes = array())
     {
-        return sprintf($this->tags['a'], RWBASE . $path, $this->getAttrStr($attributes), $content) . PHP_EOL;
+        return sprintf($this->tags['a'], URLPATH . $path,
+                       $this->getAttrStr($attributes), $content);
     }
 
     /**
-     * Create an image
+     * <img> element
      *
      * @access  public
      * @param   string  $path
@@ -133,7 +134,7 @@ final class Html extends Factory
      */
     public function img($path, array $attributes = array())
     {
-        return sprintf($this->tags['img'], IMG . $path, $this->getAttrStr($attributes)) . PHP_EOL;
+        return sprintf($this->tags['img'], IMG . $path, $this->getAttrStr($attributes));
     }
 
     /**
@@ -149,7 +150,7 @@ final class Html extends Factory
 
         foreach($attributes as $key => $value)
         {
-            $string .= $key . '="' . $value . '" ';
+            $string .= sprintf('%s="%s"', $key, $value);
         }
 
         return $string;
