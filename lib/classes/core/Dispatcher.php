@@ -21,14 +21,6 @@
 class Dispatcher extends Factory
 {
     /**
-     * Request uri
-     *
-     * @access  private
-     * @var     string
-     */
-    private $uri = null;
-
-    /**
      * Controller
      *
      * @access  private
@@ -71,10 +63,26 @@ class Dispatcher extends Factory
     {
         if($uri === null)
         {
-            $uri = $this->getURI();
+            $uri = Request::uri();
+        }
+        else
+        {
+            $uri = explode('/', $uri);
         }
 
-        $this->uri = $this->filter($uri);
+        $this->class = $uri[0];
+
+        if(isset($uri[1]))
+        {
+            $this->method = $uri[1];
+
+            if(isset($uri[2]))
+            {
+                $this->param = $uri[2];
+            }
+        }
+
+        $this->view = View::factory($this->class);
     }
 
     /**
@@ -85,8 +93,6 @@ class Dispatcher extends Factory
      */
     public function dispatch()
     {
-        $this->setRoute();
-
         $controller = $this->loadController();
 
         if(!method_exists($controller, $this->method))
@@ -97,29 +103,6 @@ class Dispatcher extends Factory
         $this->invoke($controller, $this->method, $this->param);
         
         $response = Response::factory()->body($this->view->body)->send();
-    }
-
-    /**
-     * Sets the controller route
-     *
-     * @access  private
-     * @return  void
-     */
-    private function setRoute()
-    {
-        $route = explode('/', $this->uri);
-
-        $this->class = $route[0];
-
-        if(isset($route[1]))
-        {
-            $this->method = $route[1];
-
-            if(isset($route[2]))
-            {
-                $this->param = $route[2];
-            }
-        }
     }
 
     /**
@@ -134,14 +117,28 @@ class Dispatcher extends Factory
 
         if(!is_readable(CTRLS . $controller . EXT))
         {
-            $response = Response::factory()->notFound();
+            //$response = Response::factory()->notFound();
+            ob_start();
+            require LIB . 'error/404.php';
+            $response = Response::factory(404)->body(ob_get_clean())->send();
         }
 
-        $this->view = View::factory($this->class);
+        switch(strtolower(Request::method()))
+        {
+            case 'get':
+                $data = Request::_get();
+                break;
+            case 'post':
+                $data = Request::_post();
+                break;
+            default:
+                $data = array();
+                break;
+        }
 
         $model = $this->class . 'Model';
 
-        return $controller::factory($this->view, $model::factory());
+        return $controller::factory($this->view, $model::factory(), $data);
     }
 
     /**
@@ -156,29 +153,6 @@ class Dispatcher extends Factory
     private function invoke($class, $method, $param)
     {
         $class->$method($param);
-    }
-
-    /**
-     * Gets the URI
-     *
-     * @access  private
-     * @return  string
-     */
-    private function getURI()
-    {
-        return empty($_GET['uri']) ? CONTROLLER : $_GET['uri'];
-    }
-
-    /**
-     * Remove unwanted characters from the uri
-     *
-     * @access  private
-     * @param   string  $uri
-     * @return  string
-     */
-    private function filter($uri)
-    {
-        return filter_var($uri, FILTER_SANITIZE_URL);
     }
 
     /**
