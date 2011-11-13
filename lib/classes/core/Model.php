@@ -29,7 +29,7 @@ abstract class Model extends Factory
     public function __construct() {}
 
     /**
-     * Gets the first value from a SELECT query
+     * Gets the first value from a SELECT query by id
      *
      * @access  public
      * @param   string  $select
@@ -49,7 +49,7 @@ abstract class Model extends Factory
     }
 
     /**
-     * Gets the first row from a SELECT query
+     * Gets the first row from a SELECT query by id
      *
      * @access  public
      * @param   string  $select
@@ -67,7 +67,7 @@ abstract class Model extends Factory
     }
 
     /**
-     * Delete an item based on an ID
+     * Delete an item based on an id
      *
      * @access  public
      * @param   string  $from
@@ -83,7 +83,7 @@ abstract class Model extends Factory
     }
 
     /**
-     * Update a single column by ID
+     * Update a single column by id
      *
      * @access  public
      * @param   string  $table
@@ -109,6 +109,6 @@ abstract class Model extends Factory
      */
     final public function __get($helper)
     {
-        return core::loadHelper($helper);
+        return Core::loadHelper($helper);
     }
 }
