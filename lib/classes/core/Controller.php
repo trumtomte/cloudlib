@@ -37,6 +37,14 @@ abstract class Controller extends Factory
     public $model;
 
     /**
+     * Array of request variables
+     *
+     * @access  public
+     * @var     array
+     */
+    public $data;
+
+    /**
      * Constructor
      *
      * @access  public
@@ -44,10 +52,11 @@ abstract class Controller extends Factory
      * @param   object  $model
      * @return  void
      */
-    public function __construct(View $view, Model $model)
+    public function __construct(View $view, Model $model, array $data)
     {
         $this->view = $view;
         $this->model = $model;
+        $this->data = $data;
     }
 
     /**
