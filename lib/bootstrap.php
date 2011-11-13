@@ -23,13 +23,6 @@ if(PRODUCTION == true) {
 }
 
 /**
- * If no RewriteBase is not defined, define it as root.
- */
-if(!defined('RWBASE')) {
-    define('RWBASE', '/');
-}
-
-/**
  * If no default configuration is defined, define it as default.
  */
 if(!defined('CONF')) {
@@ -62,7 +55,7 @@ if(LOGGING)
     ini_set('log_errors', 1);
     ini_set('error_log', LOGS . 'error.log');
 
-    // Log all exceptions
+    // Write to file at shutdown
     register_shutdown_function(array('Logger', 'write'));
 }
 
