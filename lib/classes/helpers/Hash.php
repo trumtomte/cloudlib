@@ -48,7 +48,7 @@ class Hash extends Factory
 
         $prefix = sprintf('$2a$%02d$', $rounds);
 
-        $salt .= config::general('salt');
+        $salt .= Config::general('salt');
 
         if(!preg_match('#^[A-Za-z0-9./]{22}$#', $salt))
         {
