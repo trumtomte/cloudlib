@@ -27,7 +27,7 @@ class Request extends Factory
      * @return  void
      */
     public function __construct() {}
-    
+
     /**
      * Get a $_GET variable
      *
@@ -153,6 +153,19 @@ class Request extends Factory
     }
 
     /**
+     * Return a filtered uri as an array
+     *
+     * @access  public
+     * @return  array
+     */
+    public static function uri()
+    {
+        $uri = (empty($_GET['uri'])) ? CONTROLLER : $_GET['uri'];
+
+        return explode('/', filter_var($uri, FILTER_SANITIZE_URL));
+    }
+
+    /**
      * Shorthand function to get a variable from one of the global arrays
      *
      * @access  public
@@ -213,9 +226,9 @@ class Request extends Factory
     {
         foreach($array as $key => $value)
         {
-            $array[$key] = is_array($value) ?
-                static::stripslashRecursive($value) :
-                stripslashes($value);
+            $array[$key] = is_array($value)
+                ? static::stripslashRecursive($value)
+                : stripslashes($value);
         }
 
         return $array;
