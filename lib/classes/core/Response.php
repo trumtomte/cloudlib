@@ -106,23 +106,6 @@ class Response extends Factory
     }
 
     /**
-     * 404
-     *
-     * @access  public
-     * @return  void
-     */
-    public function notFound()
-    {
-        ob_start();
-
-        require LIB . 'error/404.php';
-
-        $response = Response::factory(404)->body(ob_get_clean())->send();
-
-        exit(0);
-    }
-
-    /**
      * Sets the output body
      *
      * @access  public
@@ -188,9 +171,13 @@ class Response extends Factory
     {
         $this->sendHeaders();
 
-        if(isset($this->body))
+        if(!isset($this->body))
         {
-            echo $this->body;
+            throw new CloudException('No response body has been set');
         }
+
+        echo $this->body;
+
+        exit();
     }
 }
