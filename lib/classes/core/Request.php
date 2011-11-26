@@ -149,7 +149,7 @@ class Request extends Factory
      */
     public static function isAjax()
     {
-        return (static::_server('HTTP_X_REQUESTED_WITH') === 'xmlhttprequest') ? true : false;
+        return (static::_server('HTTP_X_REQUESTED_WITH') === 'XMLHttpRequest') ? true : false;
     }
 
     /**
