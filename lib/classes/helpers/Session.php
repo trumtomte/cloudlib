@@ -54,22 +54,6 @@ class Session extends Factory
     public function __construct() {}
 
     /**
-     * Magic method
-     *
-     * @access  private
-     * @return  void
-     */
-    private function __clone() {}
-
-    /**
-     * Magic method
-     *
-     * @access  private
-     * @return  void
-     */
-    private function __wakeup() {}
-
-    /**
      * Starts a session
      *
      * @access  public
