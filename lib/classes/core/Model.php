@@ -109,6 +109,6 @@ abstract class Model extends Factory
      */
     final public function __get($helper)
     {
-        return Core::loadHelper($helper);
+        return $helper::factory();
     }
 }
