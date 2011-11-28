@@ -21,6 +21,14 @@
 abstract class Factory
 {
     /**
+     * Array of objects
+     *
+     * @access  private
+     * @var     array
+     */
+    private static $objects = array();
+
+    /**
      * Constructor
      *
      * @access  public
@@ -36,7 +44,14 @@ abstract class Factory
      */
     final public static function factory()
     {
-        $reflection = new ReflectionClass(get_called_class());
-        return $reflection->newInstanceArgs(func_get_args());
+        $object = get_called_class();
+
+        if(!in_array($object, self::$objects))
+        {
+            self::$objects[$object] = new ReflectionClass($object);
+            return self::$objects[$object]->newInstanceArgs(func_get_args());
+        }
+
+        return self::$objects[$object];
     }
 }
