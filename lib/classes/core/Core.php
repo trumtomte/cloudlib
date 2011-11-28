@@ -25,15 +25,7 @@ class Core
      *
      * @access  public
      */
-    const VERSION = '0.3.11.0';
-
-    /**
-     * Array of current activated modules
-     *
-     * @access  private
-     * @var     array
-     */
-    private static $helpers = array();
+    const VERSION = '0.4.0';
 
     /**
      * Constructor
@@ -90,23 +82,6 @@ class Core
         }
         
         require $file;
-    }
-
-    /**
-     * Loads a helper
-     *
-     * @access  public
-     * @param   string  $helper
-     * @return  object
-     */
-    public static function loadHelper($helper)
-    {
-        if(!in_array($helper, self::$helpers))
-        {
-            self::$helpers[$helper] = $helper::factory();
-        }
-
-        return self::$helpers[$helper];
     }
 
     /**
