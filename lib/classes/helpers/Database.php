@@ -21,14 +21,6 @@
 class Database extends Factory
 {
     /**
-     * Database object
-     *
-     * @access  private
-     * @var     object
-     */
-    private static $instance = null;
-
-    /**
      * Current SQL statement
      *
      * @access  private
@@ -59,21 +51,16 @@ class Database extends Factory
                 PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . $config['charset']
             );
 
-        if(!isset(self::$instance))
+        try
         {
-            try
-            {
-                self::$instance = new PDO($config['dsn'], $config['username'],
-                                          $config['password'], $driverOptions);
-                self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            }
-            catch(PDOException $e)
-            {
-                throw new cloudException($e->getMessage());
-            }
+            self::$instance = new PDO($config['dsn'], $config['username'],
+                                      $config['password'], $driverOptions);
+            self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
-
-        return self::$instance;
+        catch(PDOException $e)
+        {
+            throw new cloudException($e->getMessage());
+        }
     }
 
     /**
@@ -210,7 +197,7 @@ class Database extends Factory
     }
 
     /**
-     * JOIN statement
+     * INNER JOIN statement
      *
      * @access  public
      * @return  object
