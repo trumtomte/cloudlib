@@ -99,7 +99,7 @@ class View extends Factory
      */
     public function __get($helper)
     {
-        return core::loadHelper($helper);
+        return $helper::factory();
     }
 
     /**
