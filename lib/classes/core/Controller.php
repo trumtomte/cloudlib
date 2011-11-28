@@ -52,11 +52,31 @@ abstract class Controller extends Factory
      * @param   object  $model
      * @return  void
      */
-    public function __construct(View $view, Model $model, array $data)
+    public function __construct()
     {
-        $this->view = $view;
-        $this->model = $model;
-        $this->data = $data;
+        $args = func_get_args();
+
+        if(is_array($args[0]))
+        {
+            $args = array_shift($args);
+        }
+
+        if(!($args[0] instanceof View) or !isset($args[0]))
+        {
+            throw new cloudException('Controller::__construct(): argument 1 must be an instance of View');
+        }
+        if(!($args[1] instanceof Model) or !isset($args[1]))
+        {
+            throw new cloudException('Controller::__construct(): argument 2 must be an instance of Model');
+        }
+        if(!is_array($args[2]) or !isset($args[2]))
+        {
+            throw new cloudException('Controller::__construct(): argument 3 must be an Array');
+        }
+
+        $this->view = $args[0];
+        $this->model = $args[1];
+        $this->data = $args[2];
     }
 
     /**
@@ -105,7 +125,7 @@ abstract class Controller extends Factory
      */
     final public function __get($helper)
     {
-        return Core::loadHelper($helper);
+        return $helper::factory();
     }
 
     /**
