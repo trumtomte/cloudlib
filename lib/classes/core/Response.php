@@ -106,6 +106,18 @@ class Response extends Factory
     }
 
     /**
+     * Sets the response status
+     *
+     * @access  public
+     * @param   int     $status
+     * @return  void
+     */
+    public function status($status)
+    {
+        $this->status = $status;
+    }
+
+    /**
      * Sets the output body
      *
      * @access  public
@@ -140,7 +152,7 @@ class Response extends Factory
     {
         if(!headers_sent())
         {
-            if(Request::_server('SERVER_PROTOCOL') !== false)
+            if(Request::_server('SERVER_PROTOCOL'))
             {
                 $protocol = Request::_server('SERVER_PROTOCOL');
             }
