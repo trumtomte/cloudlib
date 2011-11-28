@@ -93,6 +93,51 @@ class Session extends Factory
     }
 
     /**
+     * Set or get a name
+     *
+     * @access  public
+     * @param   string  $name
+     * @return  mixed
+     */
+    public function name($name = null)
+    {
+        if($name === null)
+        {
+            return session_name();
+        }
+
+        session_name($name);
+    }
+
+    /**
+     * Set or get an id
+     *
+     * @access  public
+     * @param   string  $id
+     * @return  mixed
+     */
+    public function id($id = null)
+    {
+        if($id === null)
+        {
+            return session_id();
+        }
+
+        session_id($id);
+    }
+
+    /**
+     * Write session data and end session
+     *
+     * @access  public
+     * @return  void
+     */
+    public function close()
+    {
+        session_write_close();
+    }
+
+    /**
      * Set a session variable
      *
      * @access  public
