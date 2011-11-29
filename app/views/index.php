@@ -1,6 +1,6 @@
 <?php
     echo '<br>';
-    echo Timer::boot();
+    echo Benchmark::boot();
     echo '<br>';
     echo '<pre>';
     debug_print_backtrace();
