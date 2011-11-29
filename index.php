@@ -63,13 +63,6 @@ define('CONFIG', LIB . 'config' . DS);
 define('LOGS', LIB . 'log' . DS);
 
 /**
- * Define sub-level directories of the Class directory,
- * directories for core and helper classes.
- */
-define('CORE', CLASSES . 'core' . DS);
-define('HELPERS', CLASSES . 'helpers' . DS);
-
-/**
  * Define the URL path.
  */
 define('URLPATH', substr(substr($_SERVER['SCRIPT_FILENAME'], 0, -9),
@@ -100,5 +93,5 @@ require LIB . 'bootstrap.php';
 /**
  * Start the timer as 'boot' and then run Core::main()
  */
-Timer::start('boot');
+Benchmark::start('boot');
 Core::main();
