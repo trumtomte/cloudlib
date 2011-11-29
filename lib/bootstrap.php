@@ -39,7 +39,7 @@ if(!defined('CONTROLLER')) {
 /**
  * Require the core class and set the autoload method.
  */
-require CORE . 'Core' . EXT;
+require CLASSES . 'Core' . EXT;
 spl_autoload_register(array('Core', 'autoload'));
 
 /**
