@@ -12,7 +12,6 @@
 error_reporting(-1);
 ini_set('display_errors', 1);
 ini_set('log_errors', 1);
-// TODO ska php logga dessa errors? eller ska jag ha en egen som gör det, både och?
 ini_set('error_log', LOGS . 'error_php.log');
 
 /**
@@ -103,11 +102,11 @@ set_exception_handler(function(Exception $e)
     exit();
 });
 
-// TODO använd en "global" funktion för error handling? som i laravel..
+// TODO: use a "global" error handling function
 register_shutdown_function(function()
 {
+    // Extract..
     $e = error_get_last();
-
     if(isset($e))
     {
         throw new ErrorException($e['message'], $e['type'], $e['type'], $e['file'], $e['line']);
@@ -116,7 +115,7 @@ register_shutdown_function(function()
 });
 
 
-// TODO ha en klass som kör allt detta?
+// TODO: implement som sort of a FrontController?
 
 Config::load('config');
 // Config::$default = 'default';
@@ -126,7 +125,7 @@ mb_internal_encoding(Config::get('app.encoding'));
 
 register_shutdown_function(array('Logger', 'write'));
 
-// TODO ska jag ha dessa här?
+// TODO: worth creating these constants? more Dependency injection instead?
 define('BASEURL', Config::get('app.baseurl'));
 define('CSS', BASEURL . DS . 'pub/css/');
 define('JS', BASEURL . DS . 'pub/js/');

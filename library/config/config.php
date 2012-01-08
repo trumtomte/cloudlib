@@ -15,13 +15,13 @@ return array
     'default' => array(
         // Application
         'app.environment'   => 'development',
-        'app.baseurl'       => '/cloudlibnew',
+        'app.baseurl'       => '/cloudlib',
         'app.timezone'      => 'Europe/Stockholm',
         'app.locale'        => null,
         'app.secret'          => 'MySuperSecretSalt',
         'app.encoding'      => 'utf8',
         // Database
-        'db.dsn'        => 'mysql:host=localhost;dbname=databasteknik',
+        'db.dsn'        => 'mysql:host=localhost;dbname=default',
         'db.username'   => 'root',
         'db.password'   => 'root',
         'db.charset'    => 'utf8',
@@ -34,7 +34,7 @@ return array
     'custom' => array(
         // Application
         'app.environment'   => 'development',
-        'app.baseurl'       => '/cloudlibnew',
+        'app.baseurl'       => '/cloudliw',
         'app.timezone'      => 'Europe/Stockholm',
         'app.locale'        => null,
         'app.salt'          => 'MySuperSecretSalt',
