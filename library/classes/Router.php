@@ -18,34 +18,34 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <email>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class Router extends Factory
+class Router
 {
     /**
-     * The requested URI
+     * Route map
      *
-     * @access  public
+     * @access  protected
      * @var     string
      */
-    public $uri;
+    protected $map = null;
 
     /**
-     * The request method
+     * Request object
      *
-     * @access  public
+     * @access  protected
+     * @var     object
+     */
+    protected $request;
+
+    /**
+     * Base uri
+     *
+     * @access  protected
      * @var     string
      */
-    public $method;
+    protected $baseUri;
 
     /**
-     * The base url
-     *
-     * @access  public
-     * @var     string
-     */
-    public $baseurl;
-
-    /**
-     * Variable to determine if the route is valid
+     * Determine wether the route is valid or not
      *
      * @access  public
      * @var     boolean
@@ -53,7 +53,7 @@ class Router extends Factory
     public $validRoute = false;
 
     /**
-     * Variable to determine if the method is valid
+     * Determine wether the method is valid or not
      *
      * @access  public
      * @var     boolean
@@ -61,125 +61,121 @@ class Router extends Factory
     public $validMethod = false;
 
     /**
-     * Constructor
+     * The response
      *
      * @access  public
-     * @param   string  $uri
-     * @param   string  $method
-     * @param   string  $baseurl
+     * @var     string
+     */
+    public $response;
+
+    /**
+     * Constructor
+     * 
+     * Sets the request object and the base uri
+     *
+     * @access  public
+     * @param   object  $request
+     * @param   string  $baseUri
      * @return  void
      */
-    public function __construct($uri, $method, $baseurl)
+    public function __construct(Request $request, $baseUri = '/')
     {
-        $this->uri = $uri;
-        $this->method = $method;
-        $this->baseurl = $baseurl;
+        $this->request = $request;
+        $this->baseUri = $baseUri;
     }
 
     /**
-     * Validate the requested route from a file of routes
+     * Register a route map
      *
      * @access  public
-     * @param   string  $file
-     * @return  boolean
+     * @param   string  $map
+     * @return  void
      */
-    public function validate($file)
+    public function registerMap($map)
     {
-        $app = Controller::factory(Request::input());
-
-        if( ! file_exists($file))
+        if( ! file_exists($map))
         {
-            throw new RuntimeException(sprintf('"%s" does not exist',
+            throw new RuntimeException(sprintf('Route map [%s] does not exist!',
                 $file));
         }
+        $this->map = $map;
+    }
 
-        $routes = require $file;
+    /**
+     * Parse the route map and set the response
+     *
+     * @access  public
+     * @return  boolean
+     */
+    public function parseMap()
+    {
+        if($this->map === null)
+        {
+            throw new RuntimeException('No map has been set!');
+        }
+
+        $app = new Controller($this->request->input);
+
+        $routes = require $this->map;
 
         if( ! is_array($routes))
         {
-            throw new LogicException(sprintf('The file "%s" must return an array',
-                $file));
+            throw new LogicException(sprintf('The route map [%s] must return an array',
+                $routes));
         }
-        
-        // Remove the baseurl from the requested uri
-        $route = trim(preg_replace('#' . $this->baseurl . '#', '', $this->uri), '/');
+
+        // Remove the base uri from the requested uri
+        $requestUri = rtrim(preg_replace('#' . $this->baseUri . '#', '',
+            $this->request->uri), '/');
 
         // Check for a literal match
-        if(array_key_exists($index = $this->method . ' /' . $route, $routes))
+        if(array_key_exists($index = $this->request->method . $requestUri, $routes))
         {
             $this->validRoute = $this->validMethod = true;
 
-            $this->response = $this->parseRouteResponse($routes[$index]);
+            $this->response = $this->getRouteResponse($routes[$index]);
 
             return true;
         }
 
-        // No literal match was found, parse through the routes array
-        return $this->parseRoutes($route, $routes, $app);
-    }
-
-    /**
-     * Parse through the array of routes and set the response body
-     *
-     * @access  protected
-     * @param   string  $route
-     * @param   array   $routes
-     * @param   object  $app
-     * @return  mixed
-     */
-    protected function parseRoutes($route, array $routes, Controller $app)
-    {
-        // Split the requested uri into parts
-        $routeParts = explode('/', $route);
-
-        foreach($routes as $index => $value)
+        // Go through all the routes in the route map
+        foreach($routes as $route => $response)
         {
-            // Get the method and the uri
-            list($method, $uri) = explode(' ', $index);
+            list($method, $uri) = explode(' ', $route);
 
-            if($uri === '/')
+            // Escape all slashes ("/") and replace variables (:name) with the regex.
+            $regex = str_replace('/', '\/',
+                preg_replace('/(:[a-zA-Z0-9\.\-_]+)/', '[a-zA-Z0-9\.\-_]+', $uri));
+
+            if(preg_match('#^' . $regex . '$#', $requestUri))
             {
-                $uri = null;
-            }
-            
-            // Split the stored uri into parts
-            $uriParts = explode('/', trim($uri, '/'));
+                $this->validRoute = true;
 
-            // Compare the length of the two arrays of parts
-            if(count($uriParts) == count($routeParts))
-            {
-                $params = array();
+                list($uriParts, $requestUriParts) = array(explode('/', $uri),
+                    explode('/', $requestUri));
 
-                // Replace all parameters in the uri to the regex
-                // Store all the parameters in the params array
-                foreach($uriParts as $key => &$value)
+                $parameters = array();
+
+                foreach($uriParts as $index => $value)
                 {
                     if(strpos($value, ':') !== false)
                     {
-                        $value = '[a-zA-Z0-9\.\-_]+';
-                        $params[] = $routeParts[$key];
+                        $parameters[] = $requestUriParts[$index];
                     }
                 }
 
-                // Create the regex
-                $regex = implode('\/', $uriParts);
-
-                if(preg_match('/^' . $regex . '$/', $route))
+                if($method == $this->request->method)
                 {
-                    $this->validRoute = true;
+                    $this->validMethod = true;
 
-                    if($this->method == $method)
-                    {
-                        $this->validMethod = true;
+                    $this->response = $this->getRouteResponse($response, $parameters);
 
-                        $this->response = $this->parseRouteResponse($routes[$index], $params);
-
-                        return true;
-                    }
+                    return true;
                 }
             }
         }
     }
+
 
     /**
      * Parse the route response from the given file of routes and return the contents
@@ -189,7 +185,7 @@ class Router extends Factory
      * @param   array   $parameters
      * @return  string
      */
-    protected function parseRouteResponse($response, array $parameters = array())
+    protected function getRouteResponse($response, array $parameters = array())
     {
         if($response instanceof Closure)
         {
@@ -204,12 +200,12 @@ class Router extends Factory
         else
         {
             $class = $response;
-            $method = $this->method;
+            $method = $this->request->method;
         }
 
         $class .= 'Controller';
 
-        $controller = $class::factory(Request::input());
+        $controller = new $class($this->request->input);
 
         if(method_exists($controller, 'before'))
         {
