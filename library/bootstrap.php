@@ -41,8 +41,6 @@ spl_autoload_register(function($class)
     require $file;
 });
 
-Benchmark::start('boot');
-
 /**
  * Magic quotes...
  */
@@ -77,77 +75,20 @@ set_exception_handler(function(Exception $e)
         ob_end_clean();
     }
 
-    if(strtolower(Request::server('CLOUDLIB_ENV')) === 'production')
-    {
-        Response::factory(500)->body('error/500')->send();
-    }
-    else
-    {
-        $message = $e->getMessage();
-        $file    = $e->getFile();
-        $line    = $e->getLine();
-        $trace   = $e->getTrace();
-        $traceStr = $e->getTraceAsString();
+    // TODO Cloudlib environment (internal error 500)
 
-        if(file_exists($file = VIEWS . 'error/exception.php'))
-        {
-            require $file;
-        }
-        else
-        {
-            // TODO
-            // HTML output
-        }
-    }
+    echo sprintf('<pre>Message: %s</pre><pre>File: %s, Line: %s</pre><pre>Trace: %s</pre>',
+        $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());
+
     exit();
 });
 
 // TODO: use a "global" error handling function
 register_shutdown_function(function()
 {
-    // Extract..
-    $e = error_get_last();
-    if(isset($e))
+    if(is_array($e = error_get_last()))
     {
-        throw new ErrorException($e['message'], $e['type'], $e['type'], $e['file'], $e['line']);
+        extract($e);
+        throw new ErrorException($message, $type, $type, $file, $line);
     }
-
 });
-
-
-// TODO: implement som sort of a FrontController?
-
-Config::load('config');
-// Config::$default = 'default';
-
-date_default_timezone_set(Config::get('app.timezone'));
-mb_internal_encoding(Config::get('app.encoding'));
-
-register_shutdown_function(array('Logger', 'write'));
-
-// TODO: worth creating these constants? more Dependency injection instead?
-define('BASEURL', Config::get('app.baseurl'));
-define('CSS', BASEURL . DS . 'pub/css/');
-define('JS', BASEURL . DS . 'pub/js/');
-define('IMG', BASEURL . DS . 'pub/img/');
-
-$router = Router::factory(Request::uri(), Request::method(), Config::get('app.baseurl'));
-$router->validate(APP . 'routes.php');
-
-if($router->validRoute)
-{
-    if($router->validMethod)
-    {
-        Response::factory(200)->body($router->response)->send();
-    }
-    else
-    {
-        Response::factory(405)->body('error/405')->send();
-    }
-}
-else
-{
-    Response::factory(404)->body('error/404')->send();
-}
-
-//Logger::log(Database::$queries, 1);
