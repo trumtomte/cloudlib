@@ -136,6 +136,13 @@ class Response
         return $this;
     }
 
+    // TODO: function for errors, such as if a file is not found it will return a string
+    // with the error code and message
+    public function error()
+    {
+
+    }
+
     /**
      * Add a header
      *
