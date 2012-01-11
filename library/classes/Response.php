@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <email>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class Response extends Factory
+class Response
 {
     /**
      * Array of status codes
@@ -26,7 +26,7 @@ class Response extends Factory
      * @access  private
      * @var     array
      */
-    public $codes = array(
+    public $statusCodes = array(
         // Informational 1xx
         100 => 'Continue',
         101 => 'Switching Protocols',
@@ -89,7 +89,6 @@ class Response extends Factory
      * @access  public
      * @var     int
      */
-    // TODO statisk status?
     public $status;
 
     /**
@@ -106,9 +105,9 @@ class Response extends Factory
      * @access  public
      * @return  void
      */
-    public function __construct($status = 200)
+    public function __construct(Request $request)
     {
-        $this->status = $status;
+        $this->request = $request;
     }
 
     /**
@@ -120,7 +119,7 @@ class Response extends Factory
      */
     public function status($status)
     {
-        $this->status = $status;
+        $this->status = (int) $status;
         return $this;
     }
 
@@ -133,14 +132,7 @@ class Response extends Factory
      */
     public function body($body)
     {
-        if($body instanceof View)
-        {
-            $this->body = $body->render();
-        } 
-        else
-        {
-            $this->body = View::factory($body)->render();
-        }
+        $this->body = ( ! $body instanceof View) ? new View($body) : $body;
         return $this;
     }
 
@@ -167,17 +159,18 @@ class Response extends Factory
     {
         if( ! headers_sent())
         {
-            header(Request::protocol() . ' ' . $this->status . ' ' . $this->codes[$this->status]);
+            header(sprintf('%s %s %s', $this->request->protocol(), $this->status,
+                $this->statusCodes[$this->status]));
 
             if( ! isset(static::$headers['Content-Type']))
             {
-                $encoding = Config::get('app.encoding');
-                header('Content-Type: text/html; charset=' . $encoding);
+                static::header('Content-Type', sprintf('text/html; charset=%s',
+                    Config::get('app.encoding')));
             }
 
             if( ! isset(static::$headers['Content-Length']))
             {
-                header('Content-Length: ' . strlen($this->body));
+                static::header('Content-Length', strlen( (string) $this->body));
             }
 
             if(isset(static::$headers))
@@ -204,7 +197,10 @@ class Response extends Factory
         }
 
         $this->sendHeaders();
-
-        echo $this->body;
+        
+        if($this->request->isHead() == false)
+        {
+            echo (string) $this->body;
+        }
     }
 }
