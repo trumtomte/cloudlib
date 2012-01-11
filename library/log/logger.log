@@ -1,6 +1,0 @@
-[2012-01-08 21:56:10][INFO]: Query "SELECT Namn FROM Deltagare WHERE Namn = 'loool'" returned 0 row(s)
-[2012-01-08 21:56:10][INFO]: Query "SELECT Namn FROM Deltagare" returned 25 row(s)
-[2012-01-08 21:56:10][INFO]: Query "SELECT Namn FROM Deltagare" returned 25 row(s)
-[2012-01-08 21:58:41][INFO]: Query "SELECT Namn FROM Deltagare WHERE Namn = 'loool'" returned 0 row(s)
-[2012-01-08 21:58:41][INFO]: Query "SELECT Namn FROM Deltagare" returned 25 row(s)
-[2012-01-08 21:58:41][INFO]: Query "SELECT Namn FROM Deltagare" returned 25 row(s)
