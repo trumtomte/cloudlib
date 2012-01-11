@@ -40,7 +40,7 @@ class Logger
      * Log a message
      * 
      * @access  public
-     * @param   string  $message
+     * @param   mixed   $message
      * @param   mixed   $severity
      * @return  void
      */
