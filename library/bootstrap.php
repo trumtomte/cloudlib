@@ -8,7 +8,7 @@
  * @package     cloudlib
  */
 
-// TODO
+// TODO: dont display if the 
 error_reporting(-1);
 ini_set('display_errors', 1);
 ini_set('log_errors', 1);
@@ -58,37 +58,43 @@ if(get_magic_quotes_gpc())
 }
 
 /**
- * Set the error handler
+ * Exception Handler
  */
-set_error_handler(function($code, $str, $file, $line)
+$exceptionHandler = function(Exception $e)
 {
-    throw new ErrorException($str, $code, $code, $file, $line);
-});
+    if(ob_get_contents()) ob_end_clean();
 
-/**
- * Set the exception handler
- */
-set_exception_handler(function(Exception $e)
-{
-    if(ob_get_contents())
+    if($_SERVER['CLOUDLIB_ENV'] == 'production')
     {
-        ob_end_clean();
+        $response = new Response(new Request($_SERVER));
+        $response->body(new View('error/500'));
+        $response->status(500);
+        $response->send();
+        exit(1);
     }
-
-    // TODO Cloudlib environment (internal error 500)
 
     echo sprintf('<pre>Message: %s</pre><pre>File: %s, Line: %s</pre><pre>Trace: %s</pre>',
         $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());
 
-    exit();
-});
+    exit(1);
+};
 
-// TODO: use a "global" error handling function
+/**
+ * Exception/Error Handling
+ */
+set_exception_handler(function(Exception $e)
+{
+    $exceptionHandler($e);
+});
+set_error_handler(function($code, $str, $file, $line)
+{
+    $exceptionHandler(new ErrorException($str, $code, $code, $file, $line));
+});
 register_shutdown_function(function()
 {
-    if(is_array($e = error_get_last()))
+    if( ! ($e = error_get_last()) === null)
     {
         extract($e);
-        throw new ErrorException($message, $type, $type, $file, $line);
+        $exceptionHandler(new ErrorException($message, $type, $type, $file, $line));
     }
 });
