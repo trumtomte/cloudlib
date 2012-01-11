@@ -62,7 +62,7 @@ mb_internal_encoding(Config::get('app.encoding'));
 
 define('BASEURL', Config::get('app.baseurl'));
 
-$request = new Request($_GET, $_POST, $_SERVER, $_FILES, $_COOKIE);
+$request = new Request($_SERVER, $_GET, $_POST, $_FILES, $_COOKIE);
 
 $router = new Router($request, Config::get('app.baseurl'));
 
