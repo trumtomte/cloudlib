@@ -364,7 +364,7 @@ class Form
     }
 
     /**
-     * Take an array of attributes and return it as a html attribute-value string
+     * Take an array of attributes and return it as a string of HTML attribute:value pairs
      *
      * @access  protected
      * @param   array   $attributes
