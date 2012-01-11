@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <email>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class View extends Factory
+class View
 {
     /**
      * The View
@@ -67,6 +67,27 @@ class View extends Factory
             $this->layout = isset($view[1]) ? $view[1] : null;
             $this->data = isset($view[2]) ? $view[2] : array();
         }
+
+
+        // TODO Better solution for this
+        if( ! file_exists($view = VIEWS . $this->view . EXT))
+        {
+            throw new RuntimeException(sprintf('The View [%s] does not exist',
+                $this->view));
+        }
+
+        $this->view = $view;
+
+        if($this->layout)
+        {
+            if( ! file_exists($layout = LAYOUTS . $this->layout . EXT))
+            {
+                throw new RuntimeException(sprintf('The Layout "%s" does not exist', 
+                    $this->layout));
+            }
+
+            $this->layout = $layout;
+        }
     }
 
     /**
@@ -78,17 +99,11 @@ class View extends Factory
      */
     public function render()
     {
-        if( ! file_exists($view = VIEWS . $this->view . EXT))
-        {
-            throw new RuntimeException(sprintf('The View "%s" does not exist',
-                $this->view));
-        }
-
         ob_start();
 
         extract($this->data);
 
-        require $view;        
+        require $this->view;        
 
         if(isset($this->layout))
         {
@@ -96,19 +111,16 @@ class View extends Factory
 
             ob_clean();
 
-            if( ! file_exists($layout = LAYOUTS . $this->layout . EXT))
-            {
-                throw new RuntimeException(sprintf('The Layout "%s" does not exist', 
-                    $this->layout));
-            }
-
-            require $layout;
+            require $this->layout;
         }
 
         return ob_get_clean();
     }
 
-    
+    public function __toString()
+    {
+        return $this->render();
+    }
     
     /**
      * Magic get method for loading classes
@@ -119,6 +131,6 @@ class View extends Factory
      */
     public function __get($class)
     {
-        return $class::factory();
+        return new $class();
     }
 }
