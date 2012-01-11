@@ -21,12 +21,47 @@
 class Request
 {
     /**
+     * The request uri
+     *
+     * @access  public
+     * @var     string
+     */
+    public $uri;
+
+    /**
+     * The request method
+     *
+     * @access  public
+     * @var     string
+     */
+    public $method;
+
+    /**
+     * The request input, GET/POST etc.
+     *
+     * @access  public
+     * @var     array
+     */
+    public $input;
+
+    /**
      * Constructor
      *
      * @access  public
      * @return  void
      */
-    public function __construct() {}
+    public function __construct(array $get, array $post, array $server, array $files, array $cookies)
+    {
+        $this->getVars = $get;
+        $this->postVars = $post;
+        $this->serverVars = $server;
+        $this->fileVars = $files;
+        $this->cookieVars = $cookies;
+
+        $this->uri = $this->uri();
+        $this->method = $this->method();
+        $this->input = $this->input();
+    }
 
     /**
      * Get a $_SERVER variable
@@ -35,13 +70,13 @@ class Request
      * @param   string  $key
      * @return  mixed
      */
-    public static function server($key = null)
+    public function server($key = null)
     {
         if($key === null)
         {
-            return $_SERVER;
+            return $this->serverVars;
         }
-        return isset($_SERVER[$key]) ? $_SERVER[$key] : false;
+        return isset($this->serverVars[$key]) ? $this->serverVars[$key] : false;
     }
 
     /**
@@ -50,9 +85,9 @@ class Request
      * @access  public
      * @return  string
      */
-    public static function method()
+    public function method()
     {
-        return static::server('REQUEST_METHOD');
+        return $this->server('REQUEST_METHOD');
     }
 
     /**
@@ -61,9 +96,9 @@ class Request
      * @access  public
      * @return  boolean
      */
-    public static function isGet()
+    public function isGet()
     {
-        return (static::method() === 'GET') ? true : false;
+        return ($this->method() === 'GET') ? true : false;
     }
 
     /**
@@ -72,9 +107,9 @@ class Request
      * @access  public
      * @return  boolean
      */
-    public static function isPost()
+    public function isPost()
     {
-        return (static::method() === 'POST') ? true : false;
+        return ($this->method() === 'POST') ? true : false;
     }
 
     /**
@@ -83,9 +118,9 @@ class Request
      * @access  public
      * @return  boolean
      */
-    public static function isPut()
+    public function isPut()
     {
-        return (static::method() === 'PUT') ? true : false;
+        return ($this->method() === 'PUT') ? true : false;
     }
 
     /**
@@ -94,9 +129,35 @@ class Request
      * @access  public
      * @return  boolean
      */
-    public static function isDelete()
+    public function isDelete()
     {
-        return (static::method() === 'DELETE') ? true : false;
+        return ($this->method() === 'DELETE') ? true : false;
+    }
+
+    /**
+     * Check if the request method is head
+     *
+     * @access  public
+     * @return  boolean
+     */
+    public function isHead()
+    {
+        return ($this->method() === 'HEAD') ? true : false;
+    }
+
+    /**
+     * Check if the requested method is allowed
+     *
+     * @access  public
+     * @return  boolean
+     */
+    public function methodAllowed()
+    {
+        if(in_array($this->method(), array('GET', 'POST', 'PUT', 'DELETE', 'HEAD')))
+        {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -105,9 +166,9 @@ class Request
      * @access  public
      * @return  boolean
      */
-    public static function isAjax()
+    public function isAjax()
     {
-        return (static::server('HTTP_X_REQUESTED_WITH') === 'XMLHttpRequest') ? true : false;
+        return ($this->server('HTTP_X_REQUESTED_WITH') === 'XMLHttpRequest') ? true : false;
     }
 
     /**
@@ -116,7 +177,7 @@ class Request
      * @access  public
      * @return  boolean
      */
-    public static function isSecure()
+    public function isSecure()
     {
         // TODO
     }
@@ -127,12 +188,16 @@ class Request
      * @access  public
      * @return  array
      */
-    public static function uri()
+    public function uri()
     {
-        return (empty($_SERVER['REQUEST_URI']))
-            ? '/'
-            : filter_var(parse_url(preg_replace('/\/{2,}/', '/',
-                $_SERVER['REQUEST_URI']), PHP_URL_PATH), FILTER_SANITIZE_URL);
+        $uri = $this->server('REQUEST_URI');
+
+        if(isset($uri))
+        {
+            return filter_var(parse_url(preg_replace('/\/{2,}/', '/', $uri), PHP_URL_PATH), FILTER_SANITIZE_URL);
+        }
+
+        return '/';
     }
 
     /**
@@ -141,9 +206,9 @@ class Request
      * @access  public
      * @return  string
      */
-    public static function protocol()
+    public function protocol()
     {
-        return (static::server('SERVER_PROTOCOL')) ? static::server('SERVER_PROTOCOL') : 'HTTP/1.1';
+        return ($this->server('SERVER_PROTOCOL')) ? $this->server('SERVER_PROTOCOL') : 'HTTP/1.1';
     }
 
     /**
@@ -152,15 +217,15 @@ class Request
      * @access  public
      * @return  array
      */
-    public static function input()
+    public function input()
     {
-        switch(Request::method())
+        switch($this->method())
         {
             case 'GET':
-                $input = $_GET;
+                $input = $this->getVars;
                 break;
             case 'POST':
-                $input = $_POST;
+                $input = $this->postVars;
                 break;
             case 'PUT':
             case 'DELETE':
