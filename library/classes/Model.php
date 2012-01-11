@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <email>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-abstract class Model extends Factory
+abstract class Model
 {
     /**
      * Constructor
@@ -37,6 +37,6 @@ abstract class Model extends Factory
      */
     public function __get($class)
     {
-        return $class::factory();
+        return new $class();
     }
 }
