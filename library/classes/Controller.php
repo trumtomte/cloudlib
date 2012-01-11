@@ -18,7 +18,7 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <email>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class Controller extends Factory
+class Controller
 {
     /**
      * Array of View variables
@@ -69,17 +69,18 @@ class Controller extends Factory
      */
     public function model($model = null)
     {
+        //TODO: better solution
         if($model === null)
         {
             if(is_subclass_of($this, 'Controller'))
             {
                 $model = preg_replace('/Controller$/', 'Model', get_class($this));
-                return $model::factory();
+                return new $model();
             }
             $model .= 'default';
         }
         $model .= 'Model';
-        return $model::factory();
+        return new $model;
     }
 
     /**
@@ -91,7 +92,7 @@ class Controller extends Factory
      */
     public function render($view, $layout = null)
     {
-        return View::factory($view, $layout, $this->data);
+        return new View($view, $layout, $this->data);
     }
 
     /**
@@ -103,6 +104,6 @@ class Controller extends Factory
      */
     public function __get($class)
     {
-        return $class::factory();
+        return new $class();
     }
 }
