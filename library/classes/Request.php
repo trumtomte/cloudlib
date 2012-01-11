@@ -50,11 +50,12 @@ class Request
      * @access  public
      * @return  void
      */
-    public function __construct(array $get, array $post, array $server, array $files, array $cookies)
+    public function __construct(array $server = array(), array $get = array(),
+        array $post = array(), array $files = array(), array $cookies = array())
     {
+        $this->serverVars = $server;
         $this->getVars = $get;
         $this->postVars = $post;
-        $this->serverVars = $server;
         $this->fileVars = $files;
         $this->cookieVars = $cookies;
 
@@ -87,7 +88,7 @@ class Request
      */
     public function method()
     {
-        return $this->server('REQUEST_METHOD');
+        return ($this->server('REQUEST_METHOD')) ? $this->server('REQUEST_METHOD') : null;
     }
 
     /**
