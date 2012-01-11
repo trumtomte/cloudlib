@@ -46,7 +46,7 @@ class Benchmark
     {
         if( ! isset(self::$times['start:' . $time]))
         {
-            self::$times['start:' . $time] = static::getTime();
+            self::$times['start:' . $time] = microtime(true);
         }
     }
 
@@ -59,20 +59,7 @@ class Benchmark
      */
     protected static function stop($time)
     {
-        self::$times['stop:' . $time] = static::getTime();
-    }
-
-    /**
-     * Gets the time
-     *
-     * @access  protected
-     * @return  int
-     */
-    protected static function getTime()
-    {
-        list($usec, $sec) = explode(' ', microtime());
-
-        return ((float) $usec + (float) $sec);
+        self::$times['stop:' . $time] = microtime(true);
     }
 
     /**
@@ -86,6 +73,19 @@ class Benchmark
         static::stop($time);
 
         return round((static::$times['stop:' . $time] - static::$times['start:' . $time]), $round);
+    }
+
+    /**
+     * Compare an already defined time with the current timestamp
+     *
+     * @access  public
+     * @param   float   $time
+     * @param   int     $round
+     * @return  float
+     */
+    public static function compare($time, $round = 5)
+    {
+        return round((microtime(true) - (float) $time), $round);
     }
 
     /**
