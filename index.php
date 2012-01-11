@@ -8,6 +8,8 @@
  * @package     cloudlib
  */
 
+define('BOOTTIME', microtime(true));
+
 /**
  * Define the root directory and the directory separator.
  */
@@ -51,3 +53,50 @@ define('EXT', '.php');
  * Bootstrap the application.
  */
 require LIB . 'bootstrap.php';
+
+// TODO: redo class?
+Config::load('config');
+
+date_default_timezone_set(Config::get('app.timezone'));
+mb_internal_encoding(Config::get('app.encoding'));
+
+define('BASEURL', Config::get('app.baseurl'));
+
+$request = new Request($_GET, $_POST, $_SERVER, $_FILES, $_COOKIE);
+
+$router = new Router($request, Config::get('app.baseurl'));
+
+$router->registerMap(APP . 'routes.php');
+
+$router->parseMap();
+
+$response = new Response($request);
+
+if($request->methodAllowed())
+{
+    if($router->validRoute)
+    {
+        if($router->validMethod)
+        {
+            $response->body($router->response);
+            $response->status(200);
+        }
+        else
+        {
+            $response->body(new View('error/405'));
+            $response->status(405);
+        }
+    }
+    else
+    {
+        $response->body(new View('error/404'));
+        $response->status(404);
+    }
+}
+else
+{
+    $response->body(new View('error/405'));
+    $response->status(405);
+}
+
+$response->send();
