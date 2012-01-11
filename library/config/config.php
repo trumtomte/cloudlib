@@ -18,7 +18,7 @@ return array
         'app.baseurl'       => '/cloudlib',
         'app.timezone'      => 'Europe/Stockholm',
         'app.locale'        => null,
-        'app.secret'          => 'MySuperSecretSalt',
+        'app.secret'        => 'MySuperSecretSalt',
         'app.encoding'      => 'utf8',
         // Database
         'db.dsn'        => 'mysql:host=localhost;dbname=default',
@@ -28,7 +28,7 @@ return array
         'db.persistent' => true,
         // Logging
         'log.dateformat'    => 'Y-m-d G:i:s',
-        'log.file'   => 'logger.log',
+        'log.file'          => 'logger.log',
     ),
 
     'custom' => array(
@@ -47,6 +47,6 @@ return array
         'db.persistent' => true,
         // Logging
         'log.dateformat'    => 'Y-m-d G:i:s',
-        'log.file'   => 'logger.log',
+        'log.file'          => 'logger.log',
     )
 );
