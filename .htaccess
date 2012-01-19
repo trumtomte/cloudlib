@@ -1,4 +1,4 @@
-SetEnv CLOUDLIB_ENV local
+SetEnv CLOUDLIB_ENV development
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
