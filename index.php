@@ -15,7 +15,7 @@ define('BOOT_TIME', microtime(true));
 require 'Cloudlib/Cloudlib.php';
 
 // Inititalize the application
-$app = new Cloudlib(__DIR__, '/cloudlib_future');
+$app = new Cloudlib(__DIR__, '/cloudlib');
 
 // Custom 500 error view
 $app->error(500, function()
