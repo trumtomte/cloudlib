@@ -2,101 +2,66 @@
 /**
  * CloudLib :: Lightweight RESTful MVC PHP Framework
  *
- * @author      Sebastian Book <email>
- * @copyright   Copyright (c) 2011 Sebastian Book <email>
+ * @author      Sebastian Book <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
- * @package     cloudlib
+ * @package     Cloudlib
  */
 
-define('BOOTTIME', microtime(true));
+// For testing purposes
+define('BOOT_TIME', microtime(true));
 
-/**
- * Define the root directory and the directory separator.
- */
-define('DS', DIRECTORY_SEPARATOR);
-define('ROOT', dirname(__FILE__));
+// Require the framework
+require 'Cloudlib/Cloudlib.php';
 
-/**
- * Define the first-level directories.
- */
-define('LIB', ROOT . DS . 'library' . DS);
-define('PUB', ROOT . DS . 'public' . DS);
-define('APP', ROOT . DS . 'application' . DS);
+// Inititalize the application
+$app = new Cloudlib(__DIR__, '/cloudlib_future');
 
-/**
- * Define sub-level directories of the Application directory,
- * directories for controllers, models and views.
- */
-define('CTRLS', APP . 'controllers' . DS);
-define('MODELS', APP . 'models' . DS);
-define('VIEWS', APP . 'views' . DS);
-
-/**
- * Sub-level directory of views for layouts.
- */
-define('LAYOUTS', VIEWS . 'layouts' . DS);
-
-/**
- * Define sub-level directories of the Library directory,
- * directories for classes, config and log files.
- */
-define('CLASSES', LIB . 'classes' . DS);
-define('CONFIG', LIB . 'config' . DS);
-define('LOGS', LIB . 'log' . DS);
-
-/**
- * File extensions for files and classes.
- */
-define('EXT', '.php');
-
-/**
- * Bootstrap the application.
- */
-require LIB . 'bootstrap.php';
-
-// TODO: redo class?
-Config::load('config');
-
-date_default_timezone_set(Config::get('app.timezone'));
-mb_internal_encoding(Config::get('app.encoding'));
-
-define('BASEURL', Config::get('app.baseurl'));
-
-$request = new Request($_SERVER, $_GET, $_POST, $_FILES, $_COOKIE);
-
-$router = new Router($request, Config::get('app.baseurl'));
-
-$router->registerMap(APP . 'routes.php');
-
-$router->parseMap();
-
-$response = new Response($request);
-
-if($request->methodAllowed())
+// Custom 500 error view
+$app->error(500, function()
 {
-    if($router->validRoute)
-    {
-        if($router->validMethod)
-        {
-            $response->body($router->response);
-            $response->status(200);
-        }
-        else
-        {
-            $response->body(new View('error/405'));
-            $response->status(405);
-        }
-    }
-    else
-    {
-        $response->body(new View('error/404'));
-        $response->status(404);
-    }
-}
-else
-{
-    $response->body(new View('error/405'));
-    $response->status(405);
-}
+    return new View('errors/500');
+});
 
-$response->send();
+// Define the root route
+$app->route('/', array('GET', 'POST'), function() use ($app)
+{
+    return $app->render('index', 'index');
+});
+
+// Define a /home route with a parameter
+$app->route('/home/:test', array('GET'), function($test)
+{
+    $data['test'] = $test;
+
+    return new View('index', null, $data);
+});
+
+// Define a /test route with a parameter
+$app->route('/test/:hej', array('GET'), function($test)
+{
+    return 'HEEEJ ' . $test;
+});
+
+// Define two routes for controllers
+$app->route('/ctrl', array('GET'), array('controller' => 'index'));
+$app->route('/ctrl/:param', array('GET'), array('controller' => 'index', 'method' => 'test'));
+
+// Custom 404 view
+$app->error(404, function($error) {
+    $data['code'] = $error['code'];
+    $data['message'] = $error['message'];
+    return new View('errors/404', null, $data);
+});
+
+// Custom 405 view
+$app->error(405, function($error) use ($app)
+{
+    $app->set('code', $error['code'])
+        ->set('message', $error['message']);
+
+    return $app->render('errors/405');
+});
+
+// Run the application
+$app->run();
