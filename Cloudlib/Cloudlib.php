@@ -200,6 +200,58 @@ class Cloudlib
     }
 
     /**
+     * Shorthand function to add a GET route
+     *
+     * @access  public
+     * @param   string  $route
+     * @param   mixed   $response
+     * @return  void
+     */
+    public function get($route, $response)
+    {
+        $this->router->route($route, array('GET'), $response);
+    }
+
+    /**
+     * Shorthand function to add a POST route
+     *
+     * @access  public
+     * @param   string  $route
+     * @param   mixed   $response
+     * @return  void
+     */
+    public function post($route, $response)
+    {
+        $this->router->route($route, array('POST'), $response);
+    }
+
+    /**
+     * Shorthand function to add a PUT route
+     *
+     * @access  public
+     * @param   string  $route
+     * @param   mixed   $response
+     * @return  void
+     */
+    public function put($route, $response)
+    {
+        $this->router->route($route, array('PUT'), $response);
+    }
+
+    /**
+     * Shorthand function to add a DELETE route
+     *
+     * @access  public
+     * @param   string  $route
+     * @param   mixed   $response
+     * @return  void
+     */
+    public function delete($route, $response)
+    {
+        $this->router->route($route, array('DELETE'), $response);
+    }
+
+    /**
      * Add an Error
      *
      * @access  public
