@@ -46,4 +46,19 @@ class String
     }
 
     // TODO: shorthand functions for mb_(functions)?
+
+    /**
+     * Shorthand function for mb_strimwidth()
+     *
+     * @access  public
+     * @param   string  $string
+     * @param   int     $width
+     * @param   int     $start
+     * @param   string  $marker
+     * @return  string
+     */
+    public static function trim($string, $width, $start = 0, $marker = '...')
+    {
+        return mb_strimwidth($string, $start, $width, $marker);
+    }
 }
