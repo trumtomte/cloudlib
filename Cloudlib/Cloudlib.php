@@ -336,10 +336,10 @@ class Cloudlib
     /**
      * Register an autoloader
      * 
-     * @access  public
+     * @access  protected 
      * @return  void
      */
-    public function registerClassLoader()
+    protected function registerClassLoader()
     {
         spl_autoload_register(array($this, 'classLoader'));
     }
@@ -378,10 +378,10 @@ class Cloudlib
     /**
      * Function that handles all errors and exceptions
      *
-     * @access  public
+     * @access  protected 
      * @return  void
      */
-    public function setErrorHandling()
+    protected function setErrorHandling()
     {
         error_reporting(-1);
         ini_set('display_errors', 1);
