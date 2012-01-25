@@ -17,12 +17,6 @@ require 'Cloudlib/Cloudlib.php';
 // Inititalize the application
 $app = new Cloudlib(__DIR__, '/cloudlib');
 
-// Custom 500 error view
-$app->error(500, function()
-{
-    return new View('errors/500');
-});
-
 // Define the root route
 $app->route('/', array('GET', 'POST'), function() use ($app)
 {
@@ -61,6 +55,12 @@ $app->error(405, function($error) use ($app)
         ->set('message', $error['message']);
 
     return $app->render('errors/405');
+});
+
+// Custom 500 error view
+$app->error(500, function()
+{
+    return new View('errors/500');
 });
 
 // Run the application
