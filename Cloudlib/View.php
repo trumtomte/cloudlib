@@ -150,6 +150,6 @@ class View
      */
     public function __toString()
     {
-        return $this->content;
+        return (string) $this->content;
     }
 }
