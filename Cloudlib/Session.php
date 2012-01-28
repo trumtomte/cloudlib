@@ -135,21 +135,49 @@ class Session
         session_write_close();
     }
 
+    /**
+     * Set a session variable
+     *
+     * @access  public
+     * @param   string  $key
+     * @param   mixed   $value
+     * @return  void
+     */
     public static function set($key, $value)
     {
         $_SESSION[$key] = $value;
     }
-
+    
+    /**
+     * Get a session variable
+     *
+     * @access  public
+     * @param   string  $key
+     * @return  void
+     */
     public static function get($key)
     {
         return $_SESSION[$key];
     }
 
+    /**
+     * Delete a session variable
+     *
+     * @access  public
+     * @param   string  $key
+     * @return  void
+     */
     public static function del($key)
     {
         unset($_SESSION[$key]);
     }
 
+    /**
+     * Get the CSRF token
+     *
+     * @access  public
+     * @return  string
+     */
     public static function token()
     {
         return static::get('csrf-token');
