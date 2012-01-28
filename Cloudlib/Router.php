@@ -105,6 +105,7 @@ class Router
             $methods = $array['methods'];
             $response = $array['response'];
 
+            // Literal match
             if($route == $uri)
             {
                 if(in_array($this->request->method, $methods))
