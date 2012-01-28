@@ -45,7 +45,7 @@ class String
         return str_repeat($string . $separator, ($times - 1)) . $string;
     }
 
-    // TODO: shorthand functions for mb_(functions)?
+    // TODO: more shorthand functions for mb_<function>'s
 
     /**
      * Shorthand function for mb_strimwidth()
