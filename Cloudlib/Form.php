@@ -20,12 +20,23 @@
 class Form
 {
     /**
+     * Variable which contains the current created form
+     *
+     * @access  protected
+     * @var     string
+     */
+    protected $form = null;
+
+    /**
      * Constructor
      *
      * @access  public
      * @return  void
      */
-    public function __construct() {}
+    public function __construct($action = null, array $options = array())
+    {
+        $this->form = static::open($action, $options);
+    }
 
     /**
      * Open the form
@@ -41,7 +52,7 @@ class Form
 
         if( ! isset($options['method']))
         {
-            $options['method'] = 'post';
+            $options['method'] = 'POST';
         }
 
         if(isset($options['type']))
@@ -390,6 +401,205 @@ class Form
 
         $options['type'] = 'submit';
         return sprintf('%s</form>' . PHP_EOL, static::button($name, $text, $options));
+    }
+
+    /**
+     * Create an input field
+     *
+     * @access  public
+     * @param   string  $name
+     * @param   array   $options
+     * @return  string
+     */
+    public function addInput($name = null, array $options = array())
+    {
+        $this->form .= static::input($name, $options);
+    }
+
+    /**
+     * Create an input field with the type 'submit'
+     *
+     * @access  public
+     * @param   string  $name
+     * @param   array   $options
+     * @return  string
+     */
+    public function addSubmit($name = null, array $options = array())
+    {
+        $this->form .= static::submit($name, $options);
+    }
+
+    /**
+     * Create an input field with the type 'password'
+     *
+     * @access  public
+     * @param   string  $name
+     * @param   array   $options
+     * @return  string
+     */
+    public function addPassword($name = null, array $options = array())
+    {
+        $this->form .= static::password($name, $options);
+    }
+
+    /**
+     * Create an input field with the type 'radio'
+     *
+     * @access  public
+     * @param   string  $name
+     * @param   array   $options
+     * @return  string
+     */
+    public function addRadio($name = null, array $options = array())
+    {
+        $this->form .= static::radio($name, $options);
+    }
+
+    /**
+     * Create an input field with the type 'checkbox'
+     *
+     * @access  public
+     * @param   string  $name
+     * @param   array   $options
+     * @return  string
+     */
+    public function addCheckbox($name = null, array $options = array())
+    {
+        $this->form .= static::checkbox($name, $options);
+    }
+
+    /**
+     * Create an input field with the type 'reset'
+     *
+     * @access  public
+     * @param   string  $name
+     * @param   array   $options
+     * @return  string
+     */
+    public function addReset($name = null, array $options = array())
+    {
+        $this->form .= static::reset($name, $options);
+    }
+
+    /**
+     * Create an input field with the type 'hidden'
+     *
+     * @access  public
+     * @param   string  $name
+     * @param   array   $options
+     * @return  string
+     */
+    public function addHidden($name = null, array $options = array())
+    {
+        $this->form .= static::hidden($name, $options);
+    }
+
+    /**
+     * Create an input field with the type 'file'
+     *
+     * @access  public
+     * @param   string  $name
+     * @param   array   $options
+     * @return  string
+     */
+    public function addFile($name = null, array $options = array())
+    {
+        $this->form .= static::file($name, $options);
+    }
+
+    /**
+     * Shorthand function for creating a csrf token
+     *
+     * @access  public
+     * @param   string  $value
+     * @param   string  $name
+     * @param   array   $options
+     * @return  string
+     */
+    public function addToken($value, $name = 'csrf_token', array $options = array())
+    {
+        $this->form .= static::token($value, $name, $options);
+    }
+
+    /**
+     * Create a button
+     *
+     * @access  public
+     * @param   string  $name
+     * @param   string  $text
+     * @param   array   $options
+     * @return  string
+     */
+    public function addButton($name = null, $text = null, array $options = array())
+    {
+        $this->form .= static::button($name, $text, $options);
+    }
+
+    /**
+     * Create a textarea
+     *
+     * @access  public
+     * @param   string  $name
+     * @param   string  $text
+     * @param   array   $options
+     * @return  string
+     */
+    public function addTextarea($name = null, $text = null, array $options = array())
+    {
+        $this->form .= static::textarea($name, $text, $options);
+    }
+
+    /**
+     * Create a dropdown list
+     *
+     * @access  public
+     * @param   string  $name
+     * @param   array   $items
+     * @param   array   $options
+     * @return  string
+     */
+    public function addSelect($name = null, array $items = array(), array $options = array())
+    {
+        $this->form .= static::select($name, $items, $options);
+    }
+
+    /**
+     * Create a label
+     *
+     * @access  public
+     * @param   string  $for
+     * @param   string  $text
+     * @param   array   $options
+     * @return  string
+     */
+    public function addLabel($for = null, $text = null, array $options = array())
+    {
+        $this->form .= static::label($for, $text, $options);
+    }
+
+    /**
+     * End a form, with the possibility for a button field
+     *
+     * @access  public
+     * @param   string  $name
+     * @param   string  $text
+     * @param   array   $options
+     * @return  string
+     */
+    public function closeForm($name = null, $text = null, array $options = array())
+    {
+        $this->form .= static::close($name, $text, $options);
+    }
+
+    /**
+     * Return the whole form
+     *
+     * @access  public
+     * @return  string
+     */
+    public function __toString()
+    {
+        return (string) $this->form;
     }
 
     /**
