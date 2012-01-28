@@ -39,23 +39,23 @@ class Html
      * Shorthand for CSS stylesheet links
      *
      * @access  public
-     * @param   string|array  $path
+     * @param   string|array  $filename
      * @return  string
      */
-    public static function css($path)
+    public static function css($filename)
     {
-        if(is_string($path))
+        if(is_string($filename))
         {
             return sprintf('<link rel="stylesheet" href="%s" />',
-                static::$paths['css'] . $path . '.css');
+                static::$paths['css'] . $filename . '.css');
         }
-        if(is_array($path))
+        if(is_array($filename))
         {
             $stylesheets = null;
 
-            foreach($path as $value)
+            foreach($filename as $value)
             {
-                $stylesheets .= sprintf('<link rel="stylesheet" href="%s" />',
+                $stylesheets .= sprintf('<link rel="stylesheet" href="%s" />' . PHP_EOL,
                     static::$paths['css'] . $value . '.css');
             }
 
@@ -67,24 +67,24 @@ class Html
      * Shorthand for JavaScript links
      *
      * @access  public
-     * @param   string|array  $path
+     * @param   string|array  $filename
      * @return  string
      */
-    public static function script($path)
+    public static function js($filename)
     {
-        if(is_string($path))
+        if(is_string($filename))
         {
             return sprintf('<script src="%s"></script>',
-                static::$paths['js'] . $path . '.js');
+                static::$paths['js'] . $filename . '.js');
         }
-        if(is_array($path))
+        if(is_array($filename))
         {
             $scripts = null;
 
-            foreach($path as $value)
+            foreach($filename as $value)
             {
-                $scripts .= sprintf('<script src="%s"></script>', 
-                   static::$paths['js'] . $path . '.js');
+                $scripts .= sprintf('<script src="%s"></script>' . PHP_EOL, 
+                   static::$paths['js'] . $value . '.js');
             }
 
             return $scripts;
@@ -98,12 +98,20 @@ class Html
      * @param   string  $path
      * @param   string  $content
      * @param   array   $attributes
+     * @param   boolean $default
      * @return  string
      */
     public static function a($path, $content, array $attributes = array())
     {
-        return sprintf('<a href="%s" %s>%s</a>', static::$paths['base'] . $path,
-            static::getAttrStr($attributes), $content);
+        if($attributes['relative'] == false)
+        {
+            unset($attributes['relative']);
+
+            return sprintf('<a href="%s" %s>%s</a>', static::$paths['base'] . $path,
+                static::getAttrStr($attributes), $content);
+        }
+        return sprintf('<a href="%s" %s>%s</a>', $path, static::getAttrStr($attributes),
+            $content);
     }
 
     /**
@@ -112,12 +120,43 @@ class Html
      * @access  public
      * @param   string  $path
      * @param   array   $attributes
+     * @param   boolean $default
      * @return  string
      */
     public static function img($path, array $attributes = array())
     {
-        return sprintf('<img src="%s" %s/>', static::$paths['img'] . $path,
-            static::getAttrStr($attributes));
+        if($attributes['relative'] == false)
+        {
+            unset($attributes['relative']);
+
+            return sprintf('<img src="%s" %s/>', static::$paths['img'] . $path,
+                static::getAttrStr($attributes));
+        }
+        return sprintf('<img src="%s" %s/>',  $path, static::getAttrStr($attributes));
+    }
+
+    /**
+     * Create a <script> code block
+     *
+     * @access  public
+     * @param   string  $script
+     * @return  strig
+     */
+    public static function script($script)
+    {
+        return sprintf('<script>%s%s%s</script>', PHP_EOL, $script, PHP_EOL);
+    }
+
+    /**
+     * Create a <style> code block
+     *
+     * @access  public
+     * @param   string  $style
+     * @return  string
+     */
+    public static function style($style)
+    {
+        return sprintf('<style>%s%s%s</style>', PHP_EOL, $style, PHP_EOL);
     }
 
     /**
@@ -151,3 +190,4 @@ class Html
         return $string;
     }
 }
+
