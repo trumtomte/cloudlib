@@ -247,6 +247,7 @@ class Image
         $this->resample($width, $height);
     }
 
+    // Shorthand for thumbnails
     // TODO
     public function thumb()
     {
@@ -280,6 +281,7 @@ class Image
         $this->resample($width, $height, $srcW, $srcH, $x, $y);
     }
 
+    // Crop an image by x, y, width and height
     // TODO
     public function crop()
     {
