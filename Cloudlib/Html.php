@@ -46,7 +46,7 @@ class Html
     {
         if(is_string($filename))
         {
-            return sprintf('<link rel="stylesheet" href="%s" />',
+            return sprintf('<link rel="stylesheet" href="%s" />' . PHP_EOL,
                 static::$paths['css'] . $filename . '.css');
         }
         if(is_array($filename))
@@ -74,7 +74,7 @@ class Html
     {
         if(is_string($filename))
         {
-            return sprintf('<script src="%s"></script>',
+            return sprintf('<script src="%s"></script>' . PHP_EOL,
                 static::$paths['js'] . $filename . '.js');
         }
         if(is_array($filename))
@@ -107,8 +107,9 @@ class Html
         {
             unset($attributes['relative']);
 
-            return sprintf('<a href="%s" %s>%s</a>', static::$paths['base'] . $path,
-                static::getAttrStr($attributes), $content);
+            return sprintf('<a href="%s" %s>%s</a>' . PHP_EOL,
+                static::$paths['base'] . $path, static::getAttrStr($attributes),
+                $content);
         }
         return sprintf('<a href="%s" %s>%s</a>', $path, static::getAttrStr($attributes),
             $content);
@@ -129,7 +130,7 @@ class Html
         {
             unset($attributes['relative']);
 
-            return sprintf('<img src="%s" %s/>', static::$paths['img'] . $path,
+            return sprintf('<img src="%s" %s/>' . PHP_EOL, static::$paths['img'] . $path,
                 static::getAttrStr($attributes));
         }
         return sprintf('<img src="%s" %s/>',  $path, static::getAttrStr($attributes));
@@ -144,7 +145,7 @@ class Html
      */
     public static function script($script)
     {
-        return sprintf('<script>%s%s%s</script>', PHP_EOL, $script, PHP_EOL);
+        return sprintf('<script>%s%s%s</script>' . PHP_EOL, PHP_EOL, $script, PHP_EOL);
     }
 
     /**
@@ -156,7 +157,7 @@ class Html
      */
     public static function style($style)
     {
-        return sprintf('<style>%s%s%s</style>', PHP_EOL, $style, PHP_EOL);
+        return sprintf('<style>%s%s%s</style>' . PHP_EOL, PHP_EOL, $style, PHP_EOL);
     }
 
     /**
@@ -168,7 +169,7 @@ class Html
      */
     public static function br($times = 1)
     {
-        return str_repeat('<br />', $times);
+        return str_repeat('<br />', $times) . PHP_EOL;
     }
 
     /**
