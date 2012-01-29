@@ -182,4 +182,16 @@ class Session
     {
         return static::get('csrf-token');
     }
+
+    /**
+     * Check if a session variable exists
+     *
+     * @access  public
+     * @param   string  $key
+     * @return  boolean
+     */
+    public static function has($key)
+    {
+        return (bool) isset($_SESSION[$key]);
+    }
 }
