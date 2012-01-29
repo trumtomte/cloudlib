@@ -182,7 +182,11 @@ class Cloudlib
         mb_internal_encoding(Config::get('app.encoding'));
 
         Session::start();
-        Session::set('csrf-token', sha1(time() . uniqid(rand(), true)));
+
+        if(Session::has($key) == false)
+        {
+            Session::set('csrf-token', sha1(time() . uniqid(rand(), true)));
+        }
     }
 
     /**
@@ -262,6 +266,22 @@ class Cloudlib
     public function error($error, $response)
     {
         $this->errors[$error] = $response;
+    }
+
+    /**
+     * Return an already set error page
+     *
+     * @access  public
+     * @param   int     $error
+     * @return  object
+     */
+    public function errorPage($error)
+    {
+        if($this->errors[$error] instanceof Closure)
+        {
+            return $this->errors[$error]();
+        }
+        return $this->errors[$error];
     }
 
     /**
