@@ -190,7 +190,7 @@ class Database
         $cols .= end($columns);
         
         $insert = sprintf('(%s?)', str_repeat('?, ', $count));
-        $values = str_repeat($insert . ', ', ((count($variables) / count($columns)) - 1))
+        $values = str_repeat($insert . ', ', ((count($bindings) / count($columns)) - 1))
             . $insert;
 
         $statement = sprintf('INSERT INTO %s (%s) VALUES %s', $table, $cols, $values);
@@ -217,7 +217,7 @@ class Database
      * @param   array   $bindings
      * @return  mixed
      */
-    public function update($table, array $columns, array $bindings)
+    public function update($table, $where, array $columns, array $bindings)
     {
         $updates = null;
         $count = count($columns) - 1;
@@ -226,9 +226,9 @@ class Database
         {
             $updates .= sprintf('%s = ?, ', $columns[$i]);
         }
-        $updates .= sprintf('%s = ?, ', end($columns));
+        $updates .= sprintf('%s = ?', end($columns));
 
-        $statement = sprintf('UPDATE %s SET %s', $table, $updates);
+        $statement = sprintf('UPDATE %s SET %s WHERE %s', $table, $updates, $where);
 
         $sth = $this->execute($statement, $bindings);
         $result = $sth->rowCount();
@@ -318,3 +318,4 @@ class Database
         return $sth;
     }
 }
+
