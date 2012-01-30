@@ -43,6 +43,8 @@ class Cloudlib
      */
     protected $router;
 
+    protected $vars = array();
+
     /**
      * Stored data for Views
      *
@@ -183,9 +185,9 @@ class Cloudlib
 
         Session::start();
 
-        if(Session::has($key) == false)
+        if(Session::has('csrf-token') == false)
         {
-            Session::set('csrf-token', sha1(time() . uniqid(rand(), true)));
+            Session::generateToken('csrf-token');
         }
     }
 
@@ -445,5 +447,30 @@ class Cloudlib
                 $exceptionHandler(new ErrorException($message, $type, $type, $file, $line));
             }
         });
+    }
+
+    /**
+     * Set a variable
+     *
+     * @access  public
+     * @param   string  $index
+     * @param   mixed   $value
+     * @return  void
+     */
+    public function __set($index, $value)
+    {
+        $this->vars[$index] = $value;
+    }
+
+    /**
+     * Get a variable
+     *
+     * @access  public
+     * @param   string  $key
+     * @return  mixed
+     */
+    public function __get($key)
+    {
+        return $this->vars[$index];
     }
 }
