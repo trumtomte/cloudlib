@@ -147,7 +147,7 @@ class Session
     {
         $_SESSION[$key] = $value;
     }
-    
+
     /**
      * Get a session variable
      *
@@ -181,6 +181,18 @@ class Session
     public static function token()
     {
         return static::get('csrf-token');
+    }
+
+    /**
+     * Generate a session token
+     *
+     * @access  public
+     * @param   string  $key
+     * @return  void
+     */
+    public static function generateToken($key)
+    {
+        $_SESSION[$key] = sha1(time() . uniqid(rand(), true));
     }
 
     /**
