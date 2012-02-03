@@ -182,7 +182,15 @@ class Router
         {
             $class = $response['controller'] . 'Controller';
 
-            $controller = new $class($this->request);
+            if(isset($response['model']))
+            {
+                $model = $response['model'] . 'Model';
+                $controller = new $class($this->request, new $model());
+            }
+            else
+            {
+                $controller = new $class($this->request);
+            }
 
             if(isset($response['method']))
             {
