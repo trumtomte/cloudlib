@@ -29,7 +29,7 @@ class Uploader
 
     /**
      * PHP File errors
-     * 
+     *
      * @access  protected
      * @var     array
      */
@@ -104,13 +104,25 @@ class Uploader
             'filename' => null,
             'prefix' => null,
             'width' => null,
-            'height' => null
+            'height' => null,
+            'replace' => false
         );
 
         if(isset($config))
         {
             $this->setConfig($config);
         }
+    }
+
+    /**
+     * Check if any files has been uploaded
+     *
+     * @access  public
+     * @return  boolean
+     */
+    public function isEmpty()
+    {
+        return  isset($this->files) ? false : true;
     }
 
     /**
@@ -186,7 +198,7 @@ class Uploader
     {
         if($error !== 0)
         {
-            $this->errors[$key] = $this->fileErrors[$error];
+            $this->setError($this->fileErrors[$error], $key);
             return false;
         }
 
@@ -196,32 +208,32 @@ class Uploader
         // Is it a file?
         if($tempObj->isFile() == false)
         {
-            $this->errors[$name] = 'File is invalid';
+            $this->setError('File is invalid', $key, $name);
             return false;
         }
 
-        $this->data[$name]['origname'] = $name;
+        $this->setData($name, 'origname', $key, $name);
 
         // Valid filesize?
         if($tempObj->getSize() > static::$config['filesize'])
         {
-            $this->errors[$name] = 'File exceeds the max allowed filesize';
+            $this->setError('File exceeds the max allowed filesize', $key, $name);
             return false;
         }
 
-        $this->data[$name]['size'] = $tempObj->getSize();
+        $this->setData($tempObj->getSize(), 'size', $key, $name);
 
         // Valid file extension?
         if(isset(static::$config['filetypes']) && is_array(static::$config['filetypes']))
         {
             if( ! in_array($nameObj->getExtension(), static::$config['filetypes']))
             {
-                $this->errors[$name] = 'Invalid file extension';
+                $this->setError('Invalid file extension', $key, $name);
                 return false;
             }
         }
 
-        $this->data[$name]['ext'] = $nameObj->getExtension();
+        $this->setData($nameObj->getExtension(), 'ext', $key, $name);
 
         // Is the file an image?
         if(in_array($nameObj->getExtension(), $this->imageExtensions))
@@ -233,7 +245,7 @@ class Uploader
             {
                 if($width > static::$config['width'])
                 {
-                    $this->errors[$name] = 'Invalid width';
+                    $this->setError('Invalid width', $key, $name);
                     return false;
                 }
             }
@@ -243,20 +255,20 @@ class Uploader
             {
                 if($height > static::$config['height'])
                 {
-                    $this->errors[$name] = 'Invalid height';
+                    $this->setError('Invalid height', $key, $name);
                     return false;
                 }
             }
 
-            $this->data[$name]['image'] = 1;
-            $this->data[$name]['width'] = $width;
-            $this->data[$name]['height'] = $height;
+            $this->setData(1, 'image', $key, $name);
+            $this->setData($width, 'width', $key, $name);
+            $this->setData($height, 'height', $key, $name);
         }
         else
         {
-            $this->data[$name]['image'] = 0;
-            $this->data[$name]['width'] = 0;
-            $this->data[$name]['height'] = 0;
+            $this->setData(0, 'image', $key, $name);
+            $this->setData(0, 'width', $key, $name);
+            $this->setData(0, 'height', $key, $name);
         }
 
         // Set name
@@ -264,7 +276,8 @@ class Uploader
 
         if(isset(static::$config['filename']))
         {
-            $newName = $prefix . static::$config['filename'] . $nameObj->getExtension();
+            $newName = $prefix . static::$config['filename'] .
+                '.' . $nameObj->getExtension();
         }
         else
         {
@@ -273,29 +286,32 @@ class Uploader
 
         $newName = str_replace(' ', '_', $newName);
 
-        $copy = '';
-        $counter = 1;
-
-        while(file_exists(static::$config['directory'] . $copy . $newName))
+        if(static::$config['replace'] == false)
         {
-            $copy = sprintf('copy(%s)_', $counter);
-            $counter++;
+            $copy = '';
+            $counter = 1;
+
+            while(file_exists(static::$config['directory'] . $copy . $newName))
+            {
+                $copy = sprintf('copy(%s)_', $counter);
+                $counter++;
+            }
+
+            $newName = $copy . $newName;
         }
 
-        $newName = $copy . $newName;
-
-        $this->data[$name]['name'] = $newName;
+        $this->setData($newName, 'name', $key, $name);
 
         $dir = rtrim(static::$config['directory'], '/') . '/';
 
         if( ! move_uploaded_file($tmp, $dir . $newName))
         {
-            $this->errors[$name] = 'Unable to upload the chosen file';
+            $this->setError('Unable to upload the chosen file', $key, $name);
             return false;
         }
 
-        $this->data[$name]['path'] = $dir;
-        $this->data[$name]['fullpath'] = $dir . $newName;
+        $this->setData($dir, 'path', $key, $name);
+        $this->setData($dir . $newName, 'fullpath', $key, $name);
 
         return true;
     }
@@ -320,6 +336,45 @@ class Uploader
     public function getData()
     {
         return $this->data;
+    }
+
+    /**
+     * Set data
+     *
+     * @access  protected
+     * @param   string  $value
+     * @param   string  $index
+     * @param   int     $key
+     * @param   string  $name
+     * @return  void
+     */
+    protected function setData($value, $index, $key, $name = null)
+    {
+        $this->data[$key][$index] = $value;
+
+        if($name)
+        {
+            $this->data[$name][$index] = $value;
+        }
+    }
+
+    /**
+     * Set an error
+     *
+     * @access  protected
+     * @param   string  $value
+     * @param   int     $key
+     * @param   string  $name
+     * @return  void
+     */
+    protected function setError($value, $key, $name = null)
+    {
+        $this->errors[$key] = $value;
+
+        if($name)
+        {
+            $this->errors[$name] = $value;
+        }
     }
 
     /**
