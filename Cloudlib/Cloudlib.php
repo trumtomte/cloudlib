@@ -1,4 +1,4 @@
-<?php if( ! defined('DS')) { define('DS', DIRECTORY_SEPARATOR); }
+<?php
 /**
  * CloudLib :: Lightweight RESTful MVC PHP Framework
  *
@@ -43,6 +43,12 @@ class Cloudlib
      */
     protected $router;
 
+    /**
+     * CLoudlib class vars for use in different routes
+     *
+     * @access  protected
+     * @var     array
+     */
     protected $vars = array();
 
     /**
@@ -97,7 +103,7 @@ class Cloudlib
      * Constructor.
      *
      * Sets the root directory, base uri.
-     * It has the option of turing of the default start, if the user wants to define
+     * It has the option of turning of the default start, if the user wants to define
      * the paths instead
      *
      * @access  public
@@ -110,19 +116,27 @@ class Cloudlib
     {
         static::$root = $root;
         static::$baseUri = $baseUri;
-        
+
+        // Define highlevel paths
+        $ds = DIRECTORY_SEPARATOR;
+        $app = $root . $ds . 'Application' . $ds;
+        $pub = $root . $ds . 'Public' . $ds;
+        $relPub = rtrim('/', $baseUri) . $ds . 'Public' . $ds;
+
+        // Define specific sublevel paths
         static::$paths = array(
-            'controllers' => static::$root . DS . 'Application' . DS . 'controllers' . DS,
-            'models'      => static::$root . DS . 'Application' . DS . 'models' . DS,
-            'views'       => static::$root . DS . 'Application' . DS . 'views' . DS,
-            'layouts'     => static::$root . DS . 'Application' . DS . 'views' . DS . 'layouts' . DS,
-            'classes'     => static::$root . DS . 'Cloudlib' . DS,
-            'logs'        => static::$root . DS . 'Application' . DS . 'logs' . DS,
-            'css'         => static::$baseUri . 'Public' . DS . 'css' . DS,
-            'img'         => static::$baseUri . DS . 'Public' . DS . 'img' . DS,
-            'js'          => static::$baseUri . DS . 'Public' . DS . 'js' . DS,
-            'uploader'    => static::$root . DS . 'Public' . DS . 'img' . DS,
-            'image'       => static::$root . DS . 'Public' . DS . 'img' . DS
+            'Controllers' => $app . 'controllers' . $ds,
+            'Models'      => $app . 'models' . $ds,
+            'Views'       => $app . 'views' . $ds,
+            'Layouts'     => $app . 'views' . $ds . 'layouts' . $ds,
+            'Logs'        => $app . 'logs' . $ds,
+            'Config'      => $app . 'config.php',
+            'Uploader'    => $pub . 'img' . $ds,
+            'Image'       => $pub . 'img' . $ds,
+            'CSS'         => $relPub . 'css' . $ds,
+            'JS'          => $relPub . 'js' . $ds,
+            'Img'         => $relPub . 'img' . $ds,
+            'Classes'     => $root . $ds . 'Cloudlib' . $ds
         );
 
         if($default)
@@ -147,6 +161,18 @@ class Cloudlib
     }
 
     /**
+     * Get a directory path by name
+     *
+     * @access  public
+     * @param   string  $name
+     * @return  string
+     */
+    public function getPath($name)
+    {
+        return static::$paths[$name];
+    }
+
+    /**
      * Start the application
      *
      * @access  public
@@ -157,22 +183,22 @@ class Cloudlib
         $this->registerClassLoader();
         $this->setErrorHandling();
 
+        // Define directory paths for the classes
         View::$paths = array(
-            'views' => static::$paths['views'],
-            'layouts' => static::$paths['layouts']
+            'views' => static::$paths['Views'],
+            'layouts' => static::$paths['Layouts']
         );
-
         Html::$paths = array(
             'base' => static::$baseUri,
-            'css' => static::$paths['css'],
-            'img' => static::$paths['img'],
-            'js' => static::$paths['js']
+            'css' => static::$paths['CSS'],
+            'img' => static::$paths['Img'],
+            'js' => static::$paths['JS']
         );
+        Uploader::$path = static::$paths['Uploader'];
+        Image::$path = static::$paths['Image'];
 
-        Uploader::$path = static::$paths['uploader'];
-        Image::$path = static::$paths['image'];
-
-        Config::load(static::$root . DS . 'Application' . DS . 'config.php');
+        // Load the config
+        Config::load(static::$paths['Config']);
 
         $this->request = new Request($_SERVER, $_GET, $_POST, $_FILES, $_COOKIE);
         $this->response = new Response($this->request);
@@ -258,7 +284,7 @@ class Cloudlib
     }
 
     /**
-     * Add an Error
+     * Add an Error response
      *
      * @access  public
      * @param   int     $error
@@ -299,7 +325,6 @@ class Cloudlib
         $this->data[$key] = $value;
         return $this;
     }
-
 
     /**
      * Render a view
@@ -357,8 +382,8 @@ class Cloudlib
 
     /**
      * Register an autoloader
-     * 
-     * @access  protected 
+     *
+     * @access  protected
      * @return  void
      */
     protected function registerClassLoader()
@@ -378,13 +403,13 @@ class Cloudlib
         switch(true)
         {
             case preg_match('/Controller$/', $class) && ! preg_match('/^Controller$/', $class):
-                $directory = static::$paths['controllers'];
+                $directory = static::$paths['Controllers'];
                 break;
             case preg_match('/Model$/', $class) && ! preg_match('/^Model$/', $class):
-                $directory = static::$paths['models'];
+                $directory = static::$paths['Models'];
                 break;
             default:
-                $directory = static::$paths['classes'];
+                $directory = static::$paths['Classes'];
                 break;
         }
 
@@ -400,7 +425,7 @@ class Cloudlib
     /**
      * Function that handles all errors and exceptions
      *
-     * @access  protected 
+     * @access  protected
      * @return  void
      */
     protected function setErrorHandling()
@@ -408,8 +433,8 @@ class Cloudlib
         error_reporting(-1);
         ini_set('display_errors', 1);
         ini_set('log_errors', 1);
-        ini_set('error_log', static::$paths['logs'] . 'error_php.log');
-        
+        ini_set('error_log', static::$paths['Logs'] . 'error_php.log');
+
         $exceptionHandler = function(Exception $e)
         {
             if(ob_get_contents()) { ob_end_clean(); }
@@ -429,6 +454,7 @@ class Cloudlib
             exit(1);
         };
 
+        //TODO: use($this) in PHP 5.4
         set_exception_handler(function(Exception $e) use ($exceptionHandler)
         {
             $exceptionHandler($e);
