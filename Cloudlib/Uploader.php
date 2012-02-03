@@ -122,7 +122,25 @@ class Uploader
      */
     public function isEmpty()
     {
-        return  isset($this->files) ? false : true;
+        if(is_array($this->files['error']))
+        {
+            foreach($this->files['error'] as $value)
+            {
+                if($value !== 4)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        else
+        {
+            if($this->files['error'] !== 4)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 
     /**
