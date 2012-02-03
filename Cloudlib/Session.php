@@ -59,12 +59,12 @@ class Session
      */
     public static function start()
     {
-        if(self::$session == self::SESSION_STARTED)
+        if(static::$session == static::SESSION_STARTED)
         {
             return false;
         }
 
-        self::$session = self::SESSION_STARTED;
+        static::$session = static::SESSION_STARTED;
 
         return session_start();
     }
@@ -78,12 +78,12 @@ class Session
      */
     public static function destroy()
     {
-        if(self::$session == self::SESSION_NOT_STARTED)
+        if(static::$session == static::SESSION_NOT_STARTED)
         {
             return false;
         }
 
-        self::$session = self::SESSION_NOT_STARTED;
+        static::$session = static::SESSION_NOT_STARTED;
 
         unset($_SESSION);
 
