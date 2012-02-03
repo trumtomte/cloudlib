@@ -38,7 +38,7 @@ $app->route('/test/:hej', array('GET'), function($test)
 });
 
 // Define two routes for controllers
-$app->route('/ctrl', array('GET'), array('controller' => 'index'));
+$app->route('/ctrl', array('GET'), array('controller' => 'index', 'model' => 'index'));
 $app->route('/ctrl/:param', array('GET'), array('controller' => 'index', 'method' => 'test'));
 
 // Custom 404 view
