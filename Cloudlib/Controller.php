@@ -53,16 +53,32 @@ abstract class Controller
      * Constructor
      *
      * @access  public
-     * @param   array   $input
+     * @param   object  $request
+     * @param   object  $model
      * @return  void
      */
-    public function __construct(Request $request)
+    public function __construct(Request $request, Model $model = null)
     {
         $this->request = $request;
         $this->input = $request->input;
         
-        $model = preg_replace('/Controller$/', 'Model', get_class($this));
-        $this->model = new $model();
+        if($model)
+        {
+            $this->model = $model;
+        }
+    }
+
+    /**
+     * Return a Model
+     *
+     * @access  public
+     * @param   string  $model
+     * @return  object
+     */
+    public function model($model)
+    {
+        $model .= 'Model';
+        return new $model();
     }
 
     /**
