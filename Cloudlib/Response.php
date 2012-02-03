@@ -159,7 +159,14 @@ class Response
                 $data = array('code' => $code, 'message' => $this->statusCodes[$code]);
             }
 
-            $this->body($errors[$code]($data));
+            if($errors[$code] instanceof Closure)
+            {
+                $this->body($errors[$code]($data));
+            }
+            else
+            {
+                $this->body($errors[$code]);
+            }
         }
     }
 
