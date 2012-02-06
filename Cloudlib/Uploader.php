@@ -133,14 +133,8 @@ class Uploader
             }
             return true;
         }
-        else
-        {
-            if($this->files['error'] !== 4)
-            {
-                return false;
-            }
-            return true;
-        }
+
+        return ($this->files['error'] !== 4) ? false : true;
     }
 
     /**
