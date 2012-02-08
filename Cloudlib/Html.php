@@ -9,7 +9,7 @@
  */
 
 /**
- * <class name>
+ * The HTML Class 
  *
  * <short description>
  *
@@ -103,16 +103,14 @@ class Html
      */
     public static function a($path, $content, array $attributes = array())
     {
-        if($attributes['relative'] == false)
+        if(isset($attributes['relative']) && $attributes['relative'] == false)
         {
             unset($attributes['relative']);
-
-            return sprintf('<a href="%s" %s>%s</a>' . PHP_EOL,
-                static::$paths['base'] . $path, static::getAttrStr($attributes),
+            return sprintf('<a href="%s" %s>%s</a>', $path, static::getAttrStr($attributes),
                 $content);
         }
-        return sprintf('<a href="%s" %s>%s</a>', $path, static::getAttrStr($attributes),
-            $content);
+        return sprintf('<a href="%s" %s>%s</a>' . PHP_EOL, static::$paths['base'] .
+            $path, static::getAttrStr($attributes), $content);
     }
 
     /**
@@ -126,14 +124,13 @@ class Html
      */
     public static function img($path, array $attributes = array())
     {
-        if($attributes['relative'] == false)
+        if(isset($attributes['relative']) && $attributes['relative'] == false)
         {
             unset($attributes['relative']);
-
-            return sprintf('<img src="%s" %s/>' . PHP_EOL, static::$paths['img'] . $path,
-                static::getAttrStr($attributes));
+            return sprintf('<img src="%s" %s/>', $path, static::getAttrStr($attributes));
         }
-        return sprintf('<img src="%s" %s/>',  $path, static::getAttrStr($attributes));
+        return sprintf('<img src="%s" %s/>' . PHP_EOL, static::$paths['img'] . $path,
+            static::getAttrStr($attributes));
     }
 
     /**
@@ -191,4 +188,5 @@ class Html
         return $string;
     }
 }
+
 
