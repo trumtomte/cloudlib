@@ -343,10 +343,26 @@ class Uploader
      * Get the data array
      *
      * @access  public
+     * @param   boolean $byIndex
      * @return  array
      */
-    public function getData()
+    public function getData($byIndex = false)
     {
+        if($byIndex)
+        {
+            $array = array();
+
+            foreach($this->data as $key => $value)
+            {
+                if(is_int($key))
+                {
+                    $array[] = $value;
+                }
+            }
+
+            return $array;
+        }
+
         return $this->data;
     }
 
