@@ -109,10 +109,10 @@ class Cloudlib
      * @access  public
      * @param   string  $root
      * @param   string  $baseUri
-     * @param   boolean $default
+     * @param   boolean $autoStart
      * @return  void
      */
-    public function __construct($root, $baseUri = '/', $default = true)
+    public function __construct($root, $baseUri = '/', $autoStart = true)
     {
         static::$root = $root;
         static::$baseUri = $baseUri;
@@ -121,7 +121,7 @@ class Cloudlib
         $ds = DIRECTORY_SEPARATOR;
         $app = $root . $ds . 'Application' . $ds;
         $pub = $root . $ds . 'Public' . $ds;
-        $relPub = rtrim('/', $baseUri) . $ds . 'Public' . $ds;
+        $relPub = $baseUri . $ds . 'Public' . $ds;
 
         // Define specific sublevel paths
         static::$paths = array(
@@ -139,7 +139,7 @@ class Cloudlib
             'Classes'     => $root . $ds . 'Cloudlib' . $ds
         );
 
-        if($default)
+        if($autoStart)
         {
             $this->start();
         }
