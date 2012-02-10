@@ -7,4 +7,5 @@
     if(isset($test)) {
     echo print_r($test);
     }
+    echo var_dump($_SESSION);
     echo '</pre><hr>';
