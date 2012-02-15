@@ -117,7 +117,7 @@ class Cloudlib
         static::$root = $root;
         static::$baseUri = $baseUri;
 
-        // Define highlevel paths
+        // Define toplevel paths
         $ds = DIRECTORY_SEPARATOR;
         $app = $root . $ds . 'Application' . $ds;
         $pub = $root . $ds . 'Public' . $ds;
