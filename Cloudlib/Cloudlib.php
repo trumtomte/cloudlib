@@ -9,7 +9,7 @@
  */
 
 /**
- * <class name>
+ * Cloudlib
  *
  * <short description>
  *
