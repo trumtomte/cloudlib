@@ -3,7 +3,7 @@
     optional routes
     regex routes
     redirecting
-    wrap attribut för html och form klassen
+    wrap attribut for html och form klassen
     "warp" option for html/form methods (ex "wrap" => "h3" -> <h3><img src="random/path" /></h3>)
     nested views
     hooks for routes, before and after a route is parsed
