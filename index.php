@@ -12,10 +12,12 @@
 define('BOOT_TIME', microtime(true));
 
 // Require the framework
-require 'Cloudlib/Cloudlib.php';
+require 'cloudlib/Cloudlib.php';
 
 // Inititalize the application
 $app = new Cloudlib(__DIR__, '/cloudlib');
+
+$app->uploader = new Uploader($app->request->files);
 
 // Define the root route
 $app->route('/', array('GET', 'POST'), function() use ($app)
@@ -43,25 +45,31 @@ $app->route('/ctrl/:param', array('GET'), array('controller' => 'index', 'method
 
 // Custom 404 view
 $app->error(404, function($error) {
-    $data['code'] = $error['code'];
-    $data['message'] = $error['message'];
+    $data['code'] = $error['statusCode'];
+    $data['message'] = $error['statusMessage'];
     return new View('errors/404', null, $data);
 });
 
 // Custom 405 view
 $app->error(405, function($error) use ($app)
 {
-    $app->set('code', $error['code'])
-        ->set('message', $error['message']);
+    $app->set('code', $error['statusCode'])
+        ->set('message', $error['statusMessage']);
 
     return $app->render('errors/405');
 });
 
 // Custom 500 error view
-$app->error(500, function()
+/*
+$app->error(500, function($e) use ($app)
 {
-    return new View('errors/500');
+    $app->set('message', $e->getMessage());
+    $app->set('line', $e->getLine());
+    $app->set('file', $e->getFile());
+    $app->set('trace', $e->getTraceAsString());
+    return $app->render('errors/500');
 });
+ */
 
 // Run the application
 $app->run();

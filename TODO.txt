@@ -1,0 +1,18 @@
+# TODOs (things i'd want to implement if possible)
+    PSR-0
+    optional routes
+    regex routes
+    redirecting
+    wrap attribut för html och form klassen
+    "warp" option for html/form methods (ex "wrap" => "h3" -> <h3><img src="random/path" /></h3>)
+    nested views
+    hooks for routes, before and after a route is parsed
+    more informational comments Everywhere, codeblock examples (<code>)
+    sort the form / html attributes
+    get the last occurred database error
+    using custom paths in the image class for loading/saving, instead of the default one
+    wrapper method in the database class for a begin/commit/rollBack session
+    proper way of being able to access Database::$queries for logging
+    filepermissions in the uploader and image class
+    get last query
+    (might wanna remove the PHP_EOL's in the html/form classes)

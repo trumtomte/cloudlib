@@ -12,7 +12,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>500</title>
+  <title>404</title>
   <style>
     html
     {
@@ -33,13 +33,12 @@
   </style>
 </head>
 <body>
-<h1>500</h1>
-<h3>Internal server error</h3>
+<h1>404</h1>
+<h3>The requested page could not be found</h3>
 <?php
-    echo $message;
-    echo $line;
-    echo $file;
-    echo $trace;
+echo $code;
+echo '<br>';
+echo $message;
 ?>
 </body>
 </html>

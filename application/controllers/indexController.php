@@ -17,10 +17,18 @@
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class indexModel extends Model
+class indexController extends Controller
 {
-    public function index()
+    public function get()
     {
-        return 'the indexModel';
+        $this->set('test', $this->model->test());
+        return $this->render('index', 'index');
+    }
+
+    public function test($param)
+    {
+        $this->set('test', $param);
+
+        return $this->render('index', 'index');
     }
 }
