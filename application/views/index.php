@@ -11,4 +11,3 @@
     echo var_dump($_SESSION);
     echo '</pre><hr>';
     echo Benchmark::compare(BOOT_TIME);
-

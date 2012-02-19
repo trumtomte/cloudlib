@@ -9,7 +9,7 @@
  */
 
 /**
- * <class name>
+ * Config
  *
  * <short description>
  *
