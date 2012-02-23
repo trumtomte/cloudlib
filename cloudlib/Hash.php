@@ -9,7 +9,7 @@
  */
 
 /**
- * Hash
+ * <class name>
  *
  * <short description>
  *
@@ -61,6 +61,6 @@ class Hash
      */
     public static function compare($hash, $value, $salt, $rounds = 8)
     {
-        return (bool) static::create($value, $salt, $rounds) == $hash;
+        return (bool) (($new = static::create($value, $salt, $rounds)) == $hash);
     }
 }
