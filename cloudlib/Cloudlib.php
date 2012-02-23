@@ -478,7 +478,7 @@ class Cloudlib
 
         set_error_handler(function($code, $str, $file, $line) use ($that)
         {
-            $that->exceptionHandler(new ErrorException($str, $code, $code, $file, $lime));
+            $that->exceptionHandler(new ErrorException($str, $code, 0, $file, $lime));
         });
 
         register_shutdown_function(function() use ($that)
@@ -486,7 +486,7 @@ class Cloudlib
             if( ! ($e = error_get_last()) === null)
             {
                 extract($e);
-                $that->exceptionHandler(new ErrorException($message, $type, $type, $file, $line));
+                $that->exceptionHandler(new ErrorException($message, $type, 0, $file, $line));
             }
         });
     }
