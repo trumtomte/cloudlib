@@ -2,7 +2,6 @@
     PSR-0
     optional routes
     regex routes
-    redirecting
     wrap attribut for html och form klassen
     "warp" option for html/form methods (ex "wrap" => "h3" -> <h3><img src="random/path" /></h3>)
     nested views
@@ -16,4 +15,4 @@
     filepermissions in the uploader and image class
     get last query
     (might wanna remove the PHP_EOL's in the html/form classes)
-    3rd parameter of Cloudlibs constructor should be an array of options (ex "globals" to be used for Dependency injection)
+    3rd parameter of Cloudlibs constructor should be an array of options (ex. "autoloader" could be an option to set your own autoloader)
