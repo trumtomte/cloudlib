@@ -173,12 +173,24 @@ class Session
     }
 
     /**
+     * Check if a session variable exists
+     *
+     * @access  public
+     * @param   string  $key
+     * @return  boolean
+     */
+    public static function has($key)
+    {
+        return (bool) isset($_SESSION[$key]);
+    }
+
+    /**
      * Get the CSRF token
      *
      * @access  public
      * @return  string
      */
-    public static function token($token = 'csrf-token')
+    public static function token($token = 'token')
     {
         return static::get($token);
     }
@@ -190,7 +202,7 @@ class Session
      * @param   string  $token
      * @return  void
      */
-    public static function generateToken($token = 'csrf-token')
+    public static function generateToken($token = 'token')
     {
         $_SESSION[$token] = sha1(time() . uniqid(rand(), true));
     }
@@ -203,35 +215,22 @@ class Session
      * @param   string  $sessionToken
      * @return  boolean
      */
-    public static function compareToken($inputToken, $sessionToken = 'csrf-token')
+    public static function compareToken($inputToken, $sessionToken = 'token')
     {
         return (bool) ($inputToken == static::token($sessionToken));
     }
 
     /**
-     * Refresh a session (for example if a user signs in
+     * Refresh a session (for example if a user signs in)
      *
      * @access  public
      * @param   string  $token
      * @return  void
      */
-    public static function refresh($token = 'csrf-token')
+    public static function refresh($token = 'token')
     {
         session_regenerate_id(true);
-        session_write_close();
         session_unset();
         static::generateToken($token);
-    }
-
-    /**
-     * Check if a session variable exists
-     *
-     * @access  public
-     * @param   string  $key
-     * @return  boolean
-     */
-    public static function has($key)
-    {
-        return (bool) isset($_SESSION[$key]);
     }
 }
