@@ -184,9 +184,9 @@ class Cloudlib
 
         Session::start();
 
-        if(Session::has('csrf-token') == false)
+        if( ! Session::has('token'))
         {
-            Session::generateToken('csrf-token');
+            Session::generateToken('token');
         }
     }
 
@@ -306,6 +306,19 @@ class Cloudlib
     public function delete($route, $response)
     {
         $this->router->route($route, array('DELETE'), $response);
+    }
+
+    /**
+     * Redirect to a new location
+     *
+     * @access  public
+     * @param   string  $location
+     * @param   int     $status
+     * @return  void
+     */
+    public function redirect($location, $status = 302)
+    {
+        $this->response->redirect(static::$baseUri . $location, $status);
     }
 
     /**

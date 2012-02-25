@@ -136,6 +136,28 @@ class Response
     }
 
     /**
+     * Redirect to a new location
+     *
+     * @access  public
+     * @param   string  $location
+     * @param   int     $status
+     * @return  void
+     */
+    public function redirect($location, $status = 302)
+    {
+        if(filter_var($location, FILTER_VALIDATE_URL))
+        {
+            $this->status($status)->header('Location', $location)->send();
+        }
+        else
+        {
+            $this->status($status)->header('Location',
+                sprintf('http://%s%s', $this->request->server('HTTP_HOST'), $location))
+                ->send();
+        }
+    }
+
+    /**
      * Shorthand function for errors
      *
      * @access  public
@@ -180,11 +202,12 @@ class Response
      * @access  public
      * @param   string  $key
      * @param   string  $value
-     * @return  void
+     * @return  object
      */
     public function header($key, $value)
     {
         $this->headers[$key] = $value;
+        return $this;
     }
 
     /**
@@ -203,7 +226,7 @@ class Response
             $this->header('Content-Type', 'text/html; charset=utf8');
         }
 
-        if( ! isset($this->headers['Content-Length']))
+        if( ! isset($this->headers['Content-Length']) && $this->body !== null)
         {
             $this->header('Content-Length', strlen( (string) $this->body));
         }
