@@ -9,7 +9,7 @@
  */
 
 /**
- * <class name>
+ * The Form class
  *
  * <short description>
  *
@@ -216,7 +216,7 @@ class Form
      * @param   array   $options
      * @return  string
      */
-    public static function token($value, $name = 'csrf-token', array $options = array())
+    public static function token($value, $name = 'token', array $options = array())
     {
         $options['type'] = 'hidden';
         $options['value'] = $value;
@@ -516,7 +516,7 @@ class Form
      * @param   array   $options
      * @return  string
      */
-    public function addToken($value, $name = 'csrf-token', array $options = array())
+    public function addToken($value, $name = 'token', array $options = array())
     {
         $this->form .= static::token($value, $name, $options);
     }
