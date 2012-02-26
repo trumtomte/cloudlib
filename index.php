@@ -15,7 +15,7 @@ define('BOOT_TIME', microtime(true));
 require 'cloudlib/Cloudlib.php';
 
 // Inititalize the application
-$app = new Cloudlib(__DIR__, '/cloudlib');
+$app = new cloudlib\Cloudlib(__DIR__, '/cloudlib');
 
 $app->uploader = new Uploader($app->request->files);
 
@@ -58,18 +58,6 @@ $app->error(405, function($error) use ($app)
 
     return $app->render('errors/405');
 });
-
-// Custom 500 error view
-/*
-$app->error(500, function($e) use ($app)
-{
-    $app->set('message', $e->getMessage());
-    $app->set('line', $e->getLine());
-    $app->set('file', $e->getFile());
-    $app->set('trace', $e->getTraceAsString());
-    return $app->render('errors/500');
-});
- */
 
 // Run the application
 $app->run();
