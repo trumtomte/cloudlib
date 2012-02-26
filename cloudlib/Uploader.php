@@ -8,6 +8,11 @@
  * @package     Cloudlib
  */
 
+namespace cloudlib;
+
+// SPL
+use SplFileInfo;
+
 /**
  * <class name>
  *
@@ -79,9 +84,9 @@ class Uploader
      * Directory for uploads
      *
      * @access  protected
-     * @var     string
+     * @var     array
      */
-    protected static $path;
+    protected static $paths = array();
 
     /**
      * Constructor.
@@ -98,7 +103,7 @@ class Uploader
         $this->files = array_shift($files);
 
         static::$config = array(
-            'directory' => static::$path,
+            'directory' => static::$paths['uploadDirectory'],
             'filetypes' => null,
             'filesize' => 1048576,
             'filename' => null,
@@ -382,14 +387,17 @@ class Uploader
     }
 
     /**
-     * Define the directory path
+     * Define directory pahts
      *
      * @access  public
-     * @param   string  $path
+     * @param   array   $paths
      * @return  void
      */
-    public static function setPath($path)
+    public static function setPaths(array $paths)
     {
-        static::$path = $path;
+        foreach($paths as $key => $value)
+        {
+            static::$paths[$key] = $value;
+        }
     }
 }

@@ -8,6 +8,11 @@
  * @package     Cloudlib
  */
 
+namespace cloudlib;
+
+// SPL
+use SplFileInfo;
+
 /**
  * <class name>
  *
@@ -44,7 +49,7 @@ class Image
 
     /**
      * Current image height
-     * 
+     *
      * @access  protected
      * @var     int
      */
@@ -78,9 +83,9 @@ class Image
      * Directory paths for image files
      *
      * @access  protected
-     * @var     string
+     * @var     array
      */
-    protected static $path;
+    protected static $paths = array();
 
     /**
      * Constructor.
@@ -114,7 +119,7 @@ class Image
      */
     public function load($image)
     {
-        $file = static::$path . $image;
+        $file = static::$paths['imageDirectory'] . $image;
 
         $image = new SplFileInfo($file);
 
@@ -158,7 +163,7 @@ class Image
      */
     public function save($file)
     {
-        $newImage = static::$path . $file;
+        $newImage = static::$paths['imageDirectory'] . $file;
 
         switch($this->extension)
         {
@@ -324,7 +329,7 @@ class Image
 
     /**
      * Set the JPEG compression value
-     * 
+     *
      * @access  public
      * @param   int     $compression
      * @return  void
@@ -346,14 +351,17 @@ class Image
     }
 
     /**
-     * Define the directory path
+     * Define directory pahts
      *
      * @access  public
-     * @param   string  $path
+     * @param   array   $paths
      * @return  void
      */
-    public static function setPath($path)
+    public static function setPaths(array $paths)
     {
-        static::$path = $path;
+        foreach($paths as $key => $value)
+        {
+            static::$paths[$key] = $value;
+        }
     }
 }
