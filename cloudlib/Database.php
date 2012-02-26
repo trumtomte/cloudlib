@@ -8,6 +8,13 @@
  * @package     Cloudlib
  */
 
+namespace cloudlib;
+
+// SPL
+use PDO;
+use PDOException;
+use RuntimeException;
+
 /**
  * <class name>
  *
@@ -188,7 +195,7 @@ class Database
             $cols .= sprintf('%s, ', $columns[$i]);
         }
         $cols .= end($columns);
-        
+
         $insert = sprintf('(%s?)', str_repeat('?, ', $count));
         $values = str_repeat($insert . ', ', ((count($bindings) / count($columns)) - 1))
             . $insert;

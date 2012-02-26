@@ -8,6 +8,14 @@
  * @package     Cloudlib
  */
 
+namespace cloudlib;
+
+// SPL
+use Closure;
+
+// Cloudlib
+use cloudlib\Request;
+
 /**
  * <class name>
  *
@@ -252,7 +260,7 @@ class Response
         {
             $this->sendHeaders();
         }
-        
+
         if($this->request->isHead() === false)
         {
             if($this->body !== null)

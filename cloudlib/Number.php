@@ -8,6 +8,11 @@
  * @package     Cloudlib
  */
 
+namespace cloudlib;
+
+// SPL
+use InvalidArgumentException;
+
 /**
  * <class name>
  *
@@ -78,14 +83,14 @@ class Number
         {
             throw new InvalidArgumentException('Argument 1 has to be of type String');
         }
-        
+
         $value = explode($type = substr($value, -2), $value);
 
         return $value[0] * pow(2, static::$byteUnits[strtoupper($type)]);
     }
 
     /**
-     * Convert bytes into a string like '0.444MB'
+     * Convert bytes into a string, ex '0.444MB'
      *
      * @access  public
      * @param   int     $value
@@ -98,7 +103,7 @@ class Number
         {
             throw new InvalidArgumentException('Argument 1 has to be of type Integer');
         }
-        
+
         return sprintf('%sMB', round(( (int) $value / 1024 / 1024), $round));
     }
 }

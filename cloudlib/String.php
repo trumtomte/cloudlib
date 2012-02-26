@@ -8,6 +8,8 @@
  * @package     Cloudlib
  */
 
+namespace cloudlib;
+
 /**
  * <class name>
  *
@@ -28,7 +30,7 @@ class String
     public function __construct() {}
 
     /**
-     * Repeat a string 
+     * Repeat a string
      *
      * @access  public
      * @param   string  $string

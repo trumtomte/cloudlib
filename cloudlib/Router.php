@@ -8,6 +8,16 @@
  * @package     Cloudlib
  */
 
+namespace cloudlib;
+
+// SPL
+use Closure;
+use ReflectionMethod;
+use ReflectionFunction;
+
+// Cloudlib
+use cloudlib\Request;
+
 /**
  * <class name>
  *
@@ -101,7 +111,7 @@ class Router
      * @param   string  $route
      * @param   array   $methods
      * @param   mixed   $response
-     * @return  mixed
+     * @return  void
      */
     public function route($route, array $methods, $response)
     {
@@ -276,4 +286,3 @@ class Router
         }
     }
 }
-

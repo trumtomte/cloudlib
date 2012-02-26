@@ -8,6 +8,12 @@
  * @package     Cloudlib
  */
 
+namespace cloudlib;
+
+// SPL
+use LogicException;
+use RuntimeException;
+
 /**
  * Config
  *

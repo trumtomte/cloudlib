@@ -8,6 +8,8 @@
  * @package     Cloudlib
  */
 
+namespace cloudlib;
+
 /**
  * <class name>
  *

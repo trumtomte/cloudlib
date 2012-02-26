@@ -8,6 +8,13 @@
  * @package     Cloudlib
  */
 
+namespace cloudlib;
+
+// Cloudlib
+use cloudlib\Request;
+use cloudlib\View;
+use cloudlib\Model;
+
 /**
  * <class name>
  *
@@ -61,7 +68,7 @@ abstract class Controller
     {
         $this->request = $request;
         $this->input = $request->input;
-        
+
         if($model)
         {
             $this->model = $model;

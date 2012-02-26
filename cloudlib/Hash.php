@@ -8,6 +8,11 @@
  * @package     Cloudlib
  */
 
+namespace cloudlib;
+
+// SPL
+use InvalidArgumentException;
+
 /**
  * <class name>
  *
@@ -28,8 +33,8 @@ class Hash
     public function __construct() {}
 
     /**
-     * Create a bcrypt hash 
-     * 
+     * Create a bcrypt hash
+     *
      * @acess   public
      * @param   string  $value
      * @param   string  $salt

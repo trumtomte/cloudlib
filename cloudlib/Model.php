@@ -8,6 +8,11 @@
  * @package     Cloudlib
  */
 
+namespace cloudlib;
+
+// Cloudlib
+use cloudlib\Database;
+
 /**
  * <class name>
  *

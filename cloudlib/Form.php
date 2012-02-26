@@ -8,6 +8,8 @@
  * @package     Cloudlib
  */
 
+namespace cloudlib;
+
 /**
  * The Form class
  *
@@ -250,7 +252,7 @@ class Form
         {
             $text = $options['name'];
         }
-        
+
         $label = null;
 
         if(isset($options['label']))
@@ -353,7 +355,7 @@ class Form
             $label = static::label($options['name'], $options['label']);
             unset($options['label']);
         }
-    
+
         $attributes = static::getAttrStr($options);
 
         return sprintf('%s<select %s>' . PHP_EOL . '%s</select>' . PHP_EOL,

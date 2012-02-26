@@ -8,8 +8,10 @@
  * @package     Cloudlib
  */
 
+namespace cloudlib;
+
 /**
- * The HTML Class 
+ * The HTML Class
  *
  * <short description>
  *
@@ -83,7 +85,7 @@ class Html
 
             foreach($filename as $value)
             {
-                $scripts .= sprintf('<script src="%s"></script>' . PHP_EOL, 
+                $scripts .= sprintf('<script src="%s"></script>' . PHP_EOL,
                    static::$paths['js'] . $value . '.js');
             }
 

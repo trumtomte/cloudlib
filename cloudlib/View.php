@@ -8,6 +8,11 @@
  * @package     Cloudlib
  */
 
+namespace cloudlib;
+
+// SPL
+use RuntimeException;
+
 /**
  * <class name>
  *
