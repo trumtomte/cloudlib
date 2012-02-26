@@ -1,11 +1,6 @@
-SetEnv CLOUDLIB_ENV development
-
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
-    # May be required..
-    # RewriteBase /
-
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
 
