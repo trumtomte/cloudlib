@@ -266,7 +266,7 @@ class Cloudlib
      */
     public function get($route, $response)
     {
-        $this->router->route($route, array('GET'), $response);
+        $this->router->get($route, $response);
     }
 
     /**
@@ -279,7 +279,7 @@ class Cloudlib
      */
     public function post($route, $response)
     {
-        $this->router->route($route, array('POST'), $response);
+        $this->router->post($route, $response);
     }
 
     /**
@@ -292,7 +292,7 @@ class Cloudlib
      */
     public function put($route, $response)
     {
-        $this->router->route($route, array('PUT'), $response);
+        $this->router->put($route, $response);
     }
 
     /**
@@ -305,7 +305,7 @@ class Cloudlib
      */
     public function delete($route, $response)
     {
-        $this->router->route($route, array('DELETE'), $response);
+        $this->router->delete($route, $response);
     }
 
     /**
@@ -553,3 +553,4 @@ class Cloudlib
         return $this->vars[$key];
     }
 }
+
