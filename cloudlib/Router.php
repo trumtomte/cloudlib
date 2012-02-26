@@ -109,6 +109,58 @@ class Router
     }
 
     /**
+     * Shorthand function to add a GET route
+     *
+     * @access  public
+     * @param   string  $route
+     * @param   mixed   $response
+     * @return  void
+     */
+    public function get($route, $response)
+    {
+        $this->route($route, array('GET'), $response);
+    }
+
+    /**
+     * Shorthand function to add a POST route
+     *
+     * @access  public
+     * @param   string  $route
+     * @param   mixed   $response
+     * @return  void
+     */
+    public function post($route, $response)
+    {
+        $this->route($route, array('POST'), $response);
+    }
+
+    /**
+     * Shorthand function to add a PUT route
+     *
+     * @access  public
+     * @param   string  $route
+     * @param   mixed   $response
+     * @return  void
+     */
+    public function put($route, $response)
+    {
+        $this->route($route, array('PUT'), $response);
+    }
+
+    /**
+     * Shorthand function to add a DELETE route
+     *
+     * @access  public
+     * @param   string  $route
+     * @param   mixed   $response
+     * @return  void
+     */
+    public function delete($route, $response)
+    {
+        $this->route($route, array('DELETE'), $response);
+    }
+
+    /**
      * Parse through the array of routes and return true if it was found otherwise return
      * false and set the error code accordingly.
      *
@@ -224,3 +276,4 @@ class Router
         }
     }
 }
+
