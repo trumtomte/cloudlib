@@ -8,6 +8,27 @@
  * @package     Cloudlib
  */
 
+namespace cloudlib;
+
+// SPL
+use Exception;
+use ErrorException;
+use Closure;
+
+// Cloudlib
+use cloudlib\View;
+use cloudlib\Html;
+use cloudlib\Uploader;
+use cloudlib\Image;
+use cloudlib\Session;
+use cloudlib\Config;
+use cloudlib\Request;
+use cloudlib\Response;
+use cloudlib\Router;
+use cloudlib\ClassLoader;
+
+require 'ClassLoader.php';
+
 /**
  * Cloudlib
  *
@@ -153,7 +174,34 @@ class Cloudlib
      */
     public function start()
     {
-        $this->registerClassLoader();
+        $loader = new ClassLoader(array(
+            'cloudlib', static::$root . DIRECTORY_SEPARATOR . 'cloudlib'
+        ), array(
+            'Benchmark'     => 'cloudlib\\Benchmark',
+            'Config'        => 'cloudlib\\Config',
+            'Controller'    => 'cloudlib\\Controller',
+            'Database'      => 'cloudlib\\Database',
+            'Form'          => 'cloudlib\\Form',
+            'Hash'          => 'cloudlib\\Hash',
+            'Html'          => 'cloudlib\\Html',
+            'Image'         => 'cloudlib\\Image',
+            'Logger'        => 'cloudlib\\Logger',
+            'Model'         => 'cloudlib\\Model',
+            'Number'        => 'cloudlib\\Number',
+            'Request'       => 'cloudlib\\Request',
+            'Response'      => 'cloudlib\\Response',
+            'Router'        => 'cloudlib\\Router',
+            'Session'       => 'cloudlib\\Session',
+            'String'        => 'cloudlib\\String',
+            'Uploader'      => 'cloudlib\\Uploader',
+            'View'          => 'cloudlib\\View'
+        ), array(
+            'controllers' => static::$paths['controllers'],
+            'models'      => static::$paths['models']
+        ));
+        $loader->register();
+
+
         $this->setErrorHandling();
 
         // Define directory paths for the classes
@@ -167,8 +215,12 @@ class Cloudlib
             'img'   => static::$paths['img'],
             'js'    => static::$paths['js']
         ));
-        Uploader::setPath(static::$paths['uploader']);
-        Image::setPath(static::$paths['image']);
+        Uploader::setPaths(array(
+            'uploadDirectory' => static::$paths['uploader']
+        ));
+        Image::setPaths(array(
+            'imageDirectory' => static::$paths['image']
+        ));
 
         // Load the config
         Config::load(static::$paths['config']);
@@ -427,48 +479,6 @@ class Cloudlib
     }
 
     /**
-     * Register an autoloader
-     *
-     * @access  protected
-     * @return  void
-     */
-    protected function registerClassLoader()
-    {
-        spl_autoload_register(array($this, 'classLoader'));
-    }
-
-    /**
-     * The class autoloader
-     *
-     * @access  protected
-     * @param   string  $class
-     * @return  void
-     */
-    protected function classLoader($class)
-    {
-        switch(true)
-        {
-            case preg_match('/Controller$/', $class) && ! preg_match('/^Controller$/', $class):
-                $directory = static::$paths['controllers'];
-                break;
-            case preg_match('/Model$/', $class) && ! preg_match('/^Model$/', $class):
-                $directory = static::$paths['models'];
-                break;
-            default:
-                $directory = static::$paths['classes'];
-                break;
-        }
-
-        if( ! file_exists($file = $directory . $class . '.php'))
-        {
-            throw new RuntimeException(sprintf('Unable to load class [%s] from [%s]',
-                $class, $file));
-        }
-
-        require $file;
-    }
-
-    /**
      * Function that handles all errors and exceptions
      *
      * @access  protected
@@ -491,7 +501,7 @@ class Cloudlib
 
         set_error_handler(function($code, $str, $file, $line) use ($that)
         {
-            $that->exceptionHandler(new ErrorException($str, $code, 0, $file, $lime));
+            $that->exceptionHandler(new ErrorException($str, $code, 0, $file, $line));
         });
 
         register_shutdown_function(function() use ($that)
@@ -553,4 +563,3 @@ class Cloudlib
         return $this->vars[$key];
     }
 }
-
