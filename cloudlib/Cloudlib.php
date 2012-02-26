@@ -201,6 +201,8 @@ class Cloudlib
         ));
         $loader->register();
 
+        // Load the config
+        Config::load(static::$paths['config']);
 
         $this->setErrorHandling();
 
@@ -221,9 +223,6 @@ class Cloudlib
         Image::setPaths(array(
             'imageDirectory' => static::$paths['image']
         ));
-
-        // Load the config
-        Config::load(static::$paths['config']);
 
         $this->request = new Request($_SERVER, $_GET, $_POST, $_FILES, $_COOKIE);
         $this->response = new Response($this->request);
@@ -487,8 +486,8 @@ class Cloudlib
     protected function setErrorHandling()
     {
         error_reporting(-1);
-        ini_set('display_errors', 1);
-        ini_set('log_errors', 1);
+        ini_set('display_errors', Config::get('app.errors'));
+        ini_set('log_errors', Config::get('app.log'));
         ini_set('error_log', static::$paths['logs'] . 'error_php.log');
 
         $that = $this;
