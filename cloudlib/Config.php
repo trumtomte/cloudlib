@@ -11,8 +11,8 @@
 namespace cloudlib;
 
 // SPL
-use LogicException;
-use RuntimeException;
+use LogicException,
+    RuntimeException;
 
 /**
  * Config

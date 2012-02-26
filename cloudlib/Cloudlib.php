@@ -11,21 +11,21 @@
 namespace cloudlib;
 
 // SPL
-use Exception;
-use ErrorException;
-use Closure;
+use Exception,
+    ErrorException,
+    Closure;
 
 // Cloudlib
-use cloudlib\View;
-use cloudlib\Html;
-use cloudlib\Uploader;
-use cloudlib\Image;
-use cloudlib\Session;
-use cloudlib\Config;
-use cloudlib\Request;
-use cloudlib\Response;
-use cloudlib\Router;
-use cloudlib\ClassLoader;
+use cloudlib\View,
+    cloudlib\Html,
+    cloudlib\Uploader,
+    cloudlib\Image,
+    cloudlib\Session,
+    cloudlib\Config,
+    cloudlib\Request,
+    cloudlib\Response,
+    cloudlib\Router,
+    cloudlib\ClassLoader;
 
 require 'ClassLoader.php';
 

@@ -11,9 +11,9 @@
 namespace cloudlib;
 
 // SPL
-use Closure;
-use ReflectionMethod;
-use ReflectionFunction;
+use Closure,
+    ReflectionMethod,
+    ReflectionFunction;
 
 // Cloudlib
 use cloudlib\Request;

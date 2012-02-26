@@ -11,9 +11,9 @@
 namespace cloudlib;
 
 // Cloudlib
-use cloudlib\Request;
-use cloudlib\View;
-use cloudlib\Model;
+use cloudlib\Request,
+    cloudlib\View,
+    cloudlib\Model;
 
 /**
  * <class name>

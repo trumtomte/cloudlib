@@ -11,9 +11,9 @@
 namespace cloudlib;
 
 // SPL
-use PDO;
-use PDOException;
-use RuntimeException;
+use PDO,
+    PDOException,
+    RuntimeException;
 
 /**
  * <class name>
