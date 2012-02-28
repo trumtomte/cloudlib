@@ -98,7 +98,7 @@ class Uploader
      * @param   array   $config
      * @return  void
      */
-    public function __construct($files, array $config = array())
+    public function __construct(array $files, array $config = array())
     {
         $this->files = array_shift($files);
 
