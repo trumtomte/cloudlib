@@ -119,7 +119,7 @@ class ClassLoader
      */
     public function register($prepend = false)
     {
-        spl_autoload_register(array($this, 'loadClass'), false, $prepend);
+        spl_autoload_register(array($this, 'loadClass'), true, $prepend);
     }
 
     /**
@@ -166,8 +166,9 @@ class ClassLoader
                 if( ! array_key_exists($namespace, $this->namespaces))
                 {
                     // No directory was assigned to the namespace
-                    throw new RuntimeException(sprintf('Unable to load class [%s], no directory assigned to namespace [%s]',
-                        $className, $namespace));
+                    error_log(sprintf('Unable to load class [%s], no directory assigned to namespace [%s]' . PHP_EOL,
+                        $className, $namespace), 3, static::$paths['logs']);
+                    return;
                 }
 
                 // The directory assigned to the namespace is prepended
@@ -176,8 +177,9 @@ class ClassLoader
                 if( ! file_exists($fileName))
                 {
                     // File does Really not exist
-                    throw new RuntimeException(sprintf('Unable to load class [%s] from [%s]',
-                        $className, $fileName));
+                    error_log(sprintf('Unable to load class [%s] from [%s]' . PHP_EOL,
+                        $className, $fileName), 3, static::$paths['logs']);
+                    return;
                 }
             }
 
@@ -187,29 +189,43 @@ class ClassLoader
         // Class was not namespaced
         else
         {
-            // Check if it is a Controller or a Model to be loaded
-            switch(true)
-            {
-                case preg_match('/Controller$/', $class) && ! preg_match('/^Controller$/', $class):
-                    $directory = static::$paths['controllers'];
-                    break;
-                case preg_match('/Model$/', $class) && ! preg_match('/^Model$/', $class):
-                    $directory = static::$paths['models'];
-                    break;
-                default:
-                    throw new RuntimeException(sprintf('Unable to load class [%s]',
-                        $class));
-                    break;
-            }
-
-            if( ! file_exists($file = $directory . $class . '.php'))
-            {
-                // Unable to locate the Controller/Model
-                throw new RuntimeException(sprintf('Unable to load class [%s] from [%s]',
-                    $class, $file));
-            }
-
-            require $file;
+            // Check if it was a Controller or a Model
+            $this->loadControllerModel($class);
         }
+    }
+
+    /**
+     * Tries to load a Controller or a Model
+     *
+     * @access  public
+     * @param   string  $class
+     * @return  void
+     */
+    public function loadControllerModel($class)
+    {
+        // Check if it is a Controller or a Model to be loaded
+        switch(true)
+        {
+            case preg_match('/Controller$/', $class) && ! preg_match('/^Controller$/', $class):
+                $directory = static::$paths['controllers'];
+                break;
+            case preg_match('/Model$/', $class) && ! preg_match('/^Model$/', $class):
+                $directory = static::$paths['models'];
+                break;
+            default:
+                // Class was not a Controller or a Model
+                return;
+                break;
+        }
+
+        if( ! file_exists($file = $directory . $class . '.php'))
+        {
+            // Unable to locate the Controller/Model
+            error_log(sprintf('Unable to load class [%s] from [%s]' . PHP_EOL,
+                $class, $file), 3, static::$paths['logs']);
+            return;
+        }
+
+        require $file;
     }
 }
