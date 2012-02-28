@@ -110,6 +110,7 @@ class Response
      * Constructor
      *
      * @access  public
+     * @param   object  $request
      * @return  void
      */
     public function __construct(Request $request)
