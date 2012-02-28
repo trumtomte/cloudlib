@@ -91,6 +91,11 @@ class Request
      * Sets all the Global variables, this enables it to be mocked
      *
      * @access  public
+     * @param   array   $server
+     * @param   array   $get
+     * @param   array   $post
+     * @param   array   $files
+     * @param   array   $cookies
      * @return  void
      */
     public function __construct(array $server = array(), array $get = array(),
