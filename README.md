@@ -1,9 +1,7 @@
-# Cloudlib :: Lightweight RESTful MVC PHP Framework
+# Cloudlib :: Flexible Lightweight PHP Framework
 
-> Cloudlib is a framework developed mainly for learning purposes,
-> by doing so it tries to conform to the constraints of REST and to
-> a certain degree the MVC design pattern.
+Cloudlib is under active development and subject to change.
 
 ---
 
-> README in progress... ;-)
+> The README will be written and released as soon as v0.1.0 is done!
