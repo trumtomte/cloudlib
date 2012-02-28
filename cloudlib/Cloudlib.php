@@ -121,6 +121,17 @@ class Cloudlib
     public static $baseUri;
 
     /**
+     * Array of options for Cloudlib
+     *
+     * @access  public
+     * @var     array
+     */
+    public static $options = array(
+        'bootstrap' => true,
+        'autoloader' => true
+    );
+
+    /**
      * Constructor.
      *
      * Sets the root directory, base uri.
@@ -130,10 +141,10 @@ class Cloudlib
      * @access  public
      * @param   string  $root
      * @param   string  $baseUri
-     * @param   boolean $autoStart
+     * @param   array   $options
      * @return  void
      */
-    public function __construct($root, $baseUri = '/', $autoStart = true)
+    public function __construct($root, $baseUri = '/', array $options = array())
     {
         static::$root = $root;
         static::$baseUri = $baseUri;
@@ -150,7 +161,7 @@ class Cloudlib
             'models'      => $app . 'models' . $ds,
             'views'       => $app . 'views' . $ds,
             'layouts'     => $app . 'views' . $ds . 'layouts' . $ds,
-            'logs'        => $app . 'logs' . $ds,
+            'logs'        => $app . 'logs' . $ds . 'error_php.log',
             'config'      => $app . 'config.php',
             'uploader'    => $pub . 'img' . $ds,
             'image'       => $pub . 'img' . $ds,
@@ -160,24 +171,28 @@ class Cloudlib
             'classes'     => $root . $ds . 'Cloudlib' . $ds
         );
 
-        if($autoStart)
+        static::setOptions($options);
+
+        if(static::$options['bootstrap'])
         {
-            $this->start();
+            $this->bootstrap();
         }
     }
 
     /**
-     * Start the application
+     * Bootstrap the application
      *
      * @access  public
      * @return  void
      */
-    public function start()
+    public function bootstrap()
     {
         $loader = new ClassLoader(array(
             'cloudlib', static::$root . DIRECTORY_SEPARATOR . 'cloudlib'
         ), array(
             'Benchmark'     => 'cloudlib\\Benchmark',
+            'ClassLoader'   => 'cloudlib\\ClassLoader',
+            'Cloudlib'      => 'cloudlib\\Cloudlib',
             'Config'        => 'cloudlib\\Config',
             'Controller'    => 'cloudlib\\Controller',
             'Database'      => 'cloudlib\\Database',
@@ -197,9 +212,18 @@ class Cloudlib
             'View'          => 'cloudlib\\View'
         ), array(
             'controllers' => static::$paths['controllers'],
-            'models'      => static::$paths['models']
+            'models'      => static::$paths['models'],
+            'logs'        => static::$paths['logs']
         ));
-        $loader->register();
+
+        if(static::$options['autoloader'])
+        {
+            $loader->register();
+        }
+        else
+        {
+            spl_autoload_register(array($loader, 'loadControllerModel'), true, true);
+        }
 
         // Load the config
         Config::load(static::$paths['config']);
@@ -255,7 +279,6 @@ class Cloudlib
             static::$paths[$key] = $value;
         }
     }
-
 
     /**
      * Get the directory pahts
@@ -431,9 +454,9 @@ class Cloudlib
     {
         if(isset($data))
         {
-            array_merge($this->data, $data);
+            $data = array_merge($this->data, $data);
         }
-        return new View($view, $layout, $this->data);
+        return new View($view, $layout, $data);
     }
 
     /**
@@ -485,10 +508,14 @@ class Cloudlib
      */
     protected function setErrorHandling()
     {
+        // Force error reporting
         error_reporting(-1);
+        // Display the errors?
         ini_set('display_errors', Config::get('app.errors'));
-        ini_set('log_errors', Config::get('app.log'));
-        ini_set('error_log', static::$paths['logs'] . 'error_php.log');
+
+        // Log the errors
+        ini_set('log_errors', 1);
+        ini_set('error_log', static::$paths['logs']);
 
         $that = $this;
 
@@ -535,6 +562,21 @@ class Cloudlib
             $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());
 
         exit(1);
+    }
+
+    /**
+     * Set the options array
+     *
+     * @access  public
+     * @param   array   $options
+     * @return  void
+     */
+    public static function setOptions(array $options)
+    {
+        foreach($options as $key => $value)
+        {
+            static::$options[$key] = $value;
+        }
     }
 
     /**
