@@ -411,11 +411,12 @@ class Form
      * @access  public
      * @param   string  $name
      * @param   array   $options
-     * @return  string
+     * @return  object
      */
     public function addInput($name = null, array $options = array())
     {
         $this->form .= static::input($name, $options);
+        return $this;
     }
 
     /**
@@ -424,11 +425,12 @@ class Form
      * @access  public
      * @param   string  $name
      * @param   array   $options
-     * @return  string
+     * @return  object
      */
     public function addSubmit($name = null, array $options = array())
     {
         $this->form .= static::submit($name, $options);
+        return $this;
     }
 
     /**
@@ -437,11 +439,12 @@ class Form
      * @access  public
      * @param   string  $name
      * @param   array   $options
-     * @return  string
+     * @return  object
      */
     public function addPassword($name = null, array $options = array())
     {
         $this->form .= static::password($name, $options);
+        return $this;
     }
 
     /**
@@ -450,11 +453,12 @@ class Form
      * @access  public
      * @param   string  $name
      * @param   array   $options
-     * @return  string
+     * @return  object
      */
     public function addRadio($name = null, array $options = array())
     {
         $this->form .= static::radio($name, $options);
+        return $this;
     }
 
     /**
@@ -463,11 +467,12 @@ class Form
      * @access  public
      * @param   string  $name
      * @param   array   $options
-     * @return  string
+     * @return  object
      */
     public function addCheckbox($name = null, array $options = array())
     {
         $this->form .= static::checkbox($name, $options);
+        return $this;
     }
 
     /**
@@ -476,11 +481,12 @@ class Form
      * @access  public
      * @param   string  $name
      * @param   array   $options
-     * @return  string
+     * @return  object
      */
     public function addReset($name = null, array $options = array())
     {
         $this->form .= static::reset($name, $options);
+        return $this;
     }
 
     /**
@@ -489,11 +495,12 @@ class Form
      * @access  public
      * @param   string  $name
      * @param   array   $options
-     * @return  string
+     * @return  object
      */
     public function addHidden($name = null, array $options = array())
     {
         $this->form .= static::hidden($name, $options);
+        return $this;
     }
 
     /**
@@ -502,11 +509,12 @@ class Form
      * @access  public
      * @param   string  $name
      * @param   array   $options
-     * @return  string
+     * @return  object
      */
     public function addFile($name = null, array $options = array())
     {
         $this->form .= static::file($name, $options);
+        return $this;
     }
 
     /**
@@ -516,11 +524,12 @@ class Form
      * @param   string  $value
      * @param   string  $name
      * @param   array   $options
-     * @return  string
+     * @return  object
      */
     public function addToken($value, $name = 'token', array $options = array())
     {
         $this->form .= static::token($value, $name, $options);
+        return $this;
     }
 
     /**
@@ -530,11 +539,12 @@ class Form
      * @param   string  $name
      * @param   string  $text
      * @param   array   $options
-     * @return  string
+     * @return  object
      */
     public function addButton($name = null, $text = null, array $options = array())
     {
         $this->form .= static::button($name, $text, $options);
+        return $this;
     }
 
     /**
@@ -544,11 +554,12 @@ class Form
      * @param   string  $name
      * @param   string  $text
      * @param   array   $options
-     * @return  string
+     * @return  object
      */
     public function addTextarea($name = null, $text = null, array $options = array())
     {
         $this->form .= static::textarea($name, $text, $options);
+        return $this;
     }
 
     /**
@@ -558,11 +569,12 @@ class Form
      * @param   string  $name
      * @param   array   $items
      * @param   array   $options
-     * @return  string
+     * @return  object
      */
     public function addSelect($name = null, array $items = array(), array $options = array())
     {
         $this->form .= static::select($name, $items, $options);
+        return $this;
     }
 
     /**
@@ -572,11 +584,12 @@ class Form
      * @param   string  $for
      * @param   string  $text
      * @param   array   $options
-     * @return  string
+     * @return  object
      */
     public function addLabel($for = null, $text = null, array $options = array())
     {
         $this->form .= static::label($for, $text, $options);
+        return $this;
     }
 
     /**
@@ -586,7 +599,7 @@ class Form
      * @param   string  $name
      * @param   string  $text
      * @param   array   $options
-     * @return  string
+     * @return  object
      */
     public function closeForm($name = null, $text = null, array $options = array())
     {
