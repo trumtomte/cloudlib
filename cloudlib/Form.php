@@ -33,6 +33,8 @@ class Form
      * Constructor
      *
      * @access  public
+     * @param   string  $action
+     * @param   array   $options
      * @return  void
      */
     public function __construct($action = null, array $options = array())
