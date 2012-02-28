@@ -44,11 +44,28 @@ class Logger
      * Constructor
      *
      * @access  public
+     * @param   string  $file
+     * @param   boolean $register
      * @return  void
      */
-    public function __construct($file)
+    public function __construct($file, $register = true)
     {
         $this->file = $file;
+
+        if($register)
+        {
+            register_shutdown_function(array($this, 'write'));
+        }
+    }
+
+    /**
+     * Register the write method as a shutdown function
+     *
+     * @access  public
+     * @return  void
+     */
+    public function register()
+    {
         register_shutdown_function(array($this, 'write'));
     }
 
