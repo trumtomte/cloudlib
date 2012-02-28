@@ -45,7 +45,6 @@ class Config
      * Constructor.
      *
      * @access  public
-     * @param   string  $file
      * @return  void
      */
     public function __construct() {}
