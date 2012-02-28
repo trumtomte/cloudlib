@@ -13,4 +13,3 @@
     * Get most recent query
     * Better way of being able to access Database::$queries? (for logging purposes)
     * (Remove, rearrange PHP_EOL's in the Html/Form class?)
-    * 3rd parameter in Cloudlibs constructor could be an array of options? (ex defining your own autoloader etc..)
