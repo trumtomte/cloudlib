@@ -16,7 +16,6 @@ return array
         'app.secret'        => 'MySuperSecretSalt',
         'app.encoding'      => 'utf8',
         'app.errors'        => 1,
-        'app.log'           => 1,
         // Database
         'db.dsn'        => 'mysql:host=localhost;dbname=default',
         'db.username'   => 'root',
@@ -32,7 +31,6 @@ return array
         'app.salt'          => 'MySuperSecretSalt',
         'app.encoding'      => 'utf8',
         'app.errors'        => 1,
-        'app.log'           => 1,
         // Database
         'db.dsn'        => 'mysql:host=localhost;dbname=default',
         'db.username'   => 'sebberoot',
