@@ -146,7 +146,7 @@ class ClassLoader
     {
         $class = ltrim($class, '\\');
 
-        // If the class is mapped with its full namespace
+        // If the class is mapped to its full namespace
         if(array_key_exists($class, static::$aliases))
         {
             // Class will be (re)loaded via class_alias() if it does not already exist
