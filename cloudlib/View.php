@@ -67,10 +67,10 @@ class View
     /**
      * Constructor
      *
+     * @access  public
      * @param   mixed   $view
      * @param   string  $layout
      * @param   array   $data
-     * @access  public
      * @return  void
      */
     public function __construct($view, $layout = null, array $data = array())
