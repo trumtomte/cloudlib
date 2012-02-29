@@ -1,6 +1,6 @@
 <?php
 /**
- * CloudLib :: Lightweight RESTful MVC PHP Framework
+ * CloudLib :: Flexible Lightweight PHP Framework
  *
  * @author      Sebastian Book <cloudlibframework@gmail.com>
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
@@ -14,9 +14,9 @@ namespace cloudlib;
 use RuntimeException;
 
 /**
- * <class name>
+ * The View class
  *
- * <short description>
+ * TODO: Description
  *
  * @package     Cloudlib
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>

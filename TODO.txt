@@ -1,15 +1,8 @@
 # TODOs (things i'd want to implement if possible)
     * Upload to Packagist
-    * Optional Routes
-    * Regex Routes
-    * Wrap attribute for Html/Form classes
-    * (Nested views)
+    * Routes: Optional, Regex
+    * Html/Form Classes: Wrap attribute, Sorting attributes, (PHP_EOL's?)
+    * Nested Views?
     * Hooks for routes, before/after a route is parsed
-    * Sort the Html/Form attributes (alphabetical order?)
-    * Get the last occerred database error
-    * Being able to use custom paths for the loading/saving methods in the Image class
-    * Wrapper method for a begin/commit/rollBack session in the Database class
-    * Filepermissions - Image/Uploader class
-    * Get most recent query
-    * Better way of being able to access Database::$queries? (for logging purposes)
-    * (Remove, rearrange PHP_EOL's in the Html/Form class?)
+    * Database: Get last error, Get most recent Query, Single method for Begin/Commit/RollBack, Easy way of accessing stored queries
+    * Image/Uploader Classes: Easy way of setting custom paths at runtime, Filepermissions

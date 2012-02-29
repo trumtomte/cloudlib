@@ -1,6 +1,6 @@
 <?php
 /**
- * CloudLib :: Lightweight RESTful MVC PHP Framework
+ * CloudLib :: Flexible Lightweight PHP Framework
  *
  * @author      Sebastian Book <cloudlibframework@gmail.com>
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
@@ -30,9 +30,9 @@ use cloudlib\View,
 require 'ClassLoader.php';
 
 /**
- * Cloudlib
+ * Cloudlib´s Core class (essentially a wrapper for the other classes
  *
- * <short description>
+ * TODO: Description.. 
  *
  * @package     Cloudlib
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
@@ -63,6 +63,14 @@ class Cloudlib
      * @var     object
      */
     protected $router;
+
+    /**
+     * Cloudlib´s Class Loader
+     *
+     * @access  public
+     * @var     object
+     */
+    public $loader;
 
     /**
      * CLoudlib class vars for use in different routes
@@ -127,7 +135,14 @@ class Cloudlib
      * @var     array
      */
     public static $options = array(
+        // Wether we should bootstrap the application or not,
+        // if not - we can, amongst other things, specify our
+        // own directories for classes
         'bootstrap' => true,
+
+        // Wether we should use the built in autoloader or our
+        // own, if not, cloudlib will still use the ClassLoader
+        // method for loading controllers and models
         'autoloader' => true
     );
 
@@ -187,9 +202,12 @@ class Cloudlib
      */
     public function bootstrap()
     {
-        $loader = new ClassLoader(array(
+        // Set the ClassLoader and add the namespace aliases and directories
+        $this->loader = new ClassLoader(array(
+            // Define namespace and the corresponding directory
             'cloudlib', static::$root . DIRECTORY_SEPARATOR . 'cloudlib'
         ), array(
+            // Set the namespace aliases
             'Benchmark'     => 'cloudlib\\Benchmark',
             'ClassLoader'   => 'cloudlib\\ClassLoader',
             'Cloudlib'      => 'cloudlib\\Cloudlib',
@@ -211,17 +229,20 @@ class Cloudlib
             'Uploader'      => 'cloudlib\\Uploader',
             'View'          => 'cloudlib\\View'
         ), array(
+            // Directory paths for contollers, models, and logs
             'controllers' => static::$paths['controllers'],
             'models'      => static::$paths['models'],
             'logs'        => static::$paths['logs']
         ));
 
+        // If we're using Cloudlib´s autoloader
         if(static::$options['autoloader'])
         {
-            $loader->register();
+            $this->loader->register();
         }
         else
         {
+            // If not, still use loadControllerModel() to load contollers and models
             spl_autoload_register(array($loader, 'loadControllerModel'), true, true);
         }
 
@@ -230,7 +251,7 @@ class Cloudlib
 
         $this->setErrorHandling();
 
-        // Define directory paths for the classes
+        // Define directory paths used by the classes
         View::setPaths(array(
             'views'     => static::$paths['views'],
             'layouts'   => static::$paths['layouts']
@@ -259,6 +280,7 @@ class Cloudlib
 
         Session::start();
 
+        // CSRF-Token
         if( ! Session::has('token'))
         {
             Session::generateToken('token');
@@ -400,7 +422,7 @@ class Cloudlib
      *
      * @access  public
      * @param   int     $error
-     * @param   closure $response
+     * @param   mixed   $response
      * @return  void
      */
     public function error($error, $response)
@@ -421,10 +443,12 @@ class Cloudlib
         {
             return false;
         }
+
         if($this->errors[$error] instanceof Closure)
         {
             return $this->errors[$error]();
         }
+
         return $this->errors[$error];
     }
 
@@ -456,6 +480,7 @@ class Cloudlib
         {
             $data = array_merge($this->data, $data);
         }
+
         return new View($view, $layout, $data);
     }
 
@@ -501,7 +526,7 @@ class Cloudlib
     }
 
     /**
-     * Function that handles all errors and exceptions
+     * Define the error/exception handling
      *
      * @access  protected
      * @return  void
@@ -513,18 +538,21 @@ class Cloudlib
         // Display the errors?
         ini_set('display_errors', Config::get('app.errors'));
 
-        // Log the errors
-        ini_set('log_errors', 1);
+        // Log the errors?
+        ini_set('log_errors', Config::get('app.logs'));
         ini_set('error_log', static::$paths['logs']);
 
         $that = $this;
 
         //TODO: use($this) in PHP 5.4
+        
+        // Exception handler
         set_exception_handler(function(Exception $e) use ($that)
         {
             $that->exceptionHandler($e);
         });
 
+        // Error handler
         set_error_handler(function($code, $str, $file, $line) use ($that)
         {
             $that->exceptionHandler(new ErrorException($str, $code, 0, $file, $line));
@@ -549,7 +577,10 @@ class Cloudlib
      */
     public function exceptionHandler(Exception $e)
     {
-        if(ob_get_contents()) { ob_end_clean(); }
+        if(ob_get_contents())
+        {
+            ob_end_clean();
+        }
 
         if(isset($this->errors[500]))
         {

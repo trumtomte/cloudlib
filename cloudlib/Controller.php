@@ -1,6 +1,6 @@
 <?php
 /**
- * CloudLib :: Lightweight RESTful MVC PHP Framework
+ * CloudLib :: Flexible Lightweight PHP Framework
  *
  * @author      Sebastian Book <cloudlibframework@gmail.com>
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
@@ -16,9 +16,9 @@ use cloudlib\Request,
     cloudlib\Model;
 
 /**
- * <class name>
+ * The Controller
  *
- * <short description>
+ * Abstract class for all controllers
  *
  * @package     Cloudlib
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
@@ -109,8 +109,13 @@ abstract class Controller
      * @param   string  $view
      * @return  void
      */
-    public function render($view, $layout = null)
+    public function render($view, $layout = null, array $data = array())
     {
-        return new View($view, $layout, $this->data);
+        if(isset($data))
+        {
+            $data = array_merge($this->data, $data);
+        }
+
+        return new View($view, $layout, $data);
     }
 }

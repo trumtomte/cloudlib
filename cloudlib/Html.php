@@ -13,7 +13,7 @@ namespace cloudlib;
 /**
  * The HTML Class
  *
- * <short description>
+ * Create HTML tags the easy way!
  *
  * @package     Cloudlib
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>

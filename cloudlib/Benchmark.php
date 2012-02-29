@@ -1,6 +1,6 @@
 <?php
 /**
- * CloudLib :: Lightweight RESTful MVC PHP Framework
+ * CloudLib :: Flexible Lightweight PHP Framework
  *
  * @author      Sebastian Book <cloudlibframework@gmail.com>
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
@@ -11,9 +11,9 @@
 namespace cloudlib;
 
 /**
- * <class name>
+ * The Benchmark Class
  *
- * <short description>
+ * Set timers, compare timers, get memory usage, get peak memory usage
  *
  * @package     Cloudlib
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
@@ -38,7 +38,7 @@ class Benchmark
     public function __construct() {}
 
     /**
-     * Sets the start time
+     * Define a start time
      *
      * @access  public
      * @return  void
@@ -52,7 +52,7 @@ class Benchmark
     }
 
     /**
-     * Sets the stop time
+     * Define a stop time
      *
      * @access  protected
      * @param   int     $time
@@ -64,7 +64,7 @@ class Benchmark
     }
 
     /**
-     * Returns the load time rounded to 5 decimals
+     * Get the time comparison
      *
      * @access  public
      * @return  int
@@ -86,7 +86,7 @@ class Benchmark
      */
     public static function compare($time, $round = 5)
     {
-        return round((microtime(true) - (float) $time), $round);
+        return (float) round((microtime(true) - (float) $time), $round);
     }
 
     /**
@@ -94,7 +94,7 @@ class Benchmark
      *
      * @access  public
      * @param   int     $round
-     * @return  int
+     * @return  float
      */
     public static function memory($round = 3)
     {
@@ -106,7 +106,7 @@ class Benchmark
      *
      * @access  public
      * @param   int     $round
-     * @return  int
+     * @return  float 
      */
     public static function peak($round = 3)
     {
@@ -119,7 +119,7 @@ class Benchmark
      * @access  public
      * @param   string  $time
      * @param   array   $args
-     * @return  int
+     * @return  float 
      */
     public static function __callStatic($time, array $args)
     {

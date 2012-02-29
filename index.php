@@ -1,12 +1,15 @@
 <?php
 /**
- * CloudLib :: Lightweight RESTful MVC PHP Framework
+ * CloudLib :: Flexible Lightweight PHP Framework
  *
  * @author      Sebastian Book <cloudlibframework@gmail.com>
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  * @package     Cloudlib
  */
+
+// Lots of things going on here, will be commented and restructured soon!
+
 
 // For testing purposes
 define('BOOT_TIME', microtime(true));
@@ -17,6 +20,7 @@ require 'cloudlib/Cloudlib.php';
 // Inititalize the application
 $app = new cloudlib\Cloudlib(__DIR__, '/cloudlib');
 
+// Load classes with their name without namespaces
 $app->uploader = new Uploader($app->request->files);
 
 // Define the root route
