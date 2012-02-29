@@ -18,6 +18,8 @@ use RuntimeException;
  *
  * Loads classes, controllers and models
  *
+ * It follows the PSR-0 standard, https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md
+ *
  * @package     Cloudlib
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
