@@ -1,0 +1,21 @@
+{
+    "name": "cloudlib/Cloudlib",
+    "description": "Flexible Lightweight PHP Framework",
+    "keywords": ["Framework","Flexible", "Lightweight", "REST", "RESTful", "MVC"],
+    "homepage": "https://github.com/trumtomte/cloudlib",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sebastian Book",
+            "email": "cloudlibframework@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.6"
+    },
+    "autoload": {
+        "psr-0": {
+            "Cloudlib": "cloudlib/"
+        }
+    }
+}
