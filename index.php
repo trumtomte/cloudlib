@@ -8,7 +8,9 @@
  * @package     Cloudlib
  */
 
-// EXAMPLE, this file is an example since the documentation isnt finished yet,
+// DISCLAIMER
+// 
+// this file is an example since the documentation isnt finished yet,
 // everything is subject to change!
 
 // Require the framework
