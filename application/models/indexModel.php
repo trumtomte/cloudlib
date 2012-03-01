@@ -1,6 +1,6 @@
 <?php
 /**
- * CloudLib :: Lightweight RESTful MVC PHP Framework
+ * CloudLib :: Flexible Lightweight PHP Framework
  *
  * @author      Sebastian Book <cloudlibframework@gmail.com>
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
@@ -8,19 +8,14 @@
  * @package     Cloudlib
  */
 
-/**
- * <class name>
- *
- * <short description>
- *
- * @package     Cloudlib
- * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
- * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
- */
 class indexModel extends Model
 {
+    // super simple model function that does nothing
     public function index()
     {
-        return 'the indexModel';
+        return 'this is my model: ' . __CLASS__;
     }
+
+    // a model can access the database functions via
+    // $this->database->method()
 }
