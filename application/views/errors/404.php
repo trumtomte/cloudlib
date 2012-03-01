@@ -1,6 +1,6 @@
 <?php
 /**
- * CloudLib :: Lightweight RESTful MVC PHP Framework
+ * CloudLib :: Flexible Lightweight PHP Framework
  *
  * @author      Sebastian Book <cloudlibframework@gmail.com>
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
@@ -27,18 +27,13 @@
       background: #fff;
       padding: 10px;
       text-align: center;
-      border-radius: 6px;
-      border: 1px solid #ccc;
     }
   </style>
 </head>
 <body>
 <h1>404</h1>
-<h3>The requested page could not be found</h3>
-<?php
-echo $code;
-echo '<br>';
-echo $message;
-?>
+<h3><?php echo $message; ?></h3>
+<p><small>this file is located in applications/views/errors/404.php</small></p>
 </body>
 </html>
+

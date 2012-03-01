@@ -1,6 +1,6 @@
 <?php
 /**
- * CloudLib :: Lightweight RESTful MVC PHP Framework
+ * CloudLib :: Flexible Lightweight PHP Framework
  *
  * @author      Sebastian Book <cloudlibframework@gmail.com>
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
@@ -27,19 +27,13 @@
       background: #fff;
       padding: 10px;
       text-align: center;
-      border-radius: 6px;
-      border: 1px solid #ccc;
     }
   </style>
 </head>
 <body>
 <h1>500</h1>
 <h3>Internal server error</h3>
-<?php
-    echo $message;
-    echo $line;
-    echo $file;
-    echo $trace;
-?>
+<h3><?php echo $message; ?></h3>
+<p><small>this file is located in applications/views/errors/500.php</small></p>
 </body>
 </html>
