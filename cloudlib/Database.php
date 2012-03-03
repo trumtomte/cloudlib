@@ -339,10 +339,12 @@ class Database
         if( ! $query)
         {
             $this->rollBack();
+
             return false;
         }
 
         $this->commit();
+
         return true;
     }
 }
