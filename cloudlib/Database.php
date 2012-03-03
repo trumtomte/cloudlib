@@ -324,5 +324,26 @@ class Database
 
         return $sth;
     }
+    
+    /**
+     * Shorthand function to perform a query transaction
+     *
+     * @access  public
+     * @param   mixed   $query
+     * @return  boolean
+     */
+    public function transaction($query)
+    {
+        $this->begin();
+
+        if( ! $query)
+        {
+            $this->rollBack();
+            return false;
+        }
+
+        $this->commit();
+        return true;
+    }
 }
 
