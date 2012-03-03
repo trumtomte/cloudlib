@@ -70,12 +70,12 @@ class Router
     protected $response = null;
 
     /**
-     * Error code
+     * Error status code
      *
      * @access  protected
      * @var     int
      */
-    protected $error;
+    protected $errorStatus;
 
     /**
      * Constructor.
@@ -115,7 +115,10 @@ class Router
      */
     public function route($route, array $methods, $response)
     {
-        $this->routes[$route] = array('methods' => $methods, 'response' => $response);
+        foreach($methods as $method)
+        {
+            $this->routes[$route][$method] = $response;
+        }
     }
 
     /**
@@ -179,51 +182,61 @@ class Router
      */
     public function routeExists()
     {
-        $uri = preg_replace('#' . $this->baseUri . '#', '', $this->request->uri);
+        // Strip the base uri from the requested uri
+        $requestUri = preg_replace('#' . $this->baseUri . '#', '', $this->request->uri);
 
-        foreach($this->routes as $route => $array)
+        foreach($this->routes as $route => $responses)
         {
-            $methods = $array['methods'];
-            $response = $array['response'];
-
             // Literal match
-            if($route == $uri)
+            if($route == $requestUri)
             {
-                if(in_array($this->requestMethod, $methods))
+                // If request method does not exist
+                if( ! array_key_exists($this->request->method, $responses))
                 {
-                    $this->setResponse($response);
-                    return true;
+                    $this->errorStatus = 405;
+                    return false;
                 }
-                $this->error = 405;
-                return false;
+                // Found route, set response
+                $this->setResponse($responses[$this->request->method]);
+                return true;
             }
 
+            // Create an regex out of an route with parameters (:param)
             $regex = str_replace('/', '\/', preg_replace('/:(\w+)/', '(\w+)', $route));
 
-            if(preg_match('#^' . $regex . '$#', $uri))
+            // Found route
+            if(preg_match('#^' . $regex . '$#', $requestUri))
             {
-                list($rParts, $uParts) = array(explode('/', $route), explode('/', $uri));
+                // Invalid method
+                if( ! array_key_exists($this->request->method, $responses))
+                {
+                    $this->errorStatus = 405;
+                    return false;
+                }
+
+                // Get all parts from the route and request uri
+                list($routeParts, $uriParts) = array(
+                    explode('/', $route),
+                    explode('/', $requestUri)
+                );
 
                 $parameters = array();
 
-                foreach($rParts as $index => $value)
+                // Extract the parameters from the request uri
+                foreach($routeParts as $key => $value)
                 {
                     if(strpos($value, ':') !== false)
                     {
-                        $parameters[] = $uParts[$index];
+                        $parameters[] = $uriParts[$key];
                     }
                 }
-
-                if(in_array($this->requestMethod, $methods))
-                {
-                    $this->setResponse($response, $parameters);
-                    return true;
-                }
-                $this->error = 405;
-                return false;
+                // Found route, set response
+                $this->setResponse($responses[$this->request->method], $parameters);
+                return true;
             }
         }
-        $this->error = 404;
+        // No matching route
+        $this->errorStatus = 404;
         return false;
     }
 
@@ -237,7 +250,7 @@ class Router
     {
         if($this->response === null)
         {
-            return $this->error;
+            return $this->errorStatus;
         }
         return $this->response;
     }
