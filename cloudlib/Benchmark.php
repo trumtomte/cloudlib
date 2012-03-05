@@ -114,7 +114,7 @@ class Benchmark
     }
 
     /**
-     * Shorthand for Timer::time()
+     * Shorthand for Benchmark::timer()
      *
      * @access  public
      * @param   string  $time
