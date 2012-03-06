@@ -137,7 +137,8 @@ class Cloudlib
     public static $options = array(
         // Wether we should bootstrap the application or not,
         // if not - we can, amongst other things, specify our
-        // own directories for classes
+        // own directories for classes, add namespace aliases
+        // and register new namespaces
         'bootstrap' => true,
 
         // Wether we should use the built in autoloader or our
@@ -186,22 +187,6 @@ class Cloudlib
             'classes'     => $root . $ds . 'Cloudlib' . $ds
         );
 
-        static::setOptions($options);
-
-        if(static::$options['bootstrap'])
-        {
-            $this->bootstrap();
-        }
-    }
-
-    /**
-     * Bootstrap the application
-     *
-     * @access  public
-     * @return  void
-     */
-    public function bootstrap()
-    {
         // Set the ClassLoader and add the namespace aliases and directories
         $this->loader = new ClassLoader(array(
             // Define namespace and the corresponding directory
@@ -228,12 +213,31 @@ class Cloudlib
             'String'        => 'cloudlib\\String',
             'Uploader'      => 'cloudlib\\Uploader',
             'View'          => 'cloudlib\\View'
-        ), array(
-            // Directory paths for contollers, models, and logs
+        ));
+
+        static::setOptions($options);
+
+        if(static::$options['bootstrap'])
+        {
+            $this->bootstrap();
+        }
+    }
+
+    /**
+     * Bootstrap the application
+     *
+     * @access  public
+     * @return  void
+     */
+    public function bootstrap()
+    {
+        $this->loader->setPaths(array(
+            // Directory paths for controllers, models and logs
             'controllers' => static::$paths['controllers'],
             'models'      => static::$paths['models'],
             'logs'        => static::$paths['logs']
         ));
+            
 
         // If we're using Cloudlib´s autoloader
         if(static::$options['autoloader'])
