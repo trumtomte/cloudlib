@@ -40,7 +40,7 @@ class ClassLoader
      * @access  public
      * @var     array
      */
-    public static $paths = array();
+    public $paths = array();
 
     /**
      * Array of class aliases
@@ -48,7 +48,7 @@ class ClassLoader
      * @access  public
      * @var     array
      */
-    public static $aliases = array();
+    public $aliases = array();
 
     /**
      * Constructor,
@@ -63,8 +63,8 @@ class ClassLoader
     public function __construct(array $namespaces, array $aliases = array(), array $paths = array())
     {
         $this->namespaces = $namespaces;
-        static::registerAliases($aliases);
-        static::setPaths($paths);
+        $this->registerAliases($aliases);
+        $this->setPaths($paths);
     }
 
     /**
@@ -74,11 +74,11 @@ class ClassLoader
      * @param   array   $paths
      * @return  void
      */
-    public static function setPaths(array $paths)
+    public function setPaths(array $paths)
     {
         foreach($paths as $key => $value)
         {
-            static::$paths[$key] = $value;
+            $this->paths[$key] = $value;
         }
     }
 
@@ -89,11 +89,11 @@ class ClassLoader
      * @param   array   $aliases
      * @return  void
      */
-    public static function registerAliases(array $aliases)
+    public function registerAliases(array $aliases)
     {
         foreach($aliases as $alias => $class)
         {
-            static::$aliases[$alias] = $class;
+            $this->aliases[$alias] = $class;
         }
     }
 
@@ -149,10 +149,10 @@ class ClassLoader
         $class = ltrim($class, '\\');
 
         // If the class is mapped to its full namespace
-        if(array_key_exists($class, static::$aliases))
+        if(array_key_exists($class, $this->aliases))
         {
             // Class will be (re)loaded via class_alias() if it does not already exist
-            class_alias(static::$aliases[$class], $class);
+            class_alias($this->aliases[$class], $class);
             return;
         }
 
@@ -169,7 +169,7 @@ class ClassLoader
                 {
                     // No directory was assigned to the namespace
                     error_log(sprintf('Unable to load class [%s], no directory assigned to namespace [%s]' . PHP_EOL,
-                        $className, $namespace), 3, static::$paths['logs']);
+                        $className, $namespace), 3, $this->paths['logs']);
                     return;
                 }
 
@@ -180,7 +180,7 @@ class ClassLoader
                 {
                     // File does Really not exist
                     error_log(sprintf('Unable to load class [%s] from [%s]' . PHP_EOL,
-                        $className, $fileName), 3, static::$paths['logs']);
+                        $className, $fileName), 3, $this->paths['logs']);
                     return;
                 }
             }
@@ -209,10 +209,10 @@ class ClassLoader
         switch(true)
         {
             case preg_match('/Controller$/', $class) && ! preg_match('/^Controller$/', $class):
-                $directory = static::$paths['controllers'];
+                $directory = $this->paths['controllers'];
                 break;
             case preg_match('/Model$/', $class) && ! preg_match('/^Model$/', $class):
-                $directory = static::$paths['models'];
+                $directory = $this->paths['models'];
                 break;
             default:
                 // Class was not a Controller or a Model
@@ -224,7 +224,7 @@ class ClassLoader
         {
             // Unable to locate the Controller/Model
             error_log(sprintf('Unable to load class [%s] from [%s]' . PHP_EOL,
-                $class, $file), 3, static::$paths['logs']);
+                $class, $file), 3, $this->paths['logs']);
             return;
         }
 
