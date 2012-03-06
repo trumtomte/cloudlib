@@ -246,18 +246,18 @@ You can define your own paths or alter the default paths.
 
 **Default paths**  
 
-* `controllers` path to your Controllers
-* `models` path to your Models
-* `views` path to your Views
-* `layouts` path to your Layouts
-* `logs` path to your Logs
-* `config` this is a complete path to the config file (ex `path/to/config.php`)
-* `uploader` path to where your files will be uploaded to
-* `image` path to where your image(s) will be loaded/saved
-* `css` relative path to your CSS files
-* `js` relative path to your JavaScript files
-* `img` relative path to your Image files
-* `classes` path to which core classes are loaded **do not alter unless you really have to**
+* `controllers` path to your Controllers.
+* `models` path to your Models.
+* `views` path to your Views.
+* `layouts` path to your Layouts.
+* `logs` path to your Logs.
+* `config` this is a complete path to the config file (ex `path/to/config.php`).
+* `uploader` path to where your files will be uploaded to.
+* `image` path to where your image(s) will be loaded/saved.
+* `css` relative path to your CSS files.
+* `js` relative path to your JavaScript files.
+* `img` relative path to your Image files.
+* `classes` path to which core classes are loaded **do not alter unless you really have to**.
 
 ```php
 <?php
@@ -268,7 +268,8 @@ $app = new cloudlib\Cloudlib(__DIR__, '/', array('bootstrap' => false));
 // Define paths with an array
 $app->setPaths(array(
     'controllers' => 'path/to/controllers',
-    'models' => 'path/to/models'
+    'models' => 'path/to/models',
+    'config' => 'path/to/config.php'
 ));
 
 // Define a path
@@ -322,7 +323,7 @@ $app->bootstrap();
 
 ## Configuration
 
-The configuration file is located in `application/config.php`, unless specified elsewhere as shown in the **Customization** section
+The configuration file is located in `application/config.php`, unless specified elsewhere as shown in the **Customization** section.
 
 The Config file will (by default) look like this.
 `NOTE` these items are required, but you are able to add more if you want.
@@ -458,13 +459,196 @@ $app->get('/', function() use ($app)
 
 ### Models
 
-TODO
+An example on a Model. `NOTE` when a Model is created it uses the Database configurations specified in your config file.
+```php
+<?php
+
+// Model class names should be suffixed with 'Model' and be a subclass of 'Model'
+class testModel extends Model
+{  
+    // Pointless method returing 'World!'
+    public function hello()
+    {
+        return 'World!';
+    }
+}
+```
+Accessing the Model is done via the `model()` method.
+```php
+<?php
+
+$app->get('/', function() use ($app)
+{
+    // We set the $word variable to 'World!'.
+    // The model() method takes the model name as a parameter, without the 'Model' suffix.
+    $word = $app->model('test')->hello(); 
+});
+```
+A little more practical example
+
+**The model.**
+```php
+<?php
+
+// The model
+class testModel extends Model
+{
+    public function getName($name)
+    {
+        // This would return an object containing variables of the first result from the query.
+        // By using PDO we protect ourselves from SQL injection,
+        // more about the Database helper class in the Helpers section.
+        return $this->database->fetchFirst('SELECT Name FROM table WHERE Name = ?', array($name));
+    }
+}
+```
+**The route.**
+```php
+<?php
+
+$app->get('/view/:name', function($name) use ($app)
+{
+    // Example for www.domain.com/view/<name>
+    // $name would be an object in the View,
+    // so $name->Name would contain the result name we got from the query.
+    $app->set('name', $app->model('test')->getName($name));
+});
+```
+`NOTE` Models can also be used in Controllers (see **Controllers** section).
+
+### Views
+
+Scroll up!
 
 ### Controllers
 
-TODO
+First lets create a Controller we'll be using for the next examples that connects it to a certain route.
+```php
+<?php
+
+// Controller names should be suffixed with 'Controller' and be a subclass of 'Controller'
+class testController extends Controller
+{
+    // A simple function that just returns 'Hello World!'
+    public function hello()
+    {
+        return 'Hello World!';
+    }
+
+    // A function that sets a parameter to a View variable then returns a rendered View
+    public function test($parameter)
+    {
+        $this->set('param', $parameter);
+
+        // Would render foo.php with the variable $param
+        return $this->render('foo');
+    }
+
+    // This function would be called if the request method is GET and you did not specify a method name
+    public function get()
+    {
+        // Would only return the View (bar.php)
+        return $this->render('bar');
+    }
+
+    // Same as above but for the request method POST
+    public function post()
+    {
+        return $this->render('bar');
+    }
+}
+```
+Assigning routes to controllers is the same as you've done before but instead of passing a response function you pass an array.
+```php
+<?php
+
+// This would load testController and call the method hello().
+$app->get('/home', array('controller' => 'test', 'method' => 'hello'));
+
+// This would load testController and pass a parameter to the test() method.
+$app->get('/view/:page', array('controller' => 'test', 'method' => 'test'));
+
+// This would load testController and call the get() method since no method
+// was defined we use the request method as the method name.
+$app->get('/', array('controller' => 'test'));
+
+// Same as above but for post
+$app->post('/save', array('controller' => 'test'));
+```
+Using Models with Controllers
+
+**Controller**
+```php
+<?php
+
+class testController extends Controller
+{
+    public function test()
+    {
+        // This would call a Model named testModel (it uses the controller class name).
+        $this->set('SQLresult', $this->model->getResult());
+
+        // This would call the Model 'foobarModel'
+        $this->set('TestResult', $this->model('foobar')->getResult());
+
+        return $this->render('view');
+    }
+}
+```
+**Route**
+```php
+<?php
+
+// To use a default Model (with the same name as the controller) you set the model name in the array.
+$app->get('/', array('controller' => 'test', 'method' => 'test', 'model' => 'test'));
+```
+`NOTE` when you call Models / assign Models to Controllers it will try to establish a database connection based on the configuration you specified in the config file.
 
 ## Helpers
+
+TODO
+
+### Database
+
+TODO
+
+### Request
+
+TODO
+
+### Session
+
+TODO
+
+### Logger
+
+TODO
+
+### Form
+
+TODO
+
+### Html
+
+TODO
+
+### Uploader
+
+TODO
+
+### Image
+
+TODO
+
+### Benchmark
+
+TODO
+
+### Hash
+
+TODO
+
+### String / Number
 
 TODO
 
