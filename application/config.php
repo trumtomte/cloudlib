@@ -51,7 +51,7 @@ return array
 
         // Database
         'db.dsn'        => 'mysql:host=localhost;dbname=default',
-        'db.username'   => 'sebberoot',
+        'db.username'   => 'root',
         'db.password'   => 'root',
         'db.charset'    => 'utf8',
         'db.persistent' => true,
