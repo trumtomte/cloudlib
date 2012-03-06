@@ -58,6 +58,10 @@ Example of a `.htaccess` file for pretty URLs
 </IfModule>
 ```
 
+#### Ngnix
+
+TODO
+
 ## Routes
 
 Cloudlib supports the four main HTTP request methods: `GET`, `POST`, `PUT`, `DELETE`. 
