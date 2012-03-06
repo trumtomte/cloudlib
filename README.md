@@ -38,6 +38,7 @@ Install with packagist
 http://packagist.org/packages/cloudlib/Cloudlib
 
 Example of a `composer.json`.
+
 ```json
 {
     "require": {
@@ -47,6 +48,7 @@ Example of a `composer.json`.
 ```
 #### Apache
 Example of a `.htaccess` file for pretty URLs
+
 ```apache
 <IfModule mod_rewrite.c>
     RewriteEngine On
@@ -131,6 +133,7 @@ $app->get('/', function() use ($app)
 This is what they could contain.  
 
 The View `home`  
+
 ```php
 <?php
 
@@ -139,6 +142,7 @@ echo '<p>This would be the only contents of the view!</p>';
 ```
 
 The Layout `main`  
+
 ```php
 <!DOCTYPE html>  
 <html lang="en">  
@@ -154,6 +158,7 @@ The Layout `main`
 </body>  
 </html>  
 ```
+
 `NOTE` Layouts are optional, you can have everything inside a View if you prefer that. Just skip or pass `null` to the Layout parameter of `render()`.  
 ### View variables
 
@@ -171,13 +176,16 @@ $app->get('/', function() use ($app)
 ```
 
 The View `home.php`
+
 ```php
 <?php
 
 // Outputs: Hello World!
 echo "$hello $world";  
 ```
+
 Passing variables without the `set()` method also works, or together
+
 ```php
 <?php
 
@@ -195,6 +203,7 @@ $app->get('/hello/:world', function($world) use ($app)
 ```
 
 The View `home.php`
+
 ```php
 <?php
 // This would be an example of http://www.domain.com/World
@@ -207,6 +216,7 @@ echo "Hello $world!, $foo $bar";
 When creating a new object of Cloudlib you have a couple of options (these are passed as the constructor arguments).  
 
 The first and second parameter.
+
 ```php
 <?php
 
@@ -219,7 +229,9 @@ $app = new cloudlib\Cloudlib(__DIR__, '/myproject');
 
 // Defaults to "/".
 ```
+
 The third parameter is an array of two keys with boolean values.
+
 ```php
 <?php
 
@@ -234,6 +246,7 @@ $loader->register();
 // We now specify that we don't want to use the default autoloader.
 $app = new cloudlib\Cloudlib(__DIR__, '/', array('autoloader' => false));
 ```
+
 ```php
 <?php
 
@@ -284,6 +297,7 @@ $app->bootstrap();
 You are able to register aliases and namespaces
 
 **Aliases**
+
 ```php
 <?php
 
@@ -305,6 +319,7 @@ $class = new MyClassName();  // Instead of $class = new my\namespace\MyClassName
 $app->myclass = new MyClassName();
 ```
 **Namespaces**
+
 ```php
 <?php
 
@@ -328,6 +343,7 @@ The configuration file is located in `application/config.php`, unless specified 
 
 The Config file will (by default) look like this.
 `NOTE` these items are required, but you are able to add more if you want.
+
 ```php
 <?php
 
@@ -359,7 +375,9 @@ return array
     )
 );
 ```
+
 You are able to specify as many categories as you want
+
 ```php
 <?php
 
@@ -377,7 +395,9 @@ return array(
     )
 );
 ```
+
 To get config items we use `Config::get()`
+
 ```php
 <?php
 
@@ -398,6 +418,7 @@ To get config items we use `Config::get()`
 ## Errors
 
 Defining errors (404, 500 etc) is just like adding new routes. You assign a status code (ex 404) to a response function.
+
 ```php
 <?php
 
@@ -412,7 +433,9 @@ $app->error(404, function($error) use ($app)
     return $app->render('errors/404');
 });
 ```
+
 `404.php` could then contain:
+
 ```php
 <!DOCTYPE html>
 <html lang="en">
@@ -425,10 +448,12 @@ $app->error(404, function($error) use ($app)
 </body>
 </html> 
 ```
+
 The same as above could be done for 405 (Method not allowed), or any other status.  
 The two main error status codes used by Cloudlib is 404 and 405.  
 There is one exception though, 500 (Internal Server Error) - if defined it will be passed  
 an Exception object instead of an array of status/message.
+
 ```php
 <?php
 
@@ -443,6 +468,7 @@ $app->error(500, function($e) use ($app)
 ```
 
 Sometimes you would want to return an error page in a route.
+
 ```php
 <?php
 
@@ -461,6 +487,7 @@ $app->get('/', function() use ($app)
 ### Models
 
 An example on a Model. `NOTE` when a Model is created it uses the Database configurations specified in your config file.
+
 ```php
 <?php
 
@@ -474,7 +501,9 @@ class testModel extends Model
     }
 }
 ```
+
 Accessing the Model is done via the `model()` method.
+
 ```php
 <?php
 
@@ -485,9 +514,11 @@ $app->get('/', function() use ($app)
     $word = $app->model('test')->hello(); 
 });
 ```
+
 A little more practical example
 
 **The model.**
+
 ```php
 <?php
 
@@ -503,7 +534,9 @@ class testModel extends Model
     }
 }
 ```
+
 **The route.**
+
 ```php
 <?php
 
@@ -524,6 +557,7 @@ Scroll up!
 ### Controllers
 
 First lets create a Controller we'll be using for the next examples that connects it to a certain route.
+
 ```php
 <?php
 
@@ -559,7 +593,9 @@ class testController extends Controller
     }
 }
 ```
+
 Assigning routes to controllers is the same as you've done before but instead of passing a response function you pass an array.
+
 ```php
 <?php
 
@@ -576,9 +612,11 @@ $app->get('/', array('controller' => 'test'));
 // Same as above but for post
 $app->post('/save', array('controller' => 'test'));
 ```
+
 Using Models with Controllers
 
 **Controller**
+
 ```php
 <?php
 
@@ -596,13 +634,16 @@ class testController extends Controller
     }
 }
 ```
+
 **Route**
+
 ```php
 <?php
 
 // To use a default Model (with the same name as the controller) you set the model name in the array.
 $app->get('/', array('controller' => 'test', 'method' => 'test', 'model' => 'test'));
 ```
+
 `NOTE` when you call Models / assign Models to Controllers it will try to establish a database connection based on the configuration you specified in the config file.
 
 ## Helpers
