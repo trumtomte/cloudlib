@@ -6,6 +6,7 @@ Inspired by frameworks like [Flask][flasklink] / [Bottle][bottlelink] (Python) a
 Since Cloudlib´s syntax is the same as many other lightweight PHP frameworks it is easy to learn and understand. It also follows common principles of [REST][restlink] and [MVC][mvclink].
 
 `NOTE` Cloudlib is under active development; therefore the documentation and codebase is subject to change.
+
 ```php
 <?php
 
