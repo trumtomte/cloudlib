@@ -322,7 +322,76 @@ $app->bootstrap();
 
 ## Configuration
 
-TODO
+The configuration file is located in `application/config.php`, unless specified elsewhere as shown in the **Customization** section
+
+The Config file will (by default) look like this.
+`NOTE` these items are required, but you are able to add more if you want.
+```php
+<?php
+
+// Here we have the config items under the category name 'default' (which is default for every application)
+return array
+(
+    'default' => array(
+        // Application
+
+        // Define the Timezone
+        'app.timezone'      => 'Europe/Stockholm',
+        // Define the Locale
+        'app.locale'        => null,
+        // Secret for Hasing
+        'app.secret'        => 'MySuperSecretSalt',
+        // Encoding to be used for databases/string functions etc..
+        'app.encoding'      => 'utf8',
+        // Display errors?
+        'app.errors'        => 1,
+        // Log php errors?
+        'app.logs'          => 1,
+
+        // Database
+        'db.dsn'        => 'mysql:host=localhost;dbname=default',
+        'db.username'   => 'root',
+        'db.password'   => 'root',
+        'db.charset'    => 'utf8',
+        'db.persistent' => true,
+    )
+);
+```
+You are able to specify as many categories as you want
+```php
+<?php
+
+return array(
+    'default' => array(
+        // Config items..
+    ),
+
+    'myproject' => array(
+        // Config items..
+    ),
+
+    'custom' => array(
+        // Config items..
+    )
+);
+```
+To get config items we use `Config::get()`
+```php
+<?php
+
+    // Returns: 'Europe/Stockholm'
+    Config::get('app.timezone');
+
+    // Returns: 'root'
+    Config::get('db.password');
+
+    // Returns an array of all config items prefixed with 'db'
+    Config::get('db');
+
+    // To get config items of categories other then 'default' we just pass another argument to the get() method
+    // Returns an array of all config items prefixed with 'db' from the category 'myproject'
+    Config::get('db', 'myproject');
+```
 
 ## Errors
 
@@ -332,7 +401,7 @@ Defining errors (404, 500 etc) is just like adding new routes. You assign a stat
 
 // Custom 404 (Page Not Found), an array is passed as the first function argument
 // containing two keys, statusCode and statusMessage
-$app->error(404, function($error)  use ($app)  
+$app->error(404, function($error) use ($app)  
 {  
     $app->set('status' => $error['statusCode'])
         ->set('message' => $error['statusMessage']);
@@ -341,8 +410,8 @@ $app->error(404, function($error)  use ($app)
     return $app->render('errors/404');
 });
 ```
+`404.php` could then contain:
 ```php
-// Example of a 404.php
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -354,13 +423,12 @@ $app->error(404, function($error)  use ($app)
 </body>
 </html> 
 ```
+The same as above could be done for 405 (Method not allowed), or any other status.  
+The two main error status codes used by Cloudlib is 404 and 405.  
+There is one exception though, 500 (Internal Server Error) - if defined it will be passed  
+an Exception object instead of an array of status/message.
 ```php
 <?php
-
-// The same as above could be done for 405 (Method not allowed), or any other status.
-// The two main error status codes used by Cloudlib is 404 and 405
-// There is one exception, 500 (Internal Server Error) - if defined it will be passed
-// an Exception object instead of an array of status/message.
 
 // This is like working with regular exceptions together with a View
 $app->error(500, function($e) use ($app)  
@@ -400,9 +468,13 @@ TODO
 
 TODO
 
+## Examples
+
+TODO
+
 ## Versioning
 
-[Semantic Versioning](http://semver.org/)
+Versioned with [Semantic Versioning](http://semver.org/)
 
 ## License
 
