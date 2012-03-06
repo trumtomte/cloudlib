@@ -463,6 +463,9 @@ $app->error(500, function($e) use ($app)
     $app->set('message', $e->getMessage())
         ->set('line', $e->getLine());
 
+    // This could also be a good place to log your errors,
+    // more about the Logger helper class in the Helpers section.
+
     return $app->render('errors/500');
 });
 ```
