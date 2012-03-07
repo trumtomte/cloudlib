@@ -343,6 +343,60 @@ class Cloudlib
     }
 
     /**
+     * Escapes input for HTML
+     *
+     * It can be a String, an array (array of objects) or an object.
+     *
+     * @access  public
+     * @param   mixed
+     * @return  mixed
+     */
+    public function escape($input, $flags = ENT_COMPAT, $charset = 'UTF-8', $encode = true)
+    {
+        if(is_string($input))
+        {
+            return htmlentities($input, $flags, $charset, $encode);
+        }
+
+        if(is_array($input))
+        {
+            array_walk_recursive($input, function(&$item, $key)
+            {
+                if(is_string($item))
+                {
+                    $item = htmlentities($item, $flags, $charset, $encode);
+                }
+
+                if(is_object($item))
+                {
+                    foreach($item as &$value)
+                    {
+                        if(is_string($value))
+                        {
+                            $value = htmlentities($value, $flags, $charset, $encode); 
+                        }
+                    }
+                }
+            });
+
+            return $input;
+        }
+
+        if(is_object($input))
+        {
+            foreach($input as &$value)
+            {
+                if(is_string($value))
+                {
+                    $value = htmlentities($value, $flags, $charset, $encode);
+                }
+            }
+
+            return $input;
+        }
+    }
+
+    /**
      * Add a Route
      *
      * @access  public
