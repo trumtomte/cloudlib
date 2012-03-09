@@ -360,7 +360,7 @@ $app->post('/sign_in', function() use ($app)
     // Authentication etc..
 });
 ```
-
+#### Escaping
 You will most likely also want to escape output to the browser, is is super easy as Cloudlib provides a simple function for this.
 The `escape()` method can be passed a string, array (or an array of objects) or an object to be esxaped.
 
