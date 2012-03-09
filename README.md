@@ -3,6 +3,8 @@
 Cloudlib is a flexible PHP framework for web development.  
 Inspired by frameworks like [Flask][flasklink] / [Bottle][bottlelink] (Python) and [Laravel][laravellink] (PHP).  
 
+Cloudlib follows the PSR-0 standard and 
+
 Since Cloudlib´s syntax is the same as many other lightweight PHP frameworks it is easy to learn and understand. It also follows common principles of [REST][restlink] and [MVC][mvclink].
 
 `NOTE` Cloudlib is under active development; therefore the documentation and codebase is subject to change.
@@ -307,7 +309,7 @@ You are able to register aliases and namespaces
 
 $app = new cloudlib\Cloudlib(__DIR__, '/', array('bootstrap' => false));
 
-// To register an aliases you pass an array of `'ClassName' => 'namespace\\ClassName'` pairs
+// To register an aliases you pass an array of 'ClassName' => 'namespace\\ClassName' pairs
 $app->loader->registerAliases(array(
     'MyClassName' => 'my\\namespace\\MyClassName'
 ));
@@ -329,7 +331,7 @@ $app->myclass = new MyClassName();
 
 $app = new cloudlib\Cloudlib(__DIR__, '/', array('bootstrap' => false));
 
-// To register a namespace you pass an array of `'namespace' => 'path/to/namespace'` pairs.
+// To register a namespace you pass an array of 'namespace' => 'path/to/namespace' pairs.
 $app->loader->registerNamespaces(array(
     'mynamespace' => 'path/to/mynamespace'
 ));
