@@ -405,6 +405,20 @@ $app->get('/home', function() use ($app)
     return $app->render('view');
 });
 ```
+`$_FILES` and `$_COOKIES` will not be sent to the input array instead they are aquired via the Request object (more on this in the Helpers section).
+
+```php
+<?php
+
+$app->get('/', function() use ($app)
+{
+    // The array $_FILES
+    $files = $app->request->files;
+
+    // The array $_COOKIES
+    $cookies = $app->request->cookies;
+});
+```
 
 
 ## Configuration
