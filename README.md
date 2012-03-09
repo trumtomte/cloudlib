@@ -3,7 +3,7 @@
 Cloudlib is a flexible PHP framework for web development.  
 Inspired by frameworks like [Flask][flasklink] / [Bottle][bottlelink] (Python) and [Laravel][laravellink] (PHP).  
 
-Cloudlib follows the PSR-0 standard and 
+Cloudlib follows the PSR-0 standard so you can use all the libraries you want! Cloudlib also lets you define your own directory structure, more on this in the customization section.
 
 Since Cloudlib´s syntax is the same as many other lightweight PHP frameworks it is easy to learn and understand. It also follows common principles of [REST][restlink] and [MVC][mvclink].
 
