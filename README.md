@@ -341,6 +341,72 @@ $app->bootstrap();
 // The new namespace is now registered!
 ```
 
+## Input
+Whenever a request is made and data is sent (via $_GET, $_POST etc) it is stored in an array called `input`.
+
+Lets say someone sign in to your website with the form input fields "username" and "password".
+
+```php
+<?php
+
+$app->post('/sign_in', function() use ($app)
+{
+    // This is how you would get the username and password.
+    $username = $app->input['username'];
+    $password = $app->input['password'];
+
+    // Authentication etc..
+});
+```
+
+You will most likely also want to escape output to the browser, is is super easy as Cloudlib provides a simple function for this.
+The `escape()` method can be passed a string, array (or an array of objects) or an object to be esxaped.
+
+```php
+<?php
+
+$app->get('/home', function() use ($app)
+{
+    $string = '<h1>My String!</h1>';
+    
+    // Escape the string.
+    $app->set('string', $app->escape($string));
+    
+    // The escape function is recursive, so multidimensional arrays is no problem.
+    $array = array
+    (
+        'foo' => 'bar',
+        'apple' => 'orange',
+        'array' => array
+        (
+            'hello' => 'world'
+        )
+    );
+
+    // Escape the array.
+    $app->set('array', $app->escape($array));
+
+    // The escape method will escape the visible (public) class properties
+    $object = new Class();
+
+    // Escape the object.
+    $app->set('object', $app->escape($object));
+
+    $arrayOfObjects = array
+    (
+        'first' => new ClassA(),
+        'second' => new ClassB()
+        // And so on
+    );
+
+    // Escape the array of objects.
+    $app-set('arrayOfObjects', $app->escape($arrayOfObjects));
+
+    return $app->render('view');
+});
+```
+
+
 ## Configuration
 
 The configuration file is located in `application/config.php`, unless specified elsewhere as shown in the **Customization** section.
