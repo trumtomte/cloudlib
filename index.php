@@ -8,80 +8,89 @@
  * @package     Cloudlib
  */
 
-// DISCLAIMER
-// 
-// this file is an example since the documentation isnt finished yet,
-// everything is subject to change!
-
 // Require the framework
 require 'cloudlib/Cloudlib.php';
 
 // Inititalize the application
 $app = new cloudlib\Cloudlib(__DIR__, '/cloudlib');
 
-// Load classes with their name without namespaces
+// Define variables outside of routes to be used in routes.
+
+// We create an Uploader object with the $_FILES array.
 $app->uploader = new Uploader($app->request->files);
 
 // Define the root route
-$app->route('/', array('GET', 'POST'), function() use ($app)
+$app->get('/', function() use ($app)
 {
+    // Render the View index.php with the Layout index.php
     return $app->render('index', 'index');
 });
 
-// Define a /home route with a parameter, without use ($app)
-$app->route('/home/:test', array('GET'), function($test)
+// Define a route with a parameter
+$app->get('/home/:param', function($param) use ($app)
 {
-    $data['test'] = $test;
+    // Set the variable param (so it can be used in the view) and escape it.
+    $app->set('param', $app->escape($param));
 
-    return new View('index', null, $data);
+    return $app->render('index', 'index');
 });
 
-// Define a /test route with a parameter
-$app->route('/test/:param', array('GET'), function($test)
+// Define a route with multiple request methods
+$app->route('/hello/:world', array('GET', 'POST', 'PUT', 'DELETE'), function($world) use ($app)
 {
-    return 'hello ' . $test;
+    // Just display Hello + (the escaped parameter)
+    return 'Hello ' . $app->escape($world);
 });
 
-// Define two routes for controllers
-$app->route('/ctrl', array('GET'), array(
-    // Controller name is required
-    'controller' => 'index'
 
-    // Optional to choose if a model should be loaded (this requires the database configuration)
-    //'model' => 'index'
-));
-// Controller route with a parameter
-$app->route('/ctrl/:param', array('GET'), array(
-    'controller' => 'index',
+// Defining controllers is the same as routes, but instead of the response function we have an array.
 
-    // You are able to specify your own method name instead of the default method name (the request method)
-    'method' => 'test'
-));
+// This would call the testController and call the get() method in that controller.
+$app->get('/controller', array('controller' => 'test'));
 
-// The keys "statusCode" and "statusMessage" will always be sent to the error response
-// Custom 404 view
-$app->error(404, function($error) {
-    $data['code'] = $error['statusCode'];
-    $data['message'] = $error['statusMessage'];
-    return new View('errors/404', null, $data);
-});
+// This would call the same controller but call the test() method and pass a parameter to that method.
+$app->get('/controller/:param', array('controller' => 'test', 'method' => 'test'));
 
-// Custom 405 view
-$app->error(405, function($error) use ($app)
+// This would call the same controller but call the view() method with a parameter,
+// the controller will also be loaded with the testModel.
+$app->get('/view/:page', array('controller' => 'test', 'method' => 'view', 'model' => 'test'));
+
+
+// Creating responses for error is also just as easy as defining routes,
+// but instead of setting a route we assign it with a status code.
+
+// Cloudlib makes use of the error codes 404 and 405 so creating Views for those is recommended.
+
+// All error functions is passed an array of the status code and status message (exception: the 500 internal server error)
+$app->error(404, function($error) use ($app)
 {
-    $app->set('code', $error['statusCode'])
+    $app->set('status', $error['statusCode'])
         ->set('message', $error['statusMessage']);
 
+    // Render the View in errors/404.php
+    return $app->render('errors/404');
+});
+
+// Lets do the same for 405 (method not allowed)
+$app->error(405, function($error) use ($app)
+{
+    $app->set('status', $error['statusCode'])
+        ->set('message', $error['statusMessage']);
+
+    // Render the View in errors/405.php
     return $app->render('errors/405');
 });
 
-// Custom 500 view, the 500 view will always be passed an Exception object
-$app->error(500, function($error) use ($app)
+// The error 500 (internal server error) will be passed an Exception instead of an array of the status code and message.
+$app->error(500, function($e) use ($app)
 {
-    $app->set('message', $error->getMessage());
+    // This is like working with regular exceptions, nothing new.
+    $app->set('message', $e->getMessage())
+        ->set('line', $e->getLine())
+        ->set('file', $e-getFile());
 
     return $app->render('errors/500');
 });
 
-// Run the application
+// Lets run the application!
 $app->run();
