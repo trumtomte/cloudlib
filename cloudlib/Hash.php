@@ -43,7 +43,7 @@ class Hash
      */
     public static function create($value, $salt, $rounds = 8)
     {
-        if($rounds > 31 or $rounds < 4)
+        if($rounds > 31 || $rounds < 4)
         {
             throw new InvalidArgumentException('The number of rounds has to be between 4-31');
         }
