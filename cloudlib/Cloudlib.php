@@ -360,8 +360,12 @@ class Cloudlib
 
         if(is_array($input))
         {
-            array_walk_recursive($input, function(&$item, $key)
+            $array = array('flags' => $flags, 'charset' => $charset, 'encode' => $encode);
+
+            array_walk_recursive($input, function(&$item, $key) use ($array)
             {
+                extract($array);
+
                 if(is_string($item))
                 {
                     $item = htmlentities($item, $flags, $charset, $encode);
