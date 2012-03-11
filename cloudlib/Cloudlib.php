@@ -501,17 +501,8 @@ class Cloudlib
      */
     public function errorPage($error)
     {
-        if( ! isset($this->errors[$error]))
-        {
-            return false;
-        }
-
-        if($this->errors[$error] instanceof Closure)
-        {
-            return $this->errors[$error]();
-        }
-
-        return $this->errors[$error];
+        $this->response->error($error, $this->errors);
+        $this->response->send();
     }
 
     /**
