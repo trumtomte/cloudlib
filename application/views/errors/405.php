@@ -14,24 +14,13 @@
   <meta charset="utf-8" />
   <title>405</title>
   <style>
-    html
-    {
-      background: #eee;
-      margin-top: 10px;
-    }
-    body
-    {
-      font-family: sans-serif;
-      width: 700px;
-      margin: auto;
-      background: #fff;
-      padding: 10px;
-      text-align: center;
-    }
+    html { margin-top: 10px; font-family: Courier; }
+    body { width: 600px; margin: auto; padding: 10px; text-align: center; }
+    h1 { padding-bottom: 10px; border-bottom: 1px solid #aaa; }
   </style>
 </head>
 <body>
-<h1>405</h1>
+<h1>405: Method Not Allowed</h1>
 <h3><?php echo $message; ?></h3>
 <p><small>this file is located in applications/views/errors/405.php</small></p>
 </body>
