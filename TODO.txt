@@ -1,4 +1,4 @@
-# TODOs (things i'd want to implement if possible)
+# TODOs
     * Routes: Optional, Regex
     * Html/Form Classes: Wrap attribute, Sorting attributes, (PHP_EOL's?)
     * Nested Views?
