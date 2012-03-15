@@ -745,7 +745,38 @@ TODO
 
 ### Request
 
-TODO
+The `Request` helper provides simple methods for getting/validating $_SERVER variables. This helper is mainly used in routes.
+
+```php
+<?php
+
+$app->get('/', function() use ($app)
+{
+    // Get a server variable
+    $app->request->server('variablename'); // ex $app->request->server('REQUEST_METHOD');
+
+    // Following methods will return true or false depending on the current request method,
+    $app->request->isGet();
+    $app->request->isPost();
+    $app->request->isPut();
+    $app->request->isDelete();
+    $app->request->isHead();
+
+    // If you just want the request method, call method()
+    $app->request->method();
+
+    // Check if it was an AJAX request. 
+    $app->request->isAjax();
+
+    // Check if we are using https.
+    $app->request->isSecure();
+
+    // Get the currently used protocol, if none is set return HTTP/1.1
+    $app->request->protocol();
+
+    return $app->render('someview');
+});
+```
 
 ### Session
 
