@@ -819,7 +819,7 @@ The `Hash` helper currently provides two methods, `create()` and `compare()`.
 
 // The Config item 'app.secret' has a value of 'MySuperSecretSalt' in this example
 // Outputs: YThlMWZiN2M0MDA0ZGE0M.rgcNiFJqhocFa.WQjf0gUpYUCvvw3Eq
-echo Hash::create('mypassword, 'mysalt');
+echo Hash::create('mypassword', 'mysalt');
 
 // compare() takes four parameters, the hash, the password, the salt and number of rounds (for blowfish, defalt: 8).
 
