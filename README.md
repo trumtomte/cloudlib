@@ -773,15 +773,102 @@ TODO
 
 ### Benchmark
 
-TODO
+The `Benchmark` helper provides simple methods of benchmarking your application.
+
+```php
+<?php
+
+// Define a start time.
+Benchmark::start('start_time');
+
+// Echo the time that has passed since you defined your start time.
+echo Benchmark::time('start_time');
+
+// Doing the same with defined variables/constants.
+define('start_time', microtime(true));
+echo Benchmark::compare(start_time);
+
+// Note: both time() and compare() takes a second parameter, the number of decimals (default: 5).
+
+// You can use the static method calls as the parameter for time().
+Benchmark::start('my_time');
+
+// Echos the time rounded to 6 decimals.
+echo Benchmark::my_time(6);
+
+
+// Get memory usage or peak usage.
+
+// Get the memory usage in megabytes rounded to 5 decimals.
+echo Benchmark::memory(5);
+
+// Same as memory() but with peak usage.
+echo Benchmark::peak(5);
+
+```
 
 ### Hash
 
-TODO
+The `Hash` helper currently provides two methods, `create()` and `compare()`.
 
-### String / Number
+```php
+<?php
 
-TODO
+// The creation of a new hash requires the config item 'app.secret' to be set.
+// create() takes three parameters, the password, the salt and number of rounds (for blowfish, default: 8).
+
+// The Config item 'app.secret' has a value of 'MySuperSecretSalt' in this example
+// Outputs: YThlMWZiN2M0MDA0ZGE0M.rgcNiFJqhocFa.WQjf0gUpYUCvvw3Eq
+echo Hash::create('mypassword, 'mysalt');
+
+// compare() takes four parameters, the hash, the password, the salt and number of rounds (for blowfish, defalt: 8).
+
+// Output: bool(true)
+echo var_dump(Hash::compare('YThlMWZiN2M0MDA0ZGE0M.rgcNiFJqhocFa.WQjf0gUpYUCvvw3Eq', 'mypassword', 'mysalt');
+
+```
+
+### String
+
+The `String` helper currently provides two methods, `repeat()` and `trim()`.
+
+```php
+<?php
+
+// repeat() takes three parameters, the string, number of times (default: 2) and the separator (default: null).
+
+// Outputs: Hello, Hello, Hello, Hello
+echo String::repeat('Hello', 4, ', ');
+
+// trim() takes four parameters, the string, max width, start position (default: 0) and the marker (default: '...').
+
+// Outputs: Hello World...
+echo String::trim('Hellow World, Foo Bar', 14, 0, '...');
+
+```
+
+### Number
+
+The `Number` helper currently provides conversion from (to MBs) or to bytes (from KB, MB, GB and TB).
+
+```php
+<?php
+
+// Outputs: 7340032
+echo Number::toBytes('7MB');
+
+// Outputs: 13.0464MB, the second parameter is the number of decimals (defaults to 3).
+echo Number::fromBytes(13680100, 4);
+
+// The shorthand function byte() will do the same as above.
+
+// Outputs: 7340032
+echo Number::byte('7MB');
+
+// Outputs: 13.0464MB
+echo Number::byte(13680100, 4);
+
+```
 
 ## Examples
 
