@@ -1,7 +1,7 @@
 # Cloudlib
 
-Cloudlib is a flexible PHP framework for web development.  
-Inspired by frameworks like [Flask][flasklink] / [Bottle][bottlelink] (Python) and [Laravel][laravellink] (PHP).  
+Cloudlib is a flexible PHP framework for web development.
+Inspired by frameworks like [Flask][flasklink] / [Bottle][bottlelink] (Python) and [Laravel][laravellink] (PHP).
 
 Cloudlib follows the PSR-0 standard so you can use all the libraries you want! Cloudlib also lets you define your own directory structure, more on this in the customization section.
 
@@ -16,9 +16,9 @@ require 'cloudlib/Cloudlib.php';
 
 $app = new cloudlib\Cloudlib(__DIR__);
 
-$app->get('/', function() use ($app)  
-{  
-    return 'Hello World!';  
+$app->get('/', function() use ($app)
+{
+    return 'Hello World!';
 });
 
 $app->run();
@@ -30,13 +30,13 @@ Follow the framework on Twitter([@cloudlibfwork](https://twitter.com/#!/cloudlib
 
 ## Installation
 
-Download from Github  
+Download from Github
 https://github.com/trumtomte/cloudlib/downloads
 
-Clone with git  
+Clone with git
 `$ git clone git@github.com:trumtomte/cloudlib.git`
 
-Install with packagist  
+Install with packagist
 http://packagist.org/packages/cloudlib/Cloudlib
 
 Example of a `composer.json`.
@@ -66,119 +66,119 @@ TODO
 
 ## Routes
 
-Cloudlib supports the four main HTTP request methods: `GET`, `POST`, `PUT`, `DELETE`. 
- 
+Cloudlib supports the four main HTTP request methods: `GET`, `POST`, `PUT`, `DELETE`.
+
 `NOTE` the request method `HEAD` also works (the same as `GET`) but only outputs headers.
 
 ```php
 <?php
 
-$app->get('/', function() use ($app)  
-{  
-    return 'This is a GET request';  
+$app->get('/', function() use ($app)
+{
+    return 'This is a GET request';
 });
 
-$app->post('/', function() use ($app)  
-{  
-    return 'This is a POST request';  
+$app->post('/', function() use ($app)
+{
+    return 'This is a POST request';
 });
 
-$app->put('/', function() use ($app)  
-{  
-    return 'This is a PUT request';  
+$app->put('/', function() use ($app)
+{
+    return 'This is a PUT request';
 });
 
-$app->delete('/', function() use ($app)  
-{  
-    return 'This is a DELETE request';  
+$app->delete('/', function() use ($app)
+{
+    return 'This is a DELETE request';
 });
 
 // Defining multiple request methods to one route is done
 // by passing them via an array using the route() method
-$app->route('/', array('GET', 'POST', 'PUT', 'DELETE'), function() use ($app)  
-{  
-    return 'This is a route with multiple request methods';  
+$app->route('/', array('GET', 'POST', 'PUT', 'DELETE'), function() use ($app)
+{
+    return 'This is a route with multiple request methods';
 });
 ```
 
 ### Routes with parameters
 
-Adding parameters to routes is done by adding a colon `:` in front of a word.  
+Adding parameters to routes is done by adding a colon `:` in front of a word.
 The parameters will be passed to the corresponding route response function.
 
 ```php
 <?php
 
-$app->get('/view/:page', function($page) use ($app)  
-{  
-  return "Viewing the page: $page";  
+$app->get('/view/:page', function($page) use ($app)
+{
+  return "Viewing the page: $page";
 });
 
 // Multiple parameters also works
 $app->get('/:year/:month/:day', function($year, $month, $day) use ($app)
-{  
+{
     return "The date: $day - $month - $year";
 });
 ```
 
 ## Views & Layouts
 
-Returing a simple string as a response is most likely not what you want to do, this is what Views are for.  
+Returing a simple string as a response is most likely not what you want to do, this is what Views are for.
 
 `NOTE` View and Layout names are suffixed with `.php`.
 
 ```php
 <?php
 
-$app->get('/', function() use ($app)  
-{  
+$app->get('/', function() use ($app)
+{
     // Here we have a View called `home` and a Layout called `main`
-    return $app->render('home', 'main');  
+    return $app->render('home', 'main');
 });
 ```
-This is what they could contain.  
+This is what they could contain.
 
-The View `home`  
+The View `home`
 
 ```php
 <?php
 
-echo '<p>This would be the only contents of the view!</p>';  
+echo '<p>This would be the only contents of the view!</p>';
 
 ```
 
-The Layout `main`  
+The Layout `main`
 
 ```php
-<!DOCTYPE html>  
-<html lang="en">  
-<head>  
-    <meta charset="utf-8" \\>  
-    <title>Example</title>  
-</head>  
-<body>  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" \\>
+    <title>Example</title>
+</head>
+<body>
 <?php
-    // View contents are loaded via a variable called $body  
-    echo $body;  
-?>  
-</body>  
-</html>  
+    // View contents are loaded via a variable called $body
+    echo $body;
+?>
+</body>
+</html>
 ```
 
-`NOTE` Layouts are optional, you can have everything inside a View if you prefer that. Just skip or pass `null` to the Layout parameter of `render()`.  
+`NOTE` Layouts are optional, you can have everything inside a View if you prefer that. Just skip or pass `null` to the Layout parameter of `render()`.
 ### View variables
 
 ```php
 <?php
 
-$app->get('/', function() use ($app)  
-{  
+$app->get('/', function() use ($app)
+{
     // Setting View variables (name, value)
     $app->set('hello', 'Hello')
         ->set('world', 'World!');
 
     return $app->render('home');
-});  
+});
 ```
 
 The View `home.php`
@@ -187,7 +187,7 @@ The View `home.php`
 <?php
 
 // Outputs: Hello World!
-echo "$hello $world";  
+echo "$hello $world";
 ```
 
 Passing variables without the `set()` method also works, or together
@@ -195,16 +195,16 @@ Passing variables without the `set()` method also works, or together
 ```php
 <?php
 
-$app->get('/hello/:world', function($world) use ($app)  
-{  
-    // Set a View variable like before  
-    $app->set('world', $world);  
+$app->get('/hello/:world', function($world) use ($app)
+{
+    // Set a View variable like before
+    $app->set('world', $world);
 
-    // Define your own array of values  
-    $array = array('foo' => 'Foo', 'bar' => 'Bar!');  
+    // Define your own array of values
+    $array = array('foo' => 'Foo', 'bar' => 'Bar!');
 
-    // $array will be merged with your other variables, also notice that we are not using a Layout  
-    return $app->render('home', null, $array);  
+    // $array will be merged with your other variables, also notice that we are not using a Layout
+    return $app->render('home', null, $array);
 });
 ```
 
@@ -215,11 +215,11 @@ The View `home.php`
 // This would be an example of http://www.domain.com/World
 
 // Outputs: Hello World!, Foo Bar!
-echo "Hello $world!, $foo $bar";  
+echo "Hello $world!, $foo $bar";
 ```
 
 ## Customization
-When creating a new object of Cloudlib you have a couple of options (these are passed as the constructor arguments).  
+When creating a new object of Cloudlib you have a couple of options (these are passed as the constructor arguments).
 
 The first and second parameter.
 
@@ -229,7 +229,7 @@ The first and second parameter.
 // The first parameter tells Cloudlib where it is, the easiest way of doing this is with __DIR__.
 $app = new cloudlib\Cloudlib(__DIR__);
 
-// The second parameter specifies the base uri (if you have your application in an subfolder this is it),  
+// The second parameter specifies the base uri (if you have your application in an subfolder this is it),
 // ex. www.domain.com/myproject would have the base uri "/myproject".
 $app = new cloudlib\Cloudlib(__DIR__, '/myproject');
 
@@ -259,12 +259,12 @@ $app = new cloudlib\Cloudlib(__DIR__, '/', array('autoloader' => false));
 // Second, "bootstrap" if set to false it lets us
 // modify the default directory structure (see this repository),
 // adding aliases for namespaced classes (lazy loading) and to register more namespaces (if you use other libraries)
-$app = new cloudlib\Cloudlib(__DIR__, '/', array('bootstrap' => false)); 
+$app = new cloudlib\Cloudlib(__DIR__, '/', array('bootstrap' => false));
 ```
 **Directory paths**
-You can define your own paths or alter the default paths.  
+You can define your own paths or alter the default paths.
 
-**Default paths**  
+**Default paths**
 
 * `controllers` path to your Controllers.
 * `models` path to your Models.
@@ -299,7 +299,7 @@ $app->setPath('controllers', 'path/to/controllers');
 // to call the bootstrap before adding routes or calling classes
 $app->bootstrap();
 ```
-**Working with the default class autoloader**  
+**Working with the default class autoloader**
 You are able to register aliases and namespaces
 
 **Aliases**
@@ -370,10 +370,10 @@ The `escape()` method can be passed a string, array (or an array of objects) or 
 $app->get('/home', function() use ($app)
 {
     $string = '<h1>My String!</h1>';
-    
+
     // Escape the string.
     $app->set('string', $app->escape($string));
-    
+
     // The escape function is recursive, so multidimensional arrays is no problem.
     $array = array
     (
@@ -510,8 +510,8 @@ Defining errors (404, 500 etc) is just like adding new routes. You assign a stat
 
 // Custom 404 (Page Not Found), an array is passed as the first function argument
 // containing two keys, statusCode and statusMessage
-$app->error(404, function($error) use ($app)  
-{  
+$app->error(404, function($error) use ($app)
+{
     $app->set('status' => $error['statusCode'])
         ->set('message' => $error['statusMessage']);
 
@@ -532,20 +532,20 @@ $app->error(404, function($error) use ($app)
 <body>
     <h1><?php echo "$status: $message"; ?></h1>
 </body>
-</html> 
+</html>
 ```
 
-The same as above could be done for 405 (Method not allowed), or any other status.  
-The two main error status codes used by Cloudlib is 404 and 405.  
-There is one exception though, 500 (Internal Server Error) - if defined it will be passed  
+The same as above could be done for 405 (Method not allowed), or any other status.
+The two main error status codes used by Cloudlib is 404 and 405.
+There is one exception though, 500 (Internal Server Error) - if defined it will be passed
 an Exception object instead of an array of status/message.
 
 ```php
 <?php
 
 // This is like working with regular exceptions together with a View
-$app->error(500, function($e) use ($app)  
-{  
+$app->error(500, function($e) use ($app)
+{
     $app->set('message', $e->getMessage())
         ->set('line', $e->getLine());
 
@@ -562,7 +562,7 @@ Sometimes you would want to return an error page in a route.
 <?php
 
 $app->get('/', function() use ($app)
-{  
+{
     if( /* Condition */ )
     {
         // If you have defined an error page for 404 it will be rendered.
@@ -582,7 +582,7 @@ An example on a Model. `NOTE` when a Model is created it uses the Database confi
 
 // Model class names should be suffixed with 'Model' and be a subclass of 'Model'
 class testModel extends Model
-{  
+{
     // Pointless method returing 'World!'
     public function hello()
     {
@@ -600,7 +600,7 @@ $app->get('/', function() use ($app)
 {
     // We set the $word variable to 'World!'.
     // The model() method takes the model name as a parameter, without the 'Model' suffix.
-    $word = $app->model('test')->hello(); 
+    $word = $app->model('test')->hello();
 });
 ```
 
@@ -749,11 +749,100 @@ TODO
 
 ### Session
 
-TODO
+The `Session` helper provides simple methods for session usage. A session will always start by default and set a session token if there is none.
+
+```php
+<?php
+
+// Set a session name
+Session::name('name');
+// Get the session name
+Session::name();
+
+// Set a session id
+Session::id('id');
+// Get the session id
+Session::id();
+
+// Set a session variable
+Session::set('variablename');
+
+// Get a session variable
+Session::get('variablename');
+
+// Unset a session variable
+Session::del('variablename');
+
+// Check if a session variable has been set
+Session::has('variablename');
+
+// Get the session token (the token can be used, as an example, to confirm secure form usage)
+Session::token();
+
+// Compare a input token with the session token
+Session::compareToken('input token'); // will return a boolean value
+
+// Create a new token
+Session::generateToken();
+
+// Refresh an Session (for example, if a user logs in you might want to get a new session token)
+Sesssion::refresh();
+
+// Write session data and end session
+Session::close();
+
+// Destroy a session (for exmaple if someone logs out)
+Session::destroy();
+
+// Start a session
+Session::start();
+
+```
 
 ### Logger
 
-TODO
+The `Logger` helper provides simple methods for logging messages (debug/info/warning/error).
+
+```php
+<?php
+
+// This creates a new log object which would write to the chosen file at shutdown.
+$logger = new Logger('path/to/file.log');
+
+// Debug message
+$logger->debug('my message');
+
+// Info message
+$logger->info('my message');
+
+// Warning message
+$logger->warning('my message');
+
+// Error message
+$logger->error('my message');
+
+// Arrays also works.
+$array = array('first message', 'second message', 'third message');
+$logger->debyg($array);
+
+// You are also able to use the log() function, but it takes a second parameter to declare the severity of the message
+// Debug(0), Info(2), Warning(3), Error(4).
+$logger->log('debugging!', 0);
+
+// These message will be written to the file at shutdown.
+// If you want to do it manually follow this example.
+
+$logger = new Logger('path/to/file.log', false); // Dont use register_shutdown_function()
+// Write some message.
+$logger->debug('debuggin!');
+
+// This would write all the messages to the file.
+$logger->write();
+
+// If you later on want to register your logger to write at shutdown you can call register().
+$logger->register(); // Will write messages to file at shutdown.
+
+```
 
 ### Form
 
@@ -761,7 +850,56 @@ TODO
 
 ### Html
 
-TODO
+The `Html` helper provides simple methods for common html tags.
+
+```php
+<?php
+
+// a() (method for creating anchor, <a>, tags) takes three arguments, the path, the content and attributes.
+// The path will be relative to your project (most often that is '/').
+// The content is what will be inside the anchor tags.
+// The attributes can be any attribute you want and is defined by an array, ex array('class' => 'myclass').
+
+// Outputs: <a href="/view/this/page" id="anchorID">hey this is a link!</a>
+echo Html::a('/view/this/page', 'hey this is a link!', array('id' => 'anchorID'));
+
+// If you want to have a link outside of your application you need to specify the attribute "relative" to false.
+// Outputs: <a href="http://www.google.com">google it!</a>
+echo Html::a('http://www.google.com', 'google it!', array('relative' => false));
+
+
+// img() (method for creating img, <img>, tags) takes two arguments, the path and attributes.
+// The path is the relative path to your img directory (default: /(base uri)/public/img/, unless specified).
+// The attributes can be any attribute you want and is defined by an array, ex array('class' => 'myclass').
+
+// Outputs: <img src="/public/img/myimage.jpg" class="imgclass" />
+echo Html::img('myimage.jpg', array('class' => 'imgclass'));
+
+// If you want to create an image from outside of your application follow the same steps as for the anchor method a().
+
+
+// Creating links for your JavaScript and CSS files is done with the methods css() and js().
+// Both take one argument, which can be a string or an array of multiple files. The path to the files
+// is, by default, /(base uri)/public/css/ & /(base uri)/public/js/, this can be changed - read the Customization section.
+
+// Outputs: <link rel="stylesheet" href="/public/css/mystyle.css" />
+echo Html::css('mystyle');
+
+// Same can be done with an array
+echo Html::css(array('mystyle', 'navstyle'));
+
+// The js() method works the same.
+// Outputs: <script src="/public/js/jquery.js"></script>
+echo Html::js('jquery');
+
+
+// To create script/style blocks use the methods script() and style().
+echo Html::style('html { background: #eeeeee; }');
+echo Html::script('alert("hello");');
+
+// And last, and most likely not most useful, br()!
+echo Html::br(100); // 100 <br />'s!
+```
 
 ### Uploader
 
