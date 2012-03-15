@@ -41,6 +41,7 @@ class Benchmark
      * Define a start time
      *
      * @access  public
+     * @param   string  $time
      * @return  void
      */
     public static function start($time)
@@ -67,13 +68,15 @@ class Benchmark
      * Get the time comparison
      *
      * @access  public
-     * @return  int
+     * @param   string  $time
+     * @param   int     $round
+     * @return  float 
      */
     public static function time($time, $round = 5)
     {
         static::stop($time);
 
-        return round((static::$times['stop:' . $time] - static::$times['start:' . $time]), $round);
+        return (float) round((static::$times['stop:' . $time] - static::$times['start:' . $time]), $round);
     }
 
     /**
