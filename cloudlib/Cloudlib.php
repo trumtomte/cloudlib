@@ -179,7 +179,7 @@ class Cloudlib
             'layouts'     => $app . 'views' . $ds . 'layouts' . $ds,
             'logs'        => $app . 'logs' . $ds . 'error_php.log',
             'config'      => $app . 'config.php',
-            'uploader'    => $pub . 'img' . $ds,
+            'uploader'    => $pub,
             'image'       => $pub . 'img' . $ds,
             'css'         => $relPub . 'css' . $ds,
             'js'          => $relPub . 'js' . $ds,
