@@ -854,7 +854,7 @@ $logger->error('my message');
 
 // Arrays also works.
 $array = array('first message', 'second message', 'third message');
-$logger->debyg($array);
+$logger->debug($array);
 
 // You are also able to use the log() function, but it takes a second parameter to declare the severity of the message
 // Debug(0), Info(2), Warning(3), Error(4).
