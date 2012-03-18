@@ -168,7 +168,7 @@ class Logger
      * Shorthand function for log()
      *
      * @access  public
-     * @param   string  $message
+     * @param   mixed  $message
      * @return  void
      */
     public function debug($message)
@@ -180,7 +180,7 @@ class Logger
      * Shorthand function for log()
      *
      * @access  public
-     * @param   string  $message
+     * @param   mixed  $message
      * @return  void
      */
     public function info($message)
@@ -192,7 +192,7 @@ class Logger
      * Shorthand function for log()
      *
      * @access  public
-     * @param   string  $message
+     * @param   mixed  $message
      * @return  void
      */
     public function warning($message)
@@ -204,7 +204,7 @@ class Logger
      * Shorthand function for log()
      *
      * @access  public
-     * @param   string  $message
+     * @param   mixed  $message
      * @return  void
      */
     public function error($message)
