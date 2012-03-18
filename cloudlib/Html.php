@@ -140,7 +140,7 @@ class Html
      *
      * @access  public
      * @param   string  $script
-     * @return  strig
+     * @return  string
      */
     public static function script($script)
     {
