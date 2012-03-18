@@ -70,7 +70,7 @@ class Benchmark
      * @access  public
      * @param   string  $time
      * @param   int     $decimals
-     * @return  float 
+     * @return  float
      */
     public static function time($time, $decimals = 5)
     {
@@ -109,7 +109,7 @@ class Benchmark
      *
      * @access  public
      * @param   int     $decimals
-     * @return  float 
+     * @return  float
      */
     public static function peak($decimals = 3)
     {
@@ -122,7 +122,7 @@ class Benchmark
      * @access  public
      * @param   string  $time
      * @param   array   $args
-     * @return  float 
+     * @return  float
      */
     public static function __callStatic($time, array $args)
     {
