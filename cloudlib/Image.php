@@ -115,11 +115,12 @@ class Image
      *
      * @access  public
      * @param   string  $image
+     * @param   boolean $relative
      * @return  void
      */
-    public function load($image)
+    public function load($image, $relative = true)
     {
-        $file = static::$paths['imageDirectory'] . $image;
+        $file = ($relative) ? static::$paths['imageDirectory'] . $image : $image;
 
         $image = new SplFileInfo($file);
 
@@ -159,11 +160,12 @@ class Image
      *
      * @access  public
      * @param   string  $file
+     * @param   boolean $relative
      * @return  void
      */
-    public function save($file)
+    public function save($file, $relative = true)
     {
-        $newImage = static::$paths['imageDirectory'] . $file;
+        $newImage = ($relative) ? static::$paths['imageDirectory'] . $file : $file;
 
         switch($this->extension)
         {
