@@ -69,14 +69,14 @@ class Benchmark
      *
      * @access  public
      * @param   string  $time
-     * @param   int     $round
+     * @param   int     $decimals
      * @return  float 
      */
-    public static function time($time, $round = 5)
+    public static function time($time, $decimals = 5)
     {
         static::stop($time);
 
-        return (float) round((static::$times['stop:' . $time] - static::$times['start:' . $time]), $round);
+        return (float) round((static::$times['stop:' . $time] - static::$times['start:' . $time]), $decimals);
     }
 
     /**
@@ -84,36 +84,36 @@ class Benchmark
      *
      * @access  public
      * @param   float   $time
-     * @param   int     $round
+     * @param   int     $decimals
      * @return  float
      */
-    public static function compare($time, $round = 5)
+    public static function compare($time, $decimals = 5)
     {
-        return (float) round((microtime(true) - (float) $time), $round);
+        return (float) round((microtime(true) - (float) $time), $decimals);
     }
 
     /**
      * Gets the current memory usage in Megabytes rounded to three decimals
      *
      * @access  public
-     * @param   int     $round
+     * @param   int     $decimals
      * @return  float
      */
-    public static function memory($round = 3)
+    public static function memory($decimals = 3)
     {
-        return (float) round((memory_get_usage() / 1024 / 1024), $round);
+        return (float) round((memory_get_usage() / 1024 / 1024), $decimals);
     }
 
     /**
      * Gets the peak memory usage in Megabytes rounded to three decimals
      *
      * @access  public
-     * @param   int     $round
+     * @param   int     $decimals
      * @return  float 
      */
-    public static function peak($round = 3)
+    public static function peak($decimals = 3)
     {
-        return (float) round((memory_get_peak_usage() / 1024 / 1024), $round);
+        return (float) round((memory_get_peak_usage() / 1024 / 1024), $decimals);
     }
 
     /**
