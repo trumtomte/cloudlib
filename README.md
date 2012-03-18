@@ -278,7 +278,16 @@ You can define your own paths or alter the default paths.
 Pathname|Default|Description
 --------|-------|-----------
 `controllers`|/application/controllers/|The path to your Controllers
-`models`|/application/models/|The path to your Models.
+`models`|/application/models/|The path to your Models
+`view`|/application/views/|The path to your Views
+`layouts`|/application/views/layouts/|The path to your Layouts
+`logs`|/application/logs/error_php.log|The path to the PHP error log
+`config`|/application/config.php|The path to your configuration file
+`uploader`|/public/|The path for uploaded files used by the Uploader class
+`image`|/public/img/|The path for uploaded images used by the Image class
+`css`|/(baseUri)/public/css/|Relative path to your CSS files
+`js`|/(baseUri)/public/js/|Relative path to your JavaScript files
+`img`|/(baseUri)/public/img/|Relative path to your Image files
 
 ```php
 <?php
