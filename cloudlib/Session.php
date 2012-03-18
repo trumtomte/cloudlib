@@ -187,9 +187,10 @@ class Session
     }
 
     /**
-     * Get the CSRF token
+     * Get the session token
      *
      * @access  public
+     * @param   string  $token
      * @return  string
      */
     public static function token($token = 'token')
