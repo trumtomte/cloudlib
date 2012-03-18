@@ -260,22 +260,7 @@ $app = new cloudlib\Cloudlib(__DIR__, '/', array('bootstrap' => false));
 #### Directory paths
 You can define your own paths or alter the default paths.
 
-**Default paths**
-
-* `controllers` path to your Controllers.
-* `models` path to your Models.
-* `views` path to your Views.
-* `layouts` path to your Layouts.
-* `logs` path to your Logs.
-* `config` this is a complete path to the config file (ex `path/to/config.php`).
-* `uploader` path to where your files will be uploaded to.
-* `image` path to where your image(s) will be loaded/saved.
-* `css` relative path to your CSS files.
-* `js` relative path to your JavaScript files.
-* `img` relative path to your Image files.
-* `classes` path to which core classes are loaded **do not alter unless you really have to**.
-
-Pathname|Default|Description
+**Pathname**|**Default**|**Description**
 --------|-------|-----------
 `controllers`|/application/controllers/|The path to your Controllers
 `models`|/application/models/|The path to your Models
