@@ -49,7 +49,7 @@ Example of a `composer.json`.
 }
 ```
 #### Apache
-Example of a `.htaccess` file for pretty URLs
+Example of a `.htaccess` file.
 
 ```apache
 <IfModule mod_rewrite.c>
@@ -68,7 +68,7 @@ TODO
 
 Cloudlib supports the four main HTTP request methods: `GET`, `POST`, `PUT`, `DELETE`.
 
-`NOTE` the request method `HEAD` also works (the same as `GET`) but only outputs headers.
+`NOTE` the request method `HEAD` is supported but is the same as `GET` except that it only outputs headers.
 
 ```php
 <?php
@@ -93,8 +93,7 @@ $app->delete('/', function() use ($app)
     return 'This is a DELETE request';
 });
 
-// Defining multiple request methods to one route is done
-// by passing them via an array using the route() method
+// Define multiple request methods with route(), pass an array of methods as the second argument.
 $app->route('/', array('GET', 'POST', 'PUT', 'DELETE'), function() use ($app)
 {
     return 'This is a route with multiple request methods';
@@ -114,7 +113,6 @@ $app->get('/view/:page', function($page) use ($app)
   return "Viewing the page: $page";
 });
 
-// Multiple parameters also works
 $app->get('/:year/:month/:day', function($year, $month, $day) use ($app)
 {
     return "The date: $day - $month - $year";
@@ -136,9 +134,7 @@ $app->get('/', function() use ($app)
     return $app->render('home', 'main');
 });
 ```
-This is what they could contain.
-
-The View `home`
+Example View `home.php`
 
 ```php
 <?php
@@ -147,25 +143,25 @@ echo '<p>This would be the only contents of the view!</p>';
 
 ```
 
-The Layout `main`
+Example Layout `main.php`
 
 ```php
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" \\>
+    <meta charset="utf-8">
     <title>Example</title>
 </head>
 <body>
 <?php
-    // View contents are loaded via a variable called $body
+    // Important! View contents are loaded via a variable called $body
     echo $body;
 ?>
 </body>
 </html>
 ```
 
-`NOTE` Layouts are optional, you can have everything inside a View if you prefer that. Just skip or pass `null` to the Layout parameter of `render()`.
+`NOTE` Layouts are optional, skip or pass `null` to the second parameter of `render()`.
 ### View variables
 
 ```php
@@ -181,7 +177,7 @@ $app->get('/', function() use ($app)
 });
 ```
 
-The View `home.php`
+Example View `home.php`
 
 ```php
 <?php
@@ -190,32 +186,32 @@ The View `home.php`
 echo "$hello $world";
 ```
 
-Passing variables without the `set()` method also works, or together
+The `set()` method is not required to define View variables, passing an `array` as the third parameter of `render()` will do the same (using both methods of defining View variables works).
 
 ```php
 <?php
 
 $app->get('/hello/:world', function($world) use ($app)
 {
-    // Set a View variable like before
-    $app->set('world', $world);
+    $array = array('foo' => 'bar');
+    $array['hello'] = $world;
+    $array['apples'] = 'oranges';
 
-    // Define your own array of values
-    $array = array('foo' => 'Foo', 'bar' => 'Bar!');
+    $app->set('name', 'joe');
 
-    // $array will be merged with your other variables, also notice that we are not using a Layout
+    // $array will be merged with your other variables (also notice that we are not using a Layout).
     return $app->render('home', null, $array);
 });
 ```
 
-The View `home.php`
+Example View `home.php`
 
 ```php
 <?php
-// This would be an example of http://www.domain.com/World
+// This could be an example of http://www.domain.com/hello/world
 
-// Outputs: Hello World!, Foo Bar!
-echo "Hello $world!, $foo $bar";
+// Outputs: bar, world, oranges, joe
+echo "$foo, $hello, $apples, $name";
 ```
 
 ## Customization
@@ -261,7 +257,7 @@ $app = new cloudlib\Cloudlib(__DIR__, '/', array('autoloader' => false));
 // adding aliases for namespaced classes (lazy loading) and to register more namespaces (if you use other libraries)
 $app = new cloudlib\Cloudlib(__DIR__, '/', array('bootstrap' => false));
 ```
-**Directory paths**
+#### Directory paths
 You can define your own paths or alter the default paths.
 
 **Default paths**
@@ -278,6 +274,11 @@ You can define your own paths or alter the default paths.
 * `js` relative path to your JavaScript files.
 * `img` relative path to your Image files.
 * `classes` path to which core classes are loaded **do not alter unless you really have to**.
+
+Pathname|Default|Description
+--------|-------|-----------
+`controllers`|/application/controllers/|The path to your Controllers
+`models`|/application/models/|The path to your Models.
 
 ```php
 <?php
@@ -299,8 +300,8 @@ $app->setPath('controllers', 'path/to/controllers');
 // to call the bootstrap before adding routes or calling classes
 $app->bootstrap();
 ```
-**Working with the default class autoloader**
-You are able to register aliases and namespaces
+#### Default class autoloader
+You are able, as with many other, to register Namespaces and Aliases (for lazy loading without namespacing class names).
 
 **Aliases**
 
@@ -526,7 +527,7 @@ $app->error(404, function($error) use ($app)
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" \\>
+    <meta charset="utf-8">
     <title><?php echo $message; ?></title>
 </head>
 <body>
@@ -934,11 +935,55 @@ echo Html::br(100); // 100 <br />'s!
 
 ### Uploader
 
-TODO
+The `Uploader` helper provides simple methods for uploading files.
+
+```php
+<?php
+
+
+```
 
 ### Image
 
-TODO
+The `Image` helper provides simple methods for image manipulation.
+
+```php
+<?php
+
+// Create a new image object.
+$image = new Image();
+
+// Load a file, relative to the defined Image directory (see Customization section), or absolute if you specify a second parameter as false, ->load('file', false);
+$image->load('path/to/image.jpg');
+
+// Resize the image to a certain width (px).
+$image->resizeToWidth(100);
+
+// Resize the image to a certain height (px).
+$image->resizeToHeight(100);
+
+// Scale the image by a certain percentage.
+$image->scale(20); // 20%
+
+// Crop the image from the center.
+$image->cropCenter(100, 100); // 100px X 100px
+
+// Set the compression level for jpg files.
+$image->setCompression(100); // Default: 75
+
+// Save a file, relative to the defined Image directory (see Customization section), or absolute if you specify a second parameter as false, ->save('file', false);
+$image->save('path/to/image.jpg');
+
+
+// Instead of manually using load() and setCompression() you can specify these in the Image constructor.
+$image = new Image('path/to/image.jpg', 100);
+// resizing/scaling
+$image->save('path/to/image.jpg');
+
+// If something would go wrong call the getError() method.
+$error = $image->getError();
+
+```
 
 ### Benchmark
 
