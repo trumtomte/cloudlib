@@ -1,8 +1,0 @@
-# TODOs
-    * Routes: Optional, Regex
-    * Html/Form Classes: Wrap attribute, Sorting attributes, (PHP_EOL's?)
-    * Nested Views?
-    * Hooks for routes, before/after a route is parsed
-    * Database: Get last error, Get most recent Query, Easy way of accessing stored queries
-    * Image/Uploader Classes: Easy way of setting custom paths at runtime, Filepermissions
-    * Global default Config category

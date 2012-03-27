@@ -1,5 +1,0 @@
-# Cloudlib
-	# Words ADDED, FIXED, REMOVED, CHANGED will be used to prefix changes
-
-01 Mar 2012, Cloudlib 0.1.0
-	- ADDED everything (inital release)
