@@ -1,87 +1,60 @@
 <?php
 /**
- * CloudLib :: Flexible Lightweight PHP Framework
+ * Cloudlib
  *
  * @author      Sebastian Book <cloudlibframework@gmail.com>
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
- * @package     Cloudlib
  */
 
 namespace cloudlib;
 
-// SPL
-use Exception,
-    ErrorException,
-    Closure;
-
-// Cloudlib
-use cloudlib\View,
-    cloudlib\Html,
-    cloudlib\Uploader,
-    cloudlib\Image,
-    cloudlib\Session,
-    cloudlib\Config,
-    cloudlib\Request,
-    cloudlib\Response,
-    cloudlib\Router,
-    cloudlib\ClassLoader;
+use Closure;
+use Exception;
+use cloudlib\ClassLoader;
+use cloudlib\Container;
+use cloudlib\Request;
+use cloudlib\Response;
+use cloudlib\Router;
+use cloudlib\View;
 
 require 'ClassLoader.php';
+require 'Container.php';
 
 /**
- * Cloudlib´s Core class (essentially a wrapper for the other classes
+ * The core framework class
  *
- * TODO: Description.. 
- *
- * @package     Cloudlib
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class Cloudlib
+class Cloudlib extends Container
 {
     /**
-     * The Request object
+     * Array of custom defined error handlers
      *
      * @access  public
-     * @var     object
-     */
-    public $request;
-
-    /**
-     * The Response object
-     *
-     * @access  public
-     * @var     object
-     */
-    public $response;
-
-    /**
-     * The Router object
-     *
-     * @access  protected
-     * @var     object
-     */
-    protected $router;
-
-    /**
-     * Cloudlib´s Class Loader
-     *
-     * @access  public
-     * @var     object
-     */
-    public $loader;
-
-    /**
-     * CLoudlib class vars for use in different routes
-     *
-     * @access  protected
      * @var     array
      */
-    protected $vars = array();
+    public $errors = array();
 
     /**
-     * Stored data for Views
+     * Array of before/after filters that are run before/after each (found) request
+     *
+     * @access  public
+     * @var     array
+     */
+    public $filters = array();
+
+    /**
+     * Array of request variables (based on the request method, ex POST would put $_POST in this array)
+     *
+     * @access  public
+     * @var     array
+     */
+    public $input = array();
+
+    /**
+     * Array of view variables to be used in views
      *
      * @access  public
      * @var     array
@@ -89,324 +62,77 @@ class Cloudlib
     public $data = array();
 
     /**
-     * Input data from Globals
+     * At object creation define the base uri
+     *
+     * Set the error/exception handlers
+     *
+     * Add object instances (ClassLoader, Request, Router)
      *
      * @access  public
-     * @var     array
-     */
-    public $input;
-
-    /**
-     * Array of stored errors
-     *
-     * @access  protected
-     * @var     array
-     */
-    protected $errors =  array();
-
-    /**
-     * Absolute and Relative paths for directories and classes
-     *
-     * @access  public
-     * @var     array
-     */
-    public static $paths = array();
-
-    /**
-     * The root directory
-     *
-     * @access  public
-     * @var     string
-     */
-    public static $root;
-
-    /**
-     * The base uri
-     *
-     * @access  public
-     * @var     string
-     */
-    public static $baseUri;
-
-    /**
-     * Array of options for Cloudlib
-     *
-     * @access  public
-     * @var     array
-     */
-    public static $options = array(
-        // Wether we should bootstrap the application or not,
-        // if not - we can, amongst other things, specify our
-        // own directories for classes, add namespace aliases
-        // and register new namespaces
-        'bootstrap' => true,
-
-        // Wether we should use the built in autoloader or our
-        // own, if not, cloudlib will still use the ClassLoader
-        // method for loading controllers and models
-        'autoloader' => true
-    );
-
-    /**
-     * Constructor.
-     *
-     * Sets the root directory, base uri.
-     * It has the option of turning of the default start, if the user wants to define
-     * the paths instead
-     *
-     * @access  public
-     * @param   string  $root
-     * @param   string  $baseUri
-     * @param   array   $options
+     * @param   string  $base   The base uri
      * @return  void
      */
-    public function __construct($root, $baseUri = '/', array $options = array())
+    public function __construct($base = '/')
     {
-        static::$root = $root;
-        static::$baseUri = $baseUri;
+        $this->base = $base;
 
-        // Define toplevel paths
-        $ds = DIRECTORY_SEPARATOR;
-        $app = $root . $ds . 'application' . $ds;
-        $pub = $root . $ds . 'public' . $ds;
-        $relPub = $baseUri . $ds . 'public' . $ds;
+        $self = $this;
 
-        // Define specific sublevel paths
-        static::$paths = array(
-            'controllers' => $app . 'controllers' . $ds,
-            'models'      => $app . 'models' . $ds,
-            'views'       => $app . 'views' . $ds,
-            'layouts'     => $app . 'views' . $ds . 'layouts' . $ds,
-            'logs'        => $app . 'logs' . $ds . 'error_php.log',
-            'config'      => $app . 'config.php',
-            'uploader'    => $pub,
-            'image'       => $pub . 'img' . $ds,
-            'css'         => $relPub . 'css' . $ds,
-            'js'          => $relPub . 'js' . $ds,
-            'img'         => $relPub . 'img' . $ds,
-            'classes'     => $root . $ds . 'Cloudlib' . $ds
-        );
-
-        // Set the ClassLoader and add the namespace aliases and directories
-        $this->loader = new ClassLoader(array(
-            // Define namespace and the corresponding directory
-            'cloudlib', static::$root . DIRECTORY_SEPARATOR . 'cloudlib'
-        ), array(
-            // Set the namespace aliases
-            'Benchmark'     => 'cloudlib\\Benchmark',
-            'ClassLoader'   => 'cloudlib\\ClassLoader',
-            'Cloudlib'      => 'cloudlib\\Cloudlib',
-            'Config'        => 'cloudlib\\Config',
-            'Controller'    => 'cloudlib\\Controller',
-            'Database'      => 'cloudlib\\Database',
-            'Form'          => 'cloudlib\\Form',
-            'Hash'          => 'cloudlib\\Hash',
-            'Html'          => 'cloudlib\\Html',
-            'Image'         => 'cloudlib\\Image',
-            'Logger'        => 'cloudlib\\Logger',
-            'Model'         => 'cloudlib\\Model',
-            'Number'        => 'cloudlib\\Number',
-            'Request'       => 'cloudlib\\Request',
-            'Response'      => 'cloudlib\\Response',
-            'Router'        => 'cloudlib\\Router',
-            'Session'       => 'cloudlib\\Session',
-            'String'        => 'cloudlib\\String',
-            'Uploader'      => 'cloudlib\\Uploader',
-            'View'          => 'cloudlib\\View'
-        ));
-
-        static::setOptions($options);
-
-        if(static::$options['bootstrap'])
+        set_exception_handler(function(Exception $e) use ($self)
         {
-            $this->bootstrap();
-        }
-    }
+            $self->exceptionHandler($e);
+        });
 
-    /**
-     * Bootstrap the application
-     *
-     * @access  public
-     * @return  void
-     */
-    public function bootstrap()
-    {
-        $this->loader->setPaths(array(
-            // Directory paths for controllers, models and logs
-            'controllers' => static::$paths['controllers'],
-            'models'      => static::$paths['models'],
-            'logs'        => static::$paths['logs']
-        ));
-            
-
-        // If we're using Cloudlib´s autoloader
-        if(static::$options['autoloader'])
+        set_error_handler(function($code, $str, $file, $line) use ($self)
         {
-            $this->loader->register();
-        }
-        else
+            $self->exceptionHandler(new ErrorException($str, $code, 0, $file, $line));
+        });
+
+        register_shutdown_function(function() use ($self)
         {
-            // If not, still use loadControllerModel() to load contollers and models
-            spl_autoload_register(array($loader, 'loadControllerModel'), true, true);
-        }
+            if( ! ($e = error_get_last()) === null)
+            {
+                extract($e);
+                $self->exceptionHandler(new ErrorException($message, $type, 0, $file, $line));
+            }
+        });
 
-        // Load the config
-        Config::load(static::$paths['config']);
+        $this->addInstance('loader', function()
+        {
+            return new ClassLoader();
+        });
 
-        $this->setErrorHandling();
-
-        // Define directory paths used by the classes
-        View::setPaths(array(
-            'views'     => static::$paths['views'],
-            'layouts'   => static::$paths['layouts']
-        ));
-        Html::setPaths(array(
-            'base'  => static::$baseUri,
-            'css'   => static::$paths['css'],
-            'img'   => static::$paths['img'],
-            'js'    => static::$paths['js']
-        ));
-        Uploader::setPaths(array(
-            'uploadDirectory' => static::$paths['uploader']
-        ));
-        Image::setPaths(array(
-            'imageDirectory' => static::$paths['image']
+        $this->loader->registerNamespaces(array(
+            'cloudlib' => __DIR__ . '/'
         ));
 
-        $this->request = new Request($_SERVER, $_GET, $_POST, $_FILES, $_COOKIE);
-        $this->response = new Response($this->request);
-        $this->router = new Router($this->request, static::$baseUri);
+        $this->loader->registerAliases(array(
+            'Response'  => 'cloudlib\Response',
+            'View'      => 'cloudlib\View'
+        ));
+
+        $this->loader->register();
+
+        $this->addInstance('request', function()
+        {
+            return new Request($_SERVER, $_GET, $_POST, $_FILES, $_COOKIE);
+        });
 
         $this->input = $this->request->input;
 
-        date_default_timezone_set(Config::get('app.timezone'));
-        mb_internal_encoding(Config::get('app.encoding'));
-
-        Session::start();
-
-        // CSRF-Token
-        if( ! Session::has('token'))
+        $this->addInstance('router', function()
         {
-            Session::generateToken('token');
-        }
+            return new Router();
+        });
     }
 
     /**
-     * Define directory paths
+     * Add a new route (with the possibility of multiple request methods)
      *
      * @access  public
-     * @param   array   $paths
-     * @return  void
-     */
-    public function setPaths(array $paths)
-    {
-        foreach($paths as $key => $value)
-        {
-            static::$paths[$key] = $value;
-        }
-    }
-
-    /**
-     * Get the directory pahts
-     *
-     * @access  public
-     * @return  array
-     */
-    public function getPaths()
-    {
-        return static::$paths;
-    }
-
-    /**
-     * Define a directory path
-     *
-     * @access  public
-     * @param   string  $key
-     * @param   string  $value
-     * @return  void
-     */
-    public function setPath($key, $value)
-    {
-        static::$path[$key] = $value;
-    }
-
-    /**
-     * Get a directory path by name
-     *
-     * @access  public
-     * @param   string  $name
-     * @return  string
-     */
-    public function getPath($name)
-    {
-        return static::$paths[$name];
-    }
-
-    /**
-     * Escapes input for HTML
-     *
-     * It can be a String, an array (array of objects) or an object.
-     *
-     * @access  public
-     * @param   mixed
-     * @return  mixed
-     */
-    public function escape($input, $flags = ENT_COMPAT, $charset = 'UTF-8', $encode = true)
-    {
-        if(is_string($input))
-        {
-            return htmlentities($input, $flags, $charset, $encode);
-        }
-
-        if(is_array($input))
-        {
-            $array = array('flags' => $flags, 'charset' => $charset, 'encode' => $encode);
-
-            array_walk_recursive($input, function(&$item, $key) use ($array)
-            {
-                extract($array);
-
-                if(is_string($item))
-                {
-                    $item = htmlentities($item, $flags, $charset, $encode);
-                }
-
-                if(is_object($item))
-                {
-                    foreach($item as &$value)
-                    {
-                        if(is_string($value))
-                        {
-                            $value = htmlentities($value, $flags, $charset, $encode); 
-                        }
-                    }
-                }
-            });
-
-            return $input;
-        }
-
-        if(is_object($input))
-        {
-            foreach($input as &$value)
-            {
-                if(is_string($value))
-                {
-                    $value = htmlentities($value, $flags, $charset, $encode);
-                }
-            }
-
-            return $input;
-        }
-    }
-
-    /**
-     * Add a Route
-     *
-     * @access  public
-     * @param   string  $route
-     * @param   array   $methods
-     * @param   mixed   $response
+     * @param   string  $route      The route pattern (ex '/home')
+     * @param   array   $methods    Array of request methods
+     * @param   mixed   $response   The response to be returned when the route is found
      * @return  void
      */
     public function route($route, array $methods, $response)
@@ -415,11 +141,11 @@ class Cloudlib
     }
 
     /**
-     * Shorthand function to add a GET route
+     * Shorthand function to route(), define a GET route
      *
      * @access  public
-     * @param   string  $route
-     * @param   mixed   $response
+     * @param   string  $route      The route pattern
+     * @param   mixed   $response   The response to be returned when the route is found
      * @return  void
      */
     public function get($route, $response)
@@ -428,11 +154,11 @@ class Cloudlib
     }
 
     /**
-     * Shorthand function to add a POST route
+     * Shorthand function to route(), define a POST route
      *
      * @access  public
-     * @param   string  $route
-     * @param   mixed   $response
+     * @param   string  $route      The route pattern
+     * @param   mixed   $response   The response to be returned when the route is found
      * @return  void
      */
     public function post($route, $response)
@@ -441,11 +167,11 @@ class Cloudlib
     }
 
     /**
-     * Shorthand function to add a PUT route
+     * Shorthand function to route(), define a PUT route
      *
      * @access  public
-     * @param   string  $route
-     * @param   mixed   $response
+     * @param   string  $route      The route pattern
+     * @param   mixed   $response   The response to be returned when the route is found
      * @return  void
      */
     public function put($route, $response)
@@ -454,11 +180,11 @@ class Cloudlib
     }
 
     /**
-     * Shorthand function to add a DELETE route
+     * Shorthand function to route(), define a DELETE route
      *
      * @access  public
-     * @param   string  $route
-     * @param   mixed   $response
+     * @param   string  $route      The route pattern
+     * @param   mixed   $response   The response to be returned when the route is found
      * @return  void
      */
     public function delete($route, $response)
@@ -467,165 +193,254 @@ class Cloudlib
     }
 
     /**
-     * Redirect to a new location
+     * Add a filter that will be run before a successful request
+     *
+     * If multiple ones are defined they will be executed successively
      *
      * @access  public
-     * @param   string  $location
-     * @param   int     $status
+     * @param   Closure $function   The filter function to be executed
+     * @return  void
+     */
+    public function before(Closure $function)
+    {
+        $this->filters['before'][] = $function;
+    }
+
+    /**
+     * Add a filter that will be run after a successful request
+     *
+     * If multiple ones are defined they will be executed successively
+     *
+     * @access  public
+     * @param   Closure $function   The filter function to be executed
+     * @return  void
+     */
+    public function after(Closure $function)
+    {
+        $this->filters['after'][] = $function;
+    }
+
+    /**
+     * Define a custom error handler based on a http status code
+     *
+     * @access  public
+     * @param   int     $code       The http status code
+     * @param   Closure $response   The error handler
+     * @return  void
+     */
+    public function error($code, Closure $response)
+    {
+        $this->errors[$code] = $response;
+    }
+
+    /**
+     * Create a new response with a location header 
+     *
+     * @access  public
+     * @param   string  $location   The destination (Location: 'destinaton')
+     * @param   int     $status     The redirect http status
      * @return  void
      */
     public function redirect($location, $status = 302)
     {
-        $this->response->redirect(static::$baseUri . $location, $status);
+        if( ! filter_var($location, FILTER_VALIDATE_URL))
+        {
+            $location = sprintf('http://%s%s', $this->request->server('HTTP_HOST'), $this->base . $location);
+        }
+
+        $response = new Response('', $status, array('Location' => $location));
+
+        $response->send($this->request->method, $this->request->protocol());
+
+        exit(0);
     }
 
     /**
-     * Add an Error response
+     * Create a new response that will end the current process of the application (404, 405, 500 etc)
      *
      * @access  public
-     * @param   int     $error
-     * @param   mixed   $response
+     * @param   int     $code       The status code
+     * @param   mixed   $data       Data that will be passed to the response function (this could also simply be as message)
+     * @param   array   $headers    Array of HTTP headers to be sent
      * @return  void
      */
-    public function error($error, $response)
+    public function abort($code, $data = null, array $headers = array())
     {
-        $this->errors[$error] = $response;
+        $response = new Response('', $code, $headers);
+
+        if( ! isset($this->errors[$code]))
+        {
+            $body = ($message) ? $message : sprintf('%s: %s', $code, $response->codes[$code]);
+        }
+        else
+        {
+            $param = array(
+                'data' => $data,
+                'statusCode' => $code,
+                'statusMessage' => $response->codes[$code]
+            );
+
+            $body = $this->errors[$code]($param);
+        }
+
+        $response->body($body);
+        $response->send($this->request->method, $this->request->protocol());
+
+        exit(0);
     }
 
     /**
-     * Return an already set error page
+     * Define a view variable 
      *
      * @access  public
-     * @param   mixed     $error
-     * @return  mixed
-     */
-    public function errorPage($error)
-    {
-        $this->response->error($error, $this->errors);
-        $this->response->send();
-    }
-
-    /**
-     * Set a variable used by the View
-     *
-     * @access  public
-     * @param   mixed   $key
-     * @param   mixed   $value
-     * @return  object
+     * @param   string  $key    The view variable name
+     * @param   mixed   $value  The view variable value
+     * @return  void
      */
     public function set($key, $value)
     {
         $this->data[$key] = $value;
-        return $this;
     }
 
     /**
-     * Render a view
+     * Create a rendered View template with the defined view variables
      *
      * @access  public
-     * @param   string  $view
-     * @param   string  $layout
-     * @return  object
+     * @param   string  $view   The view filename
+     * @param   string  $layout The layout filename
+     * @param   array   $data   Array of view variables
+     * @return  View            Returns a rendered view with view variables
      */
     public function render($view, $layout = null, array $data = array())
     {
-        if(isset($data))
-        {
-            $data = array_merge($this->data, $data);
-        }
+        $data = (isset($data)) ? array_merge($this->data, $data) : $data;
 
         return new View($view, $layout, $data);
     }
 
     /**
-     * Return a Model
+     * Match a route to the request and send it to the browser.
      *
-     * @access  public
-     * @param   string  $model
-     * @return  object
-     */
-    public function model($model)
-    {
-        $model .= 'Model';
-        return new $model();
-    }
-
-    /**
-     * Run the application
+     * Run before/after filters.
+     *
+     * If the request method is not allowed abort with a 405 http status
+     *
+     * If no route was matched exit with the appropriate http status
      *
      * @access  public
      * @return  void
      */
     public function run()
     {
-        if($this->request->methodAllowed())
+        // Check if the request method is allowed (GET, POST, PUT, DELETE, HEAD)
+        if( ! $this->request->methodAllowed())
         {
-            if($this->router->routeExists())
+            $this->abort(405);
+        }
+
+        // Parse through the array of routes
+        if($this->router->parse($this))
+        {
+            // Run before filters, if any was defined
+            if(isset($this->filters['before']))
             {
-                $this->response->body($this->router->getResponse());
-                $this->response->status(200);
+                foreach($this->filters['before'] as $beforeFilter)
+                {
+                    $beforeFilter();
+                }
             }
-            else
+
+            // Create the response object
+            $response = ($this->router->response instanceof Response) ? $this->router->response : new Response($this->router->response);
+            // Output to browser
+            $response->send($this->request->method, $this->request->protocol());
+
+            // Run after filters, if any was defined
+            if(isset($this->filters['after']))
             {
-                $this->response->error($this->router->getResponse(), $this->errors);
+                foreach($this->filters['after'] as $afterFilter)
+                {
+                    $afterFilter();
+                }
             }
         }
+        // No route was found
         else
         {
-            $this->response->error(405, $this->errors);
+            $this->abort($this->router->response);
         }
-
-        $this->response->send();
     }
 
     /**
-     * Define the error/exception handling
-     *
-     * @access  protected
-     * @return  void
-     */
-    protected function setErrorHandling()
-    {
-        // Force error reporting
-        error_reporting(-1);
-        // Display the errors?
-        ini_set('display_errors', Config::get('app.errors'));
-
-        // Log the errors?
-        ini_set('log_errors', Config::get('app.logs'));
-        ini_set('error_log', static::$paths['logs']);
-
-        $that = $this;
-
-        //TODO: use($this) in PHP 5.4
-        
-        // Exception handler
-        set_exception_handler(function(Exception $e) use ($that)
-        {
-            $that->exceptionHandler($e);
-        });
-
-        // Error handler
-        set_error_handler(function($code, $str, $file, $line) use ($that)
-        {
-            $that->exceptionHandler(new ErrorException($str, $code, 0, $file, $line));
-        });
-
-        register_shutdown_function(function() use ($that)
-        {
-            if( ! ($e = error_get_last()) === null)
-            {
-                extract($e);
-                $that->exceptionHandler(new ErrorException($message, $type, 0, $file, $line));
-            }
-        });
-    }
-
-    /**
-     * Custom exception handler
+     * Escape a string, array, object or an array of objects from html entities
      *
      * @access  public
-     * @param   object  $e
+     * @param   mixed   $input      The input to be escaped
+     * @param   int     $flags      How to handle the quotes
+     * @param   string  $enc        The charset encoding
+     * @param   boolean $dbl_enc    If we should convert everything
+     * @return  mixed               Returns the escaped input
+     */
+    public function escape($input, $flags = ENT_COMPAT, $enc = 'UTF-8', $dbl_enc = true)
+    {
+        // Escape a string
+        if(is_string($input))
+        {
+            return htmlentities($input, $flags, $enc, $dbl_enc);
+        }
+
+        // Escape an array or an array of objects
+        if(is_array($input))
+        {
+            $array = array('flags' => $flags, 'enc' => $enc, 'dbl_enc' => $dbl_enc);
+
+            array_walk_recursive($input, function(&$item, $key) use ($array)
+            {
+                extract($array);
+
+                if(is_string($item))
+                {
+                    $item = htmlentities($item, $flags, $enc, $dbl_enc);
+                }
+
+                if(is_object($item))
+                {
+                    foreach($item as &$value)
+                    {
+                        if(is_string($value))
+                        {
+                            $value = htmlentities($value, $flags, $enc, $dbl_enc);
+                        }
+                    }
+                }
+            });
+
+            return $input;
+        }
+
+        // Escape an object
+        if(is_object($input))
+        {
+            foreach($input as &$value)
+            {
+                if(is_string($value))
+                {
+                    $value = htmlentities($value, $flags, $enc, $dbl_enc);
+                }
+            }
+
+            return $input;
+        }
+    }
+
+    /**
+     * Framework exception handler
+     *
+     * If an error function for the status code 500 has been defined it will be called
+     * instead of outputting information about the exception directly to the browser
+     *
+     * @access  public
+     * @param   Exception   $e  The exception
      * @return  void
      */
     public function exceptionHandler(Exception $e)
@@ -637,54 +452,12 @@ class Cloudlib
 
         if(isset($this->errors[500]))
         {
-            $this->response->error(500, $this->errors, $e);
-            $this->response->send();
-            exit(1);
+            $this->abort(500, $e);
         }
 
-        echo sprintf('<pre>Message: %s</pre><pre>File: %s, Line: %s</pre><pre>Trace: %s</pre>',
+        echo sprintf('<pre>Message: %s</pre><pre>File: %s</pre><pre>Line: %s</pre><pre>Trace: %s</pre>',
             $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());
 
         exit(1);
-    }
-
-    /**
-     * Set the options array
-     *
-     * @access  public
-     * @param   array   $options
-     * @return  void
-     */
-    public static function setOptions(array $options)
-    {
-        foreach($options as $key => $value)
-        {
-            static::$options[$key] = $value;
-        }
-    }
-
-    /**
-     * Set a variable
-     *
-     * @access  public
-     * @param   mixed  $key
-     * @param   mixed   $value
-     * @return  void
-     */
-    public function __set($key, $value)
-    {
-        $this->vars[$key] = $value;
-    }
-
-    /**
-     * Get a variable
-     *
-     * @access  public
-     * @param   string  $key
-     * @return  mixed
-     */
-    public function __get($key)
-    {
-        return $this->vars[$key];
     }
 }

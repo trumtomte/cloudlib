@@ -1,39 +1,29 @@
 <?php
 /**
- * CloudLib :: Flexible Lightweight PHP Framework
+ * Cloudlib
  *
  * @author      Sebastian Book <cloudlibframework@gmail.com>
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
- * @package     Cloudlib
  */
 
 namespace cloudlib;
 
-// SPL
-use Closure;
-
-// Cloudlib
-use cloudlib\Request;
-
 /**
  * The Response class
  *
- * TODO: Description..
- *
- * @package     Cloudlib
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class Response
 {
     /**
-     * Array of status codes
+     * Array of HTTP Status Codes
      *
-     * @access  private
+     * @access  public
      * @var     array
      */
-    public $statusCodes = array(
+    public $codes = array(
         // Informational 1xx
         100 => 'Continue',
         101 => 'Switching Protocols',
@@ -83,7 +73,7 @@ class Response
     );
 
     /**
-     * Array of headers
+     * Array of HTTP Headers to be sent
      *
      * @access  public
      * @var     array
@@ -91,7 +81,7 @@ class Response
     public $headers = array();
 
     /**
-     * Current status code
+     * The Response HTTP Status Code
      *
      * @access  public
      * @var     int
@@ -99,172 +89,119 @@ class Response
     public $status;
 
     /**
-     * Output body
+     * The Response body
      *
      * @access  public
      * @var     string
      */
-    public $body = null;
+    public $body;
 
     /**
-     * Constructor
+     * Create a new Response object, defining the body, status and the array of headers
      *
      * @access  public
-     * @param   object  $request
+     * @param   string  $body       The Response body
+     * @param   int     $status     The status code
+     * @param   array   $headers    Array of HTTP Headers
      * @return  void
      */
-    public function __construct(Request $request)
-    {
-        $this->request = $request;
-    }
-
-    /**
-     * Sets the response status
-     *
-     * @access  public
-     * @param   int     $status
-     * @return  object
-     */
-    public function status($status)
-    {
-        $this->status = (int) $status;
-        return $this;
-    }
-
-    /**
-     * Sets the output body
-     *
-     * @access  public
-     * @param   string  $body
-     * @return  object
-     */
-    public function body($body)
+    public function __construct($body = '', $status = 200, array $headers = array())
     {
         $this->body = (string) $body;
+        $this->status = (int) $status;
+        $this->headers = $headers;
+    }
+
+    /**
+     * Set the status code
+     *
+     * @access  public
+     * @param   int     $status The status code
+     * @return  Response        Returns itself, for method chaining
+     */
+    public function status($status = null)
+    {
+        $this->status = (int) $status;
+
         return $this;
     }
 
     /**
-     * Redirect to a new location
+     * Set the body content
      *
      * @access  public
-     * @param   string  $location
-     * @param   int     $status
-     * @return  void
+     * @param   string  $body   The body content
+     * @return  Response        Returns itself, for method chaining
      */
-    public function redirect($location, $status = 302)
+    public function body($body = null)
     {
-        if(filter_var($location, FILTER_VALIDATE_URL))
-        {
-            $this->status($status)->header('Location', $location)->send();
-        }
-        else
-        {
-            $this->status($status)->header('Location',
-                sprintf('http://%s%s', $this->request->server('HTTP_HOST'), $location))
-                ->send();
-        }
+        $this->body = (string) $body;
+
+        return $this;
     }
 
     /**
-     * Shorthand function for errors
+     * Set a HTTP Header (ex array('Location' => 'www.google.com') = 'Location: www.google.com'
      *
      * @access  public
-     * @param   int     $code
-     * @param   array   $errors
-     * @param   mixed   $data
-     * @return  void
-     */
-    public function error($code, array $errors = array(), $data = null)
-    {
-        $this->status($code);
-
-        if( ! isset($errors[$code]))
-        {
-            $this->body(sprintf('%s: %s', $code, $this->statusCodes[$code]));
-        }
-        else
-        {
-            if($data === null)
-            {
-                $data = array('statusCode' => $code, 'statusMessage' => $this->statusCodes[$code]);
-            }
-            elseif(is_array($data))
-            {
-                array_merge($data, array('statusCode' => $code, 'statusMessage' => $this->statusCodes[$code]));
-            }
-
-            if($errors[$code] instanceof Closure)
-            {
-                $this->body($errors[$code]($data));
-            }
-            else
-            {
-                $this->body($errors[$code]);
-            }
-        }
-    }
-
-    /**
-     * Add a header
-     *
-     * @access  public
-     * @param   string  $key
-     * @param   string  $value
-     * @return  object
+     * @param   string  $key    Header attribute
+     * @param   string  $value  Header attribute value
+     * @return  Response        Returns itself, for method chaining
      */
     public function header($key, $value)
     {
         $this->headers[$key] = $value;
+
         return $this;
     }
 
     /**
-     * Send the headers
+     * Send all headers
      *
      * @access  public
+     * @param   string  $protocol   The current HTTP protocol version
      * @return  void
      */
-    public function sendHeaders()
+    public function sendHeaders($protocol)
     {
-        header(sprintf('%s %s %s', $this->request->protocol(), $this->status,
-            $this->statusCodes[$this->status]));
+        header(sprintf('%s %s %s', $protocol, $this->status, $this->codes[$this->status]));
 
         if( ! isset($this->headers['Content-Type']))
         {
             $this->header('Content-Type', 'text/html; charset=utf8');
         }
 
-        if( ! isset($this->headers['Content-Length']) && $this->body !== null)
+        if( ! isset($this->headers['Content-Length']))
         {
             $this->header('Content-Length', strlen( (string) $this->body));
         }
 
-        if(isset($this->headers))
+        foreach($this->headers as $key => $value)
         {
-            foreach($this->headers as $key => $value)
-            {
-                header($key . ': ' . $value);
-            }
+            header($key . ': ' . $value);
         }
     }
 
     /**
-     * Send (echo) the output
+     * Echo out the response body
+     *
+     * Send headers if they have not been sent already
      *
      * @access  public
+     * @param   string  $method     The request method
+     * @param   string  $protocol   The current HTTP protocol version
      * @return  void
      */
-    public function send()
+    public function send($method, $protocol)
     {
         if( ! headers_sent())
         {
-            $this->sendHeaders();
+            $this->sendHeaders($protocol);
         }
 
-        if($this->request->isHead() === false)
+        if($method !== 'HEAD')
         {
-            if($this->body !== null)
+            if(strlen( (string) $this->body) > 0)
             {
                 echo $this->body;
             }

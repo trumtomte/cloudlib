@@ -1,46 +1,31 @@
 <?php
 /**
- * CloudLib :: Flexible Lightweight PHP Framework
+ * Cloudlib 
  *
  * @author      Sebastian Book <cloudlibframework@gmail.com>
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
- * @package     Cloudlib
  */
 
 namespace cloudlib;
 
-// SPL
 use RuntimeException;
 
 /**
- * Cloudlib´s Class Loader
+ * Class autoloader, following the PSR-0 standard
  *
- * Loads classes, controllers and models
- *
- * It follows the PSR-0 standard, https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md
- *
- * @package     Cloudlib
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class ClassLoader
 {
     /**
-     * Namespaces and their directories
+     * Array of namespaces and their corresponding directory path.
      *
      * @access  public
      * @var     array
      */
     public $namespaces = array();
-
-    /**
-     * Paths for loading Controllers and Models
-     *
-     * @access  public
-     * @var     array
-     */
-    public $paths = array();
 
     /**
      * Array of class aliases
@@ -51,42 +36,24 @@ class ClassLoader
     public $aliases = array();
 
     /**
-     * Constructor,
-     * set the namespaces-, aliases- (optional) and paths (optional) array
+     * Define the namespaces and aliases array at creation.
      *
      * @access  public
-     * @param   array   $namespaces
-     * @param   array   $aliases
-     * @param   array   $paths
+     * @param   array   $namespaces Array of namespae:Directory pairs
+     * @param   array   $aliases    Array of Alias:Class(namespaced) pairs
      * @return  void
      */
-    public function __construct(array $namespaces, array $aliases = array(), array $paths = array())
+    public function __construct(array $namespaces = array(), array $aliases = array())
     {
         $this->namespaces = $namespaces;
-        $this->registerAliases($aliases);
-        $this->setPaths($paths);
-    }
-
-    /**
-     * Define directory paths
-     *
-     * @access  public
-     * @param   array   $paths
-     * @return  void
-     */
-    public function setPaths(array $paths)
-    {
-        foreach($paths as $key => $value)
-        {
-            $this->paths[$key] = $value;
-        }
+        $this->aliases = $aliases;
     }
 
     /**
      * Register class aliases
      *
      * @access  public
-     * @param   array   $aliases
+     * @param   array   $aliases Array of Alias:Class(namespaced) pairs
      * @return  void
      */
     public function registerAliases(array $aliases)
@@ -101,7 +68,7 @@ class ClassLoader
      * Register namespaces
      *
      * @access  public
-     * @param   array   $namespaces
+     * @param   array   $namespaces Array of Namespace:Directory pairs
      * @return  void
      */
     public function registerNamespaces(array $namespaces)
@@ -116,7 +83,7 @@ class ClassLoader
      * Register the autoloader
      *
      * @access  public
-     * @param   boolean     $prepend
+     * @param   boolean $prepend    If ClassLoader should be prepended to the autoload stack
      * @return  void
      */
     public function register($prepend = false)
@@ -136,13 +103,11 @@ class ClassLoader
     }
 
     /**
-     * The Autoloader
-     *
-     * Load a namespaced class or load a Controller/Model class
+     * Load a namespaced class via the PSR-0 Standard
      *
      * @access  public
-     * @param   string  $class
-     * @return  void
+     * @param   string  $class  The namespaced class to be loaded
+     * @return  string          The file path (if found)
      */
     public function loadClass($class)
     {
@@ -168,8 +133,6 @@ class ClassLoader
                 if( ! array_key_exists($namespace, $this->namespaces))
                 {
                     // No directory was assigned to the namespace
-                    error_log(sprintf('Unable to load class [%s], no directory assigned to namespace [%s]' . PHP_EOL,
-                        $className, $namespace), 3, $this->paths['logs']);
                     return;
                 }
 
@@ -179,55 +142,12 @@ class ClassLoader
                 if( ! file_exists($fileName))
                 {
                     // File does Really not exist
-                    error_log(sprintf('Unable to load class [%s] from [%s]' . PHP_EOL,
-                        $className, $fileName), 3, $this->paths['logs']);
                     return;
                 }
             }
 
             require $fileName;
         }
-
         // Class was not namespaced
-        else
-        {
-            // Check if it was a Controller or a Model
-            $this->loadControllerModel($class);
-        }
-    }
-
-    /**
-     * Tries to load a Controller or a Model
-     *
-     * @access  public
-     * @param   string  $class
-     * @return  void
-     */
-    public function loadControllerModel($class)
-    {
-        // Check if it is a Controller or a Model to be loaded
-        switch(true)
-        {
-            case preg_match('/Controller$/', $class) && ! preg_match('/^Controller$/', $class):
-                $directory = $this->paths['controllers'];
-                break;
-            case preg_match('/Model$/', $class) && ! preg_match('/^Model$/', $class):
-                $directory = $this->paths['models'];
-                break;
-            default:
-                // Class was not a Controller or a Model
-                return;
-                break;
-        }
-
-        if( ! file_exists($file = $directory . $class . '.php'))
-        {
-            // Unable to locate the Controller/Model
-            error_log(sprintf('Unable to load class [%s] from [%s]' . PHP_EOL,
-                $class, $file), 3, $this->paths['logs']);
-            return;
-        }
-
-        require $file;
     }
 }

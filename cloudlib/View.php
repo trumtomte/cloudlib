@@ -1,60 +1,29 @@
 <?php
 /**
- * CloudLib :: Flexible Lightweight PHP Framework
+ * Cloudlib
  *
  * @author      Sebastian Book <cloudlibframework@gmail.com>
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
- * @package     Cloudlib
  */
 
 namespace cloudlib;
 
-// SPL
-use RuntimeException;
-
 /**
  * The View class
  *
- * TODO: Description
- *
- * @package     Cloudlib
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class View
 {
     /**
-     * Directory paths
-     *
-     * @access  protected
-     * @var     string
-     */
-    protected static $paths = array();
-
-    /**
-     * The View
+     * String containing the directory name to be prepended to filenames
      *
      * @access  public
      * @var     string
      */
-    public $view = null;
-
-    /**
-     * Page layout
-     *
-     * @access  private
-     * @var     string
-     */
-    public $layout = null;
-
-    /**
-     * View variables
-     *
-     * @access  private
-     * @var     array
-     */
-    public $data = array();
+    public $directory = null;
 
     /**
      * The rendered content
@@ -62,114 +31,95 @@ class View
      * @access  public
      * @var     string
      */
-    public $content;
+    public $content = '';
 
     /**
-     * Constructor
+     * Define a View file, layout file (optional) and an array of view variables (optional)
      *
      * @access  public
-     * @param   mixed   $view
-     * @param   string  $layout
-     * @param   array   $data
+     * @param   string  $view   The view filename
+     * @param   string  $layout The layout filename
+     * @param   array   $data   Array of view variables
      * @return  void
      */
     public function __construct($view, $layout = null, array $data = array())
     {
-        if( ! is_array($view))
+        $view = $this->find($view);
+
+        if($layout)
         {
-            $this->view = $view;
-            $this->layout = $layout;
-            $this->data = $data;
-        }
-        else
-        {
-            $this->view = $view[0];
-            $this->layout = isset($view[1]) ? $view[1] : null;
-            $this->data = isset($view[2]) ? $view[2] : array();
+            $layout = $this->find($layout);
         }
 
-        $this->setContent();
+        $this->render($view, $layout, $data);
     }
 
     /**
-     * Render the content and assign it to the content variable
-     *
-     * @access  protected
-     * @return  void
-     */
-    protected function setContent()
-    {
-        if( ! file_exists($view = static::$paths['views'] . $this->view . '.php'))
-        {
-            throw new RuntimeException(sprintf('Unable to locate the View [%s] in [%s]',
-                $this->view, $view));
-        }
-
-        $this->view = $view;
-
-        if($this->layout)
-        {
-            if( ! file_exists($layout = static::$paths['layouts'] . $this->layout . '.php'))
-            {
-                throw new RuntimeException(sprintf('Unable to locate the Layout [%s] in [%s]',
-                    $this->layout, $layout));
-            }
-
-            $this->layout = $layout;
-        }
-
-        $this->content = $this->render();
-    }
-    /**
-     * Render a View and return the contents
+     * Render and define the content string
      *
      * @access  public
-     * @param   string  $view
-     * @return  string
+     * @param   string  $view   The view filename
+     * @param   string  $layout The layout filename
+     * @param   array   $data   Array of view variables
+     * @return  void
      */
-    public function render()
+    public function render($view, $layout = null, array $data = array())
     {
         ob_start();
 
-        extract($this->data);
+        extract($data);
 
-        require $this->view;
+        require $view;
 
-        if(isset($this->layout))
+        if($layout)
         {
             $body = ob_get_contents();
 
             ob_clean();
 
-            require $this->layout;
+            require $layout;
         }
 
-        return ob_get_clean();
+        $this->content = ob_get_clean();
     }
 
     /**
-     * Return the content, used by Views to echo the content
+     * Find a file based on the filename
      *
      * @access  public
-     * @return  string
+     * @param   string  $filename   The filename to be found
+     * @return  string  $file       Returns the found filename
+     */
+    public function find($filename)
+    {
+        if( ! file_exists($file = $this->directory . $filename . '.php'))
+        {
+            throw new RuntimeException('Could not locate file: ' . $file);
+        }
+
+        return $file;
+    }
+
+    /**
+     * Define the directory path to be prepended to filenames
+     *
+     * @access  public
+     * @param   string  $directory  The directory path
+     * @return  void
+     */
+    public function directory($directory)
+    {
+        $this->directory = $directory;
+    }
+
+    /**
+     * When the View object is converted to a string return the rendered content
+     *
+     * @access  public
+     * @return  string  The rendered content
      */
     public function __toString()
     {
         return (string) $this->content;
-    }
-
-    /**
-     * Define directory pahts
-     *
-     * @access  public
-     * @param   array   $paths
-     * @return  void
-     */
-    public static function setPaths(array $paths)
-    {
-        foreach($paths as $key => $value)
-        {
-            static::$paths[$key] = $value;
-        }
     }
 }
