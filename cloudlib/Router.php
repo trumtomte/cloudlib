@@ -213,7 +213,6 @@ class Router
             {
                 $classname = $response['class'];
 
-                // TODO try/catch?
                 $class = new $classname($app);
 
                 $method = (isset($response['method'])) ? $response['method'] : $app->request->method;
