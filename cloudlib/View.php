@@ -94,7 +94,7 @@ class View
     {
         if( ! file_exists($file = $this->directory . $filename . '.php'))
         {
-            throw new RuntimeException('Could not locate file: ' . $file);
+            throw new RuntimeException(sprintf('File [%s] does not exist', $file));
         }
 
         return $file;
