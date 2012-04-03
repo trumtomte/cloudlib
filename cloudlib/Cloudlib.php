@@ -11,6 +11,7 @@ namespace cloudlib;
 
 use Closure;
 use Exception;
+use ErrorException;
 use cloudlib\ClassLoader;
 use cloudlib\Container;
 use cloudlib\Request;
@@ -104,11 +105,6 @@ class Cloudlib extends Container
 
         $this->loader->registerNamespaces(array(
             'cloudlib' => dirname(__DIR__)
-        ));
-
-        $this->loader->registerAliases(array(
-            'Response'  => 'cloudlib\Response',
-            'View'      => 'cloudlib\View'
         ));
 
         $this->loader->register();
@@ -260,7 +256,7 @@ class Cloudlib extends Container
      *
      * @access  public
      * @param   int     $code       The status code
-     * @param   mixed   $data       Data that will be passed to the response function (this could also simply be as message)
+     * @param   mixed   $data       Data that will be passed to the response function
      * @param   array   $headers    Array of HTTP headers to be sent
      * @return  void
      */
