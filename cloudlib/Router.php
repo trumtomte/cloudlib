@@ -194,7 +194,7 @@ class Router
      *
      * @access  protected
      * @param   Closure|array   $response   The route response
-     * @param   Cloudlib        $app        The core framework class (DIC) to be used at object creation
+     * @param   Cloudlib        $app        The core framework class (DIC) to be used for object creation
      * @param   array           $parameters Array of route parameters
      * @return  void
      */
