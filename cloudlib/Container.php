@@ -17,7 +17,7 @@ use InvalidArgumentException;
 /**
  * The Dependency Injection Container
  *
- * The container variables can be set as array variables ($class['variablename']) or as object properties ($class->variablename)
+ * The container variables can be set as array items ($class['item']) or as object properties ($class->property)
  *
  * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
