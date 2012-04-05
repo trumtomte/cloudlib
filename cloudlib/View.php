@@ -26,6 +26,14 @@ class View
     public $directory = null;
 
     /**
+     * String containing the file extension to be appended to filenames
+     *
+     * @access  public
+     * @var     string
+     */
+    public $extension = '.php';
+
+    /**
      * The rendered content
      *
      * @access  public
@@ -92,7 +100,7 @@ class View
      */
     public function find($filename)
     {
-        if( ! file_exists($file = $this->directory . $filename . '.php'))
+        if( ! file_exists($file = $this->directory . $filename . $this->extension))
         {
             throw new RuntimeException(sprintf('File [%s] does not exist', $file));
         }
@@ -110,6 +118,18 @@ class View
     public function directory($directory)
     {
         $this->directory = $directory;
+    }
+
+    /**
+     * Define the file extension to be appended to filenames
+     *
+     * @access  public
+     * @param   string  $extension  The file extension
+     * @return  void
+     */
+    public function extension($extension)
+    {
+        $this->extension = $extension;
     }
 
     /**
