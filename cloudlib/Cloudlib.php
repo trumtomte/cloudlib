@@ -266,7 +266,7 @@ class Cloudlib extends Container
 
         if( ! isset($this->errors[$code]))
         {
-            $body = ($message) ? $message : sprintf('%s: %s', $code, $response->codes[$code]);
+            $body = ($data) ? $data : sprintf('%s: %s', $code, $response->codes[$code]);
         }
         else
         {
