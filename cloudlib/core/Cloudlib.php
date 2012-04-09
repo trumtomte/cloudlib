@@ -104,7 +104,7 @@ class Cloudlib extends Container
         });
 
         $this->loader->registerNamespaces(array(
-            'cloudlib\\core' => dirname(__DIR__)
+            'cloudlib\\core' => dirname(dirname(__DIR__))
         ));
 
         $this->loader->register();
