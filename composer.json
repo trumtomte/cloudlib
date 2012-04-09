@@ -1,7 +1,7 @@
 {
-    "name": "cloudlib/Cloudlib",
+    "name": "cloudlib/core",
     "description": "Simple Router Framework",
-    "keywords": ["Simple", "Router", "Framework", "Flexible", "REST"],
+    "keywords": ["Simple", "Router", "Framework", "Flexible", "REST", "Cloudlib"],
     "homepage": "https://github.com/trumtomte/cloudlib",
     "license": "MIT",
     "authors": [
