@@ -7,17 +7,17 @@
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-namespace cloudlib;
+namespace cloudlib\core;
 
 use Closure;
 use Exception;
 use ErrorException;
-use cloudlib\ClassLoader;
-use cloudlib\Container;
-use cloudlib\Request;
-use cloudlib\Response;
-use cloudlib\Router;
-use cloudlib\View;
+use cloudlib\core\ClassLoader;
+use cloudlib\core\Container;
+use cloudlib\core\Request;
+use cloudlib\core\Response;
+use cloudlib\core\Router;
+use cloudlib\core\View;
 
 require 'ClassLoader.php';
 require 'Container.php';
@@ -104,7 +104,7 @@ class Cloudlib extends Container
         });
 
         $this->loader->registerNamespaces(array(
-            'cloudlib' => dirname(__DIR__)
+            'cloudlib\\core' => dirname(__DIR__)
         ));
 
         $this->loader->register();

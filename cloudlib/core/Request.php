@@ -7,7 +7,7 @@
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-namespace cloudlib;
+namespace cloudlib\core;
 
 /**
  * The Request class

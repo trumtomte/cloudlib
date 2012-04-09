@@ -7,12 +7,12 @@
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-namespace cloudlib;
+namespace cloudlib\core;
 
 use Closure;
 use ReflectionFunction;
 use ReflectionMethod;
-use cloudlib\Cloudlib;
+use cloudlib\core\Cloudlib;
 
 /**
  * The Router class
