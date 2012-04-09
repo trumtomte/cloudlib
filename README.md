@@ -24,7 +24,7 @@ Cloudlib matches route patterns to anonymous functions (Closures) or namespaced 
 ```json
 {
     "require": {
-        "cloudlib\Cloudlib": "0.1.0"
+        "cloudlib\core": "0.1.1"
     }
 }
 ```
