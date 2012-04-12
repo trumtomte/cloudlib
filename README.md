@@ -21,10 +21,10 @@ Cloudlib matches route patterns to anonymous functions (Closures) or namespaced 
 
 #### Composer
 
+**To get the latest version**
 ```json
 {
     "require": {
-        // to get the latest version
         "cloudlib/core": "dev-master"
     }
 }
