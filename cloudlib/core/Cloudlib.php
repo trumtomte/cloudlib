@@ -230,6 +230,25 @@ class Cloudlib extends Container
     }
 
     /**
+     * Returns an url relative to the application (absolute if $absolute is true)
+     *
+     * @access  public
+     * @param   string  $location   The URL end point
+     * @param   boolean $absolute   If we should return an absolute URL
+     * @return  string              The complete URL (relative or absolute)
+     */
+    public function urlFor($location, $absolute = false)
+    {
+        if($absolute)
+        {
+            return sprintf('http://%s%s', $this->request->server('HTTP_HOST'),
+                preg_replace('/\/{2,}/', '/', $this->base . $location));
+        }
+
+        return preg_replace('/\/{2,}/', '/', $this->base . $location);
+    }
+
+    /**
      * Create a new response with a location header 
      *
      * @access  public
@@ -241,7 +260,7 @@ class Cloudlib extends Container
     {
         if( ! filter_var($location, FILTER_VALIDATE_URL))
         {
-            $location = sprintf('http://%s%s', $this->request->server('HTTP_HOST'), $this->base . $location);
+            $location = $this->urlFor($location, true);
         }
 
         $response = new Response('', $status, array('Location' => $location));
