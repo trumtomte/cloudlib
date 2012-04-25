@@ -132,7 +132,7 @@ class Router
         $method = ($app->request->isHead()) ? 'GET' : $app->request->method;
 
         // Strip the base uri from the requested uri
-        $request = preg_replace('/\/{2,}/', '/', preg_replace('#' . $app->base . '#', '', $app->request->uri, 1));
+        $request = preg_replace('/\/{2,}/', '/', '/' . preg_replace('#' . $app->base . '#', '', $app->request->uri, 1));
 
         foreach($this->routes as $route => $responses)
         {
