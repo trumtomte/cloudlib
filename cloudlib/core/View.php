@@ -9,6 +9,8 @@
 
 namespace cloudlib\core;
 
+use RuntimeException;
+
 /**
  * The View class
  *
