@@ -389,6 +389,9 @@ class Cloudlib extends Container
                     $afterFilter();
                 }
             }
+
+            // Exit successfully
+            exit(0);
         }
         // No route was found
         else
