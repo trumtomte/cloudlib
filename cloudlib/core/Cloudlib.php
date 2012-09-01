@@ -70,13 +70,10 @@ class Cloudlib extends Container
      * Add object instances (ClassLoader, Request, Router)
      *
      * @access  public
-     * @param   string  $base   The base uri
      * @return  void
      */
-    public function __construct($base = '/')
+    public function __construct()
     {
-        $this->base = $base;
-
         $self = $this;
 
         set_exception_handler(function(Exception $e) use ($self)
@@ -113,6 +110,17 @@ class Cloudlib extends Container
         {
             return new Request($_SERVER, $_GET, $_POST, $_FILES, $_COOKIE);
         });
+
+        // Get current script path
+        $scriptPath = $this->request->server('SCRIPT_NAME');
+
+        if($scriptPath)
+        {
+            // Get current script name
+            $scriptName = basename($scriptPath);
+            // Set the base to the script path excluding the script name
+            $this->base = substr($scriptPath, 0, (strlen($scriptPath) - (strlen($scriptName) + 1)));
+        }
 
         $this->input = $this->request->input;
 
