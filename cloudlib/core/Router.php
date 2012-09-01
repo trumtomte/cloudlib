@@ -51,6 +51,18 @@ class Router
     }
 
     /**
+     * Merge new routes with the current ones
+     *
+     * @access  public
+     * @param   array   $routes Array of available routes
+     * @return  void
+     */
+    public function mergeRoutes(array $routes)
+    {
+        $this->routes = array_merge($this->routes, $routes);
+    }
+
+    /**
      * Add a new route (with the possibility of multiple request methods)
      *
      * @access  public

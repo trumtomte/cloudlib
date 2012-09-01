@@ -70,9 +70,10 @@ class Cloudlib extends Container
      * Add object instances (ClassLoader, Request, Router)
      *
      * @access  public
+     * @param   array   $routes Array of available routes
      * @return  void
      */
-    public function __construct()
+    public function __construct(array $routes = array())
     {
         $self = $this;
 
@@ -128,6 +129,20 @@ class Cloudlib extends Container
         {
             return new Router();
         });
+
+        $this->router->mergeRoutes($routes);
+    }
+
+    /**
+     * Merge new routes with the existing ones
+     *
+     * @access  public
+     * @param   array   $routes Array of available routes
+     * @return  void
+     */
+    public function mergeRoutes(array $routes)
+    {
+        $this->router->mergeRoutes($routes);
     }
 
     /**
