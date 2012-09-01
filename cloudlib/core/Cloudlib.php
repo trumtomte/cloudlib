@@ -300,11 +300,18 @@ class Cloudlib extends Container
         }
         else
         {
-            $param = array(
-                'data' => $data,
-                'statusCode' => $code,
-                'statusMessage' => $response->codes[$code]
-            );
+            if($data instanceof Exception)
+            {
+                $param = $data;
+            }
+            else
+            {
+                $param = array(
+                    'data' => $data,
+                    'statusCode' => $code,
+                    'statusMessage' => $response->codes[$code]
+                );
+            }
 
             $body = $this->errors[$code]($param);
         }
