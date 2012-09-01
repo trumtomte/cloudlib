@@ -249,15 +249,18 @@ class Cloudlib extends Container
     {
         if($absolute)
         {
-            return sprintf('http://%s%s', $this->request->server('HTTP_HOST'),
-                preg_replace('/\/{2,}/', '/', $this->base . $location));
+            $protocol = $this->request->isSecure() ? 'https' : 'http';
+
+            return sprintf('%s://%s%s', $protocol,
+                $this->request->server('HTTP_HOST'),
+                preg_replace('/\/{2,}/', '/', $this->base . '/' . $location));
         }
 
-        return preg_replace('/\/{2,}/', '/', $this->base . $location);
+        return preg_replace('/\/{2,}/', '/', $this->base . '/' . $location);
     }
 
     /**
-     * Create a new response with a location header 
+     * Create a new response with a location header
      *
      * @access  public
      * @param   string  $location   The destination (Location: 'destinaton')
@@ -313,7 +316,7 @@ class Cloudlib extends Container
     }
 
     /**
-     * Define a view variable 
+     * Define a view variable
      *
      * @access  public
      * @param   string  $key    The view variable name
