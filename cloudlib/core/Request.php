@@ -3,7 +3,7 @@
  * Cloudlib
  *
  * @author      Sebastian Book <cloudlibframework@gmail.com>
- * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -12,7 +12,7 @@ namespace cloudlib\core;
 /**
  * The Request class
  *
- * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class Request
@@ -130,7 +130,7 @@ class Request
      */
     public function method()
     {
-        return ($this->server('REQUEST_METHOD')) ? strtoupper($this->server('REQUEST_METHOD')) : null;
+        return $this->server('REQUEST_METHOD') ? strtoupper($this->server('REQUEST_METHOD')) : null;
     }
 
     /**
@@ -196,7 +196,7 @@ class Request
      */
     public function methodAllowed()
     {
-        return (in_array($this->method(), array('GET', 'POST', 'PUT', 'DELETE', 'HEAD'))) ? true : false;
+        return in_array($this->method(), array('GET', 'POST', 'PUT', 'DELETE', 'HEAD')) ? true : false;
     }
 
     /**
@@ -247,7 +247,7 @@ class Request
      */
     public function protocol()
     {
-        return ($this->server('SERVER_PROTOCOL')) ? $this->server('SERVER_PROTOCOL') : 'HTTP/1.1';
+        return $this->server('SERVER_PROTOCOL') ? $this->server('SERVER_PROTOCOL') : 'HTTP/1.1';
     }
 
     /**

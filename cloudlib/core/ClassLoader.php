@@ -3,7 +3,7 @@
  * Cloudlib 
  *
  * @author      Sebastian Book <cloudlibframework@gmail.com>
- * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -14,7 +14,7 @@ use RuntimeException;
 /**
  * Class autoloader, following the PSR-0 standard
  *
- * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class ClassLoader

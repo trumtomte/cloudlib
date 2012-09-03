@@ -3,7 +3,7 @@
  * Cloudlib
  *
  * @author      Sebastian Book <cloudlibframework@gmail.com>
- * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -17,7 +17,7 @@ use cloudlib\core\Cloudlib;
 /**
  * The Router class
  *
- * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class Router
@@ -57,7 +57,7 @@ class Router
      * @param   array   $routes Array of available routes
      * @return  void
      */
-    public function mergeRoutes(array $routes)
+    public function merge(array $routes)
     {
         $this->routes = array_merge($this->routes, $routes);
     }
@@ -141,7 +141,7 @@ class Router
     public function parse(Cloudlib $app)
     {
         // HEAD acts as GET but only outputs header; therefore change it temporarily
-        $method = ($app->request->isHead()) ? 'GET' : $app->request->method;
+        $method = $app->request->isHead() ? 'GET' : $app->request->method;
 
         // Strip the base uri from the requested uri
         $request = preg_replace('/\/{2,}/', '/', '/' . preg_replace('#' . $app->base . '#', '', $app->request->uri, 1));
@@ -227,7 +227,7 @@ class Router
 
                 $class = new $classname($app);
 
-                $method = (isset($response['method'])) ? $response['method'] : $app->request->method;
+                $method = isset($response['method']) ? $response['method'] : $app->request->method;
 
                 $reflection = new ReflectionMethod($class, $method);
 

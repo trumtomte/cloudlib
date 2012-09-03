@@ -3,7 +3,7 @@
  * Cloudlib
  *
  * @author      Sebastian Book <cloudlibframework@gmail.com>
- * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -25,7 +25,7 @@ require 'Container.php';
 /**
  * The core framework class
  *
- * @copyright   Copyright (c) 2011 Sebastian Book <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class Cloudlib extends Container
@@ -61,6 +61,14 @@ class Cloudlib extends Container
      * @var     array
      */
     public $data = array();
+
+    /**
+     * Application base path for requests
+     *
+     * @access  public
+     * @var     string
+     */
+    public $base = '/';
 
     /**
      * At object creation define the base uri
@@ -130,7 +138,7 @@ class Cloudlib extends Container
             return new Router();
         });
 
-        $this->router->mergeRoutes($routes);
+        $this->router->merge($routes);
     }
 
     /**
@@ -140,9 +148,9 @@ class Cloudlib extends Container
      * @param   array   $routes Array of available routes
      * @return  void
      */
-    public function mergeRoutes(array $routes)
+    public function merge(array $routes)
     {
-        $this->router->mergeRoutes($routes);
+        $this->router->merge($routes);
     }
 
     /**
@@ -311,7 +319,7 @@ class Cloudlib extends Container
 
         if( ! isset($this->errors[$code]))
         {
-            $body = ($data) ? $data : sprintf('%s: %s', $code, $response->codes[$code]);
+            $body = $data ? $data : sprintf('%s: %s', $code, $response->codes[$code]);
         }
         else
         {
@@ -361,7 +369,7 @@ class Cloudlib extends Container
      */
     public function render($view, $layout = null, array $data = array())
     {
-        $data = (isset($data)) ? array_merge($this->data, $data) : $data;
+        $data = isset($data) ? array_merge($this->data, $data) : $data;
 
         return new View($view, $layout, $data);
     }
