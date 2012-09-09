@@ -41,7 +41,7 @@ class Container implements ArrayAccess
      */
     public function __construct(array $vars = array())
     {
-        $this->vars = array();
+        $this->vars = $vars;
     }
 
     /**
