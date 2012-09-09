@@ -47,39 +47,39 @@ class View
      * Define a View file, layout file (optional) and an array of view variables (optional)
      *
      * @access  public
-     * @param   string  $view   The view filename
+     * @param   string  $file   The view filename
      * @param   string  $layout The layout filename
      * @param   array   $data   Array of view variables
      * @return  void
      */
-    public function __construct($view, $layout = null, array $data = array())
+    public function __construct($file, $layout = null, array $data = array())
     {
-        $view = $this->find($view);
+        $file = $this->find($file);
 
         if($layout)
         {
             $layout = $this->find($layout);
         }
 
-        $this->render($view, $layout, $data);
+        $this->render($file, $layout, $data);
     }
 
     /**
      * Render and define the content string
      *
      * @access  public
-     * @param   string  $view   The view filename
+     * @param   string  $file   The view filename
      * @param   string  $layout The layout filename
      * @param   array   $data   Array of view variables
      * @return  void
      */
-    public function render($view, $layout = null, array $data = array())
+    public function render($file, $layout = null, array $data = array())
     {
         ob_start();
 
         extract($data);
 
-        require $view;
+        require $file;
 
         if($layout)
         {
