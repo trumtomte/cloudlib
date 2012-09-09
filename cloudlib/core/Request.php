@@ -123,6 +123,18 @@ class Request
     }
 
     /**
+     * Get a GET/POST/PUT/DELETE variable based on $key
+     *
+     * @access  public
+     * @param   string              $key    The array key identifier
+     * @return  string|array|false          Return the input variable value if found, else false
+     */
+    public function get($key)
+    {
+        return isset($this->input[$key]) ? $this->input[$key] : false;
+    }
+
+    /**
      * Get the current request method
      *
      * @access  public
