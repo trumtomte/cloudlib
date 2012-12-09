@@ -9,13 +9,15 @@
 
 namespace cloudlib\core;
 
+use cloudlib\core\Container;
+
 /**
  * The Response class
  *
  * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class Response
+class Response extends Container
 {
     /**
      * Array of HTTP Status Codes
@@ -23,7 +25,7 @@ class Response
      * @access  public
      * @var     array
      */
-    public $codes = array(
+    public $httpStatusCodes = array(
         // Informational 1xx
         100 => 'Continue',
         101 => 'Switching Protocols',
@@ -113,20 +115,6 @@ class Response
     }
 
     /**
-     * Set the status code
-     *
-     * @access  public
-     * @param   int     $status The status code
-     * @return  Response        Returns itself, for method chaining
-     */
-    public function status($status = null)
-    {
-        $this->status = (int) $status;
-
-        return $this;
-    }
-
-    /**
      * Set the body content
      *
      * @access  public
@@ -141,7 +129,22 @@ class Response
     }
 
     /**
-     * Set a HTTP Header (ex array('Location' => 'www.google.com') = 'Location: www.google.com'
+     * Set the status code
+     *
+     * @access  public
+     * @param   int     $status The status code
+     * @return  Response        Returns itself, for method chaining
+     */
+    public function status($status = null)
+    {
+        $this->status = (int) $status;
+
+        return $this;
+    }
+
+    /**
+     * Set a HTTP Header (ex array('Location' => 'www.google.com')
+     * Would be: 'Location: www.google.com')
      *
      * @access  public
      * @param   string  $key    Header attribute
@@ -164,7 +167,9 @@ class Response
      */
     public function sendHeaders($protocol)
     {
-        header(sprintf('%s %s %s', $protocol, $this->status, $this->codes[$this->status]));
+        $this->headers = array_merge($this->headers, $this->vars);
+
+        header(sprintf('%s %s %s', $protocol, $this->status, $this->httpStatusCodes[$this->status]));
 
         if( ! isset($this->headers['Content-Type']))
         {
