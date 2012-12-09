@@ -9,10 +9,8 @@
 
 namespace cloudlib\core;
 
-use Closure;
-use ReflectionFunction;
-use ReflectionMethod;
 use cloudlib\core\Cloudlib;
+use cloudlib\core\Route;
 
 /**
  * The Router class
@@ -23,7 +21,15 @@ use cloudlib\core\Cloudlib;
 class Router
 {
     /**
-     * Array of stored routes with corresponding request method and response
+     * The found route
+     *
+     * @access  public
+     * @var     object
+     */
+    public $route = null;
+
+    /**
+     * Array of available routes
      *
      * @access  public
      * @var     array
@@ -31,208 +37,141 @@ class Router
     public $routes = array();
 
     /**
-     * The response to be set if a route is found or not found (status code)
+     * Array of matching routes for the current request
      *
      * @access  public
-     * @var     mixed
+     * @var     array
      */
-    public $response = null;
+    public $matchingRoutes = array();
 
     /**
-     * At object creation define a new $routes array
+     * Add a new route (route + method + response)
      *
      * @access  public
-     * @param   array   $routes Array of routes
-     * @return  void
+     * @param   string  $route      The route uri
+     * @param   string  $method     Allowed method for the route
+     * @param   mixed   $response   The route response
+     * @return  object              The newly added route
      */
-    public function __construct(array $routes = array())
+    public function add($route, $method, $response)
     {
-        $this->routes = $routes;
+        // Sets the route and then returns it
+        return $this->routes[sprintf('%s %s', $method, $route)] = new Route($route, $method, $response);
     }
 
     /**
-     * Merge new routes with the current ones
+     * Add multiple (or a single one) routes
      *
      * @access  public
-     * @param   array   $routes Array of available routes
-     * @return  void
-     */
-    public function merge(array $routes)
-    {
-        $this->routes = array_merge($this->routes, $routes);
-    }
-
-    /**
-     * Add a new route (with the possibility of multiple request methods)
-     *
-     * @access  public
-     * @param   string  $route      The route pattern (ex '/home')
-     * @param   array   $methods    Array of request methods
-     * @param   mixed   $response   The response to be returned when the route is found
+     * @param   string  $route      The route uri
+     * @param   array   $methods    Array of allowed request method
+     * @param   mixed   $response   The route response
      * @return  void
      */
     public function route($route, array $methods, $response)
     {
         foreach($methods as $method)
         {
-            $this->routes[$route][$method] = $response;
+            $this->add($route, $method, $response);
         }
     }
 
     /**
-     * Shorthand function to route(), define a GET route
+     * Shorthand function for adding a route which allows the GET method
      *
      * @access  public
-     * @param   string  $route      The route pattern
-     * @param   mixed   $response   The response to be returned when the route is found
-     * @return  void
+     * @param   string  $route      The route uri
+     * @param   mixed   $response   The route response
+     * @return  object              The newly added route
      */
     public function get($route, $response)
     {
-        $this->route($route, array('GET'), $response);
+        return $this->add($route, 'GET', $response);
     }
 
     /**
-     * Shorthand function to route(), define a POST route
+     * Shorthand function for adding a route which allows the POST method
      *
      * @access  public
-     * @param   string  $route      The route pattern
-     * @param   mixed   $response   The response to be returned when the route is found
-     * @return  void
+     * @param   string  $route      The route uri
+     * @param   mixed   $response   The route response
+     * @return  object              The newly added route
      */
     public function post($route, $response)
     {
-        $this->route($route, array('POST'), $response);
+        return $this->add($route, 'POST', $response);
     }
 
     /**
-     * Shorthand function to route(), define a PUT route
+     * Shorthand function for adding a route which allows the PUT method
      *
      * @access  public
-     * @param   string  $route      The route pattern
-     * @param   mixed   $response   The response to be returned when the route is found
-     * @return  void
+     * @param   string  $route      The route uri
+     * @param   mixed   $response   The route response
+     * @return  object              The newly added route
      */
     public function put($route, $response)
     {
-        $this->route($route, array('PUT'), $response);
+        return $this->add($route, 'PUT', $response);
     }
 
     /**
-     * Shorthand function to route(), define a DELETE route
+     * Shorthand function for adding a route which allows the DELETE method
      *
      * @access  public
-     * @param   string  $route      The route pattern
-     * @param   mixed   $response   The response to be returned when the route is found
-     * @return  void
+     * @param   string  $route      The route uri
+     * @param   mixed   $response   The route response
+     * @return  object              The newly added route
      */
     public function delete($route, $response)
     {
-        $this->route($route, array('DELETE'), $response);
+        return $this->add($route, 'DELETE', $response);
     }
 
     /**
-     * Parse through the $routes array to find a matching route to the request uri
+     * Check if a route exists based on $uri and $base
      *
      * @access  public
-     * @param   Cloudlib    $app    The core framework class (DIC) to be used to fetch the request method and uri
-     * @return  boolean             Returns true if a route was found, else false
+     * @param   string  $base   The base uri
+     * @param   string  $uri    The requested uri
+     * @return  boolean         Returns true if a matching route does exist
      */
-    public function parse(Cloudlib $app)
+    public function routeExists($base, $uri)
     {
-        // HEAD acts as GET but only outputs header; therefore change it temporarily
-        $method = $app->request->isHead() ? 'GET' : $app->request->method;
+        $request = preg_replace('/\/{2,}/', '/', '/' . preg_replace('#' . $base . '#', '', $uri, 1));
 
-        // Strip the base uri from the requested uri
-        $request = preg_replace('/\/{2,}/', '/', '/' . preg_replace('#' . $app->base . '#', '', $app->request->uri, 1));
-
-        foreach($this->routes as $route => $responses)
+        foreach($this->routes as $route)
         {
-            // Literal match
-            if($route == $request)
+            if($route->match($request))
             {
-                // If request method does not exist
-                if( ! array_key_exists($method, $responses))
-                {
-                    $this->response = 405;
-                    return false;
-                }
-                // Found route, set response
-                $this->setResponse($responses[$method], $app);
-                return true;
-            }
+                $route->setRequest($request);
 
-            // Create an regex out of an route with parameters (:param or ;regex)
-            $regex = str_replace('/', '\/', preg_replace('/;/', '', preg_replace('/:(\w+)/', '(\w+)', $route)));
-
-            // Found route
-            if(preg_match('#^' . $regex . '$#', $request))
-            {
-                // Invalid method
-                if( ! array_key_exists($method, $responses))
-                {
-                    $this->response = 405;
-                    return false;
-                }
-
-                // Get all parts from the route and request uri
-                list($routeParts, $uriParts) = array(
-                    explode('/', $route),
-                    explode('/', $request)
-                );
-
-                $parameters = array();
-
-                // Extract the parameters from the request uri
-                foreach($routeParts as $key => $value)
-                {
-                    if(strpos($value, ':') !== false || strpos($value, ';') !== false)
-                    {
-                        $parameters[] = $uriParts[$key];
-                    }
-                }
-                // Found route, set response
-                $this->setResponse($responses[$method], $app, $parameters);
-                return true;
+                $this->matchingRoutes[] = $route;
             }
         }
-        // No matching route
-        $this->response = 404;
-        return false;
+
+        return empty($this->matchingRoutes) ? false : true;
     }
 
     /**
-     * Set the response, either by calling an anonymous function or creating a new object and invoking the object method
+     * Check if the requested route allows the request $method
      *
-     * @access  protected
-     * @param   Closure|array   $response   The route response
-     * @param   Cloudlib        $app        The core framework class (DIC) to be used for object creation
-     * @param   array           $parameters Array of route parameters
-     * @return  void
+     * @access  public
+     * @param   string  $method
+     * @return  boolean Returns true if the route allows the requested method
      */
-    protected function setResponse($response, Cloudlib $app, array $parameters = array())
+    public function routeHasMethod($method)
     {
-        if($response instanceof Closure)
-        {
-            $reflection = new ReflectionFunction($response);
+        $method = ($method == 'HEAD') ? 'GET' : $method;
 
-            $this->response = $reflection->invokeArgs($parameters);
-        }
-
-        if(is_array($response))
+        foreach($this->matchingRoutes as $route)
         {
-            if(isset($response['class']))
+            if($route->hasMethod($method))
             {
-                $classname = $response['class'];
-
-                $class = new $classname($app);
-
-                $method = isset($response['method']) ? $response['method'] : $app->request->method;
-
-                $reflection = new ReflectionMethod($class, $method);
-
-                $this->response = $reflection->invokeArgs($class, $parameters);
+                $this->route = $route;
             }
         }
+
+        return isset($this->route) ? true : false;
     }
 }
