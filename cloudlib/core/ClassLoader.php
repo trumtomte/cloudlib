@@ -39,7 +39,7 @@ class ClassLoader
      * Define the namespaces and aliases array at creation.
      *
      * @access  public
-     * @param   array   $namespaces Array of namespae:Directory pairs
+     * @param   array   $namespaces Array of Namespace:Directory pairs
      * @param   array   $aliases    Array of Alias:Class(namespaced) pairs
      * @return  void
      */
