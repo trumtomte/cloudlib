@@ -17,7 +17,8 @@ use InvalidArgumentException;
 /**
  * The Dependency Injection Container
  *
- * The container variables can be set as array items ($class['item']) or as object properties ($class->property)
+ * The container variables can be set as array items ($class['item']) or as
+ * object properties ($class->property)
  *
  * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -60,10 +61,12 @@ class Container implements ArrayAccess
     /**
      * Get a class property
      *
-     * If the property is an anonymous function the first parameter will be the Container object
+     * If the property is an anonymous function the first parameter will be the
+     * Container object
      *
      * @access  public
      * @param   string  $key    The variable identifier (name)
+     * @throws  InvalidArgumentException    If the key does not exist
      * @return  mixed           Return the variable value or, if its an anonymous function, call it
      */
     public function __get($key)
@@ -108,6 +111,7 @@ class Container implements ArrayAccess
      * @access  public
      * @param   string  $key    The variable identifier (name)
      * @param   array   $args   Array containing all the parameters
+     * @throws  InvalidArgumentException    If the key does not exist
      * @return  mixed           Is depending on what the function was defined to return
      */
     public function __call($key, $args)
@@ -149,6 +153,7 @@ class Container implements ArrayAccess
      *
      * @access  public
      * @param   string  $key    The variable identifier (name)
+     * @throws  InvalidArgumentException    If the key does not exist
      * @return  mixed           Return the variable value or, if its an anonymous function, call it
      */
     public function offsetGet($key)
@@ -186,58 +191,21 @@ class Container implements ArrayAccess
     }
 
     /**
-     * Create a single instance of an object (singleton)
+     * Return a single instance of an object (singleton)
      *
      * @access  public
-     * @param   object  $object The object of which an instance will be created
-     * @return  Closure         Returns a Closure that returns a single instance of the class
+     * @param   object  $callable   The object of which an instance will be created
+     * @return  Closure             Returns a Closure that returns a single instance of the class
      */
-    public function instance($object)
+    public function instance(Closure $callable)
     {
-        return function($self) use ($object)
+        return function($self) use ($callable)
         {
             static $instance = null;
 
             if($instance === null)
             {
-                if($object instanceof Closure)
-                {
-                    $instance = $object($self);
-                }
-                else
-                {
-                    $instance = $object;
-                }
-            }
-
-            return $instance;
-        };
-    }
-
-    /**
-     * Same as instance() but assigns the object to a Container variable identifier
-     *
-     * @access  public
-     * @param   string  $key    The variable identifier (name)
-     * @param   object  $object The object of which an instance will be created
-     * @return  void
-     */
-    public function addInstance($key, $object)
-    {
-        $this->vars[$key] = function($self) use ($object)
-        {
-            static $instance = null;
-
-            if($instance === null)
-            {
-                if($object instanceof Closure)
-                {
-                    $instance = $object($self);
-                }
-                else
-                {
-                    $instance = $object;
-                }
+                $instance = $callable($self);
             }
 
             return $instance;
