@@ -74,12 +74,12 @@ class Request
     public $method;
 
     /**
-     * The request input (based on the request method)
+     * Request arguments (GET, POST, PUT, DELETE)
      *
      * @access  public
      * @var     array
      */
-    public $input;
+    public $arguments;
 
     /**
      * Set all global arrays, request uri, request method and request variables
@@ -101,9 +101,9 @@ class Request
         $this->files = $files;
         $this->cookies = $cookies;
 
-        $this->uri = $this->uri();
+        $this->uri = $this->filterUri();
         $this->method = $this->method();
-        $this->input = $this->input();
+        $this->arguments = $this->getArguments();
     }
 
     /**
@@ -131,7 +131,7 @@ class Request
      */
     public function get($key)
     {
-        return isset($this->input[$key]) ? $this->input[$key] : false;
+        return isset($this->arguments[$key]) ? $this->arguments[$key] : false;
     }
 
     /**
@@ -146,10 +146,10 @@ class Request
     }
 
     /**
-     * Check if the request method is get
+     * Check if the request method is GET
      *
      * @access  public
-     * @return  boolean Return true if the request method is get, else false
+     * @return  boolean Return true if the request method is GET, else false
      */
     public function isGet()
     {
@@ -157,10 +157,10 @@ class Request
     }
 
     /**
-     * Check if the request method is post
+     * Check if the request method is POST
      *
      * @access  public
-     * @return  boolean Return true if the request method is post, else false
+     * @return  boolean Return true if the request method is POST, else false
      */
     public function isPost()
     {
@@ -168,10 +168,10 @@ class Request
     }
 
     /**
-     * Check if the request method is put
+     * Check if the request method is PUT
      *
      * @access  public
-     * @return  boolean Return true if the request method is put, else false
+     * @return  boolean Return true if the request method is PUT, else false
      */
     public function isPut()
     {
@@ -179,10 +179,10 @@ class Request
     }
 
     /**
-     * Check if the request method is delete
+     * Check if the request method is DELETE
      *
      * @access  public
-     * @return  boolean Return true if the request method is delete, else false
+     * @return  boolean Return true if the request method is DELETE, else false
      */
     public function isDelete()
     {
@@ -190,10 +190,10 @@ class Request
     }
 
     /**
-     * Check if the request method is head
+     * Check if the request method is HEAD
      *
      * @access  public
-     * @return  boolean Return true if the request method is head, else false
+     * @return  boolean Return true if the request method is HEAD, else false
      */
     public function isHead()
     {
@@ -201,7 +201,7 @@ class Request
     }
 
     /**
-     * Check if the requested method is allowed, (get, post, put, delete, head)
+     * Check if the requested method is allowed, (GET, POST, PUT, DELETE, HEAD)
      *
      * @access  public
      * @return  boolean Return true if the request method is allowed, else false
@@ -217,9 +217,20 @@ class Request
      * @access  public
      * @return  boolean Return true if XHR has been set, else false
      */
-    public function isAjax()
+    public function isXhr()
     {
         return ($this->server('HTTP_X_REQUESTED_WITH') === 'XMLHttpRequest') ? true : false;
+    }
+
+    /**
+     * Same as Request::isXhr()
+     *
+     * @access  public
+     * @return  boolean Return true if XHR has been set, else false
+     */
+    public function isAjax()
+    {
+        return $this->isXhr();
     }
 
     /**
@@ -234,12 +245,12 @@ class Request
     }
 
     /**
-     * Return a filtered uri as an array
+     * Return a filtered uri
      *
      * @access  public
      * @return  string  Return an filtered uri string if an request uri as been set, else '/'
      */
-    public function uri()
+    public function filterUri()
     {
         $uri = $this->server('REQUEST_URI');
 
@@ -263,29 +274,89 @@ class Request
     }
 
     /**
-     * Return the input
+     * Get the current User Agent
      *
      * @access  public
-     * @return  array   Return an array containing the request variables based on the request method
+     * @return  string|boolean  Return the user agent, else false
      */
-    public function input()
+    public function userAgent()
+    {
+        return $this->server('USER_AGENT');
+    }
+
+    /**
+     * Get the current HTTP Host
+     *
+     * @access  public
+     * @return  string|boolean  Return the HTTP Host, else false
+     */
+    public function host()
+    {
+        return $this->server('HTTP_HOST');
+    }
+
+    /**
+     * Get the current Server Port
+     *
+     * @access  public
+     * @return  int     Returns the current Server Port, else false
+     */
+    public function port()
+    {
+        return (int) $this->server('SERVER_PORT');
+    }
+
+    /**
+     * Get the current Content Type
+     *
+     * @access  public
+     * @return  string|boolean  Return the current Content Type, else false
+     */
+    public function contentType()
+    {
+        return $this->server('CONTENT_TYPE');
+    }
+
+    /**
+     * Get the current IP adress being used (with a grain of salt)
+     *
+     * @access  public
+     * @return  string|boolean  Return the IP, else false
+     */
+    public function ip()
+    {
+        if($this->server('X_FORWARDED_FOR'))
+        {
+            return $this->server('X_FORWARDED_FOR');
+        }
+
+        return $this->server('REMOTE_ADDR');
+    }
+
+    /**
+     * Returns an array of HTTP request variables based on the request method
+     *
+     * @access  public
+     * @return  array   Return an array of HTTP request variables
+     */
+    public function getArguments()
     {
         switch($this->method())
         {
             case 'GET':
-                $input = $this->get;
+                $args = $this->get;
                 break;
             case 'POST':
-                $input = $this->post;
+                $args = $this->post;
                 break;
             case 'PUT':
             case 'DELETE':
-                parse_str(file_get_contents('php://input'), $input);
+                parse_str(file_get_contents('php://input'), $args);
                 break;
             default:
-                $input = array();
+                $args = array();
                 break;
         }
-        return $input;
+        return $args;
     }
 }
