@@ -295,7 +295,7 @@ class Cloudlib extends Container
      */
     public function status($code)
     {
-        return $this->response->status($key, $value);
+        return $this->response->status($code);
     }
 
     /**
