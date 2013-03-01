@@ -31,7 +31,7 @@ class Container implements ArrayAccess
      * @access  protected
      * @var     array
      */
-    protected $vars = array();
+    protected $vars = [];
 
     /**
      * Define container variables at object creation
