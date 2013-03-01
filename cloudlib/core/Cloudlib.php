@@ -544,6 +544,20 @@ class Cloudlib extends Container
     }
 
     /**
+     * Shorthand function for returning JSON
+     *
+     * @access  public
+     * @param   mixed   $input      The input to be converted to JSON
+     * @param   int     $options    Options for json_encode()
+     * @return  string              The encode JSON
+     */
+    public function json($input, $options = JSON_NUMERIC_CHECK)
+    {
+        $this->header('Content-Type', 'application/json');
+        return json_encode($input, $options);
+    }
+
+    /**
      * Add a flash message to the template
      *
      * @access  public

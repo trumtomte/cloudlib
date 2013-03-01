@@ -245,6 +245,17 @@ class Request
     }
 
     /**
+     * Check if the content type is JSON
+     *
+     * @access  public
+     * @return  boolean Return true if the content type is json, else false
+     */
+    public function isJson()
+    {
+        return ($this->server('CONTENT_TYPE') == 'application/json') ? true : false;
+    }
+
+    /**
      * Return a filtered uri
      *
      * @access  public
@@ -341,6 +352,11 @@ class Request
      */
     public function getArguments()
     {
+        if(in_array($this->method, array('POST', 'PUT', 'DELETE')) && $this->isJson())
+        {
+            return file_get_contents('php://input');
+        }
+
         switch($this->method())
         {
             case 'GET':
@@ -357,6 +373,7 @@ class Request
                 $args = array();
                 break;
         }
+
         return $args;
     }
 }
