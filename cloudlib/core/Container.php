@@ -33,17 +33,16 @@ class Container implements ArrayAccess
      */
     protected $vars = [];
 
+    protected $arrayVariables = [];
+    protected $objectProperties = [];
+
     /**
-     * Define container variables at object creation
+     * Constructor
      *
      * @access  public
-     * @param   array   $vars   Array of container variables
      * @return  void
      */
-    public function __construct(array $vars = array())
-    {
-        $this->vars = $vars;
-    }
+    public function __construct() {}
 
     /**
      * Define a class property
