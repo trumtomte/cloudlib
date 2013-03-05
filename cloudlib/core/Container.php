@@ -54,7 +54,7 @@ class Container implements ArrayAccess
      */
     public function __set($key, $value)
     {
-        $this->vars[$key] = $value;
+        $this->objectProperties[$key] = $value;
     }
 
     /**
@@ -70,12 +70,12 @@ class Container implements ArrayAccess
      */
     public function __get($key)
     {
-        if( ! array_key_exists($key, $this->vars))
+        if( ! array_key_exists($key, $this->objectProperties))
         {
             throw new InvalidArgumentException(sprintf('Key [%s] does not exist', $key));
         }
 
-        return ($this->vars[$key] instanceof Closure) ? $this->vars[$key]($this) : $this->vars[$key];
+        return ($this->objectProperties[$key] instanceof Closure) ? $this->objectProperties[$key]($this) : $this->objectProperties[$key];
     }
 
     /**
@@ -87,7 +87,7 @@ class Container implements ArrayAccess
      */
     public function __isset($key)
     {
-        return isset($this->vars[$key]);
+        return isset($this->objectProperties[$key]);
     }
 
     /**
@@ -99,7 +99,7 @@ class Container implements ArrayAccess
      */
     public function __unset($key)
     {
-        unset($this->vars[$key]);
+        unset($this->objectProperties[$key]);
     }
 
     /**
@@ -108,26 +108,26 @@ class Container implements ArrayAccess
      * The first parameter will always be the Container object
      *
      * @access  public
-     * @param   string  $key    The variable identifier (name)
-     * @param   array   $args   Array containing all the parameters
+     * @param   string  $key                The variable identifier (name)
+     * @param   array   $args               Array containing all the parameters
      * @throws  InvalidArgumentException    If the key does not exist
-     * @return  mixed           Is depending on what the function was defined to return
+     * @return  mixed                       Is depending on what the function was defined to return
      */
     public function __call($key, $args)
     {
-        if( ! array_key_exists($key, $this->vars))
+        if( ! array_key_exists($key, $this->objectProperties))
         {
             throw new InvalidArgumentException(sprintf('Key [%s] does not exist', $key));
         }
 
-        if( ! ($this->vars[$key] instanceof Closure))
+        if( ! ($this->objectProperties[$key] instanceof Closure))
         {
             throw new InvalidArgumentException(sprintf('Key [%s] is not a function', $key));
         }
 
         array_unshift($args, $this);
 
-        $reflection = new ReflectionFunction($this->vars[$key]);
+        $reflection = new ReflectionFunction($this->objectProperties[$key]);
 
         return $reflection->invokeArgs($args);
     }
@@ -142,7 +142,7 @@ class Container implements ArrayAccess
      */
     public function offsetSet($key, $value)
     {
-        $this->vars[$key] = $value;
+        $this->arrayVariables[$key] = $value;
     }
 
     /**
@@ -157,12 +157,12 @@ class Container implements ArrayAccess
      */
     public function offsetGet($key)
     {
-        if( ! array_key_exists($key, $this->vars))
+        if( ! array_key_exists($key, $this->arrayVariables))
         {
             throw new InvalidArgumentException(sprintf('Key [%s] does not exist', $key));
         }
 
-        return ($this->vars[$key] instanceof Closure) ? $this->vars[$key]($this) : $this->vars[$key];
+        return ($this->arrayVariables[$key] instanceof Closure) ? $this->arrayVariables[$key]($this) : $this->arrayVariables[$key];
     }
 
     /**
@@ -174,7 +174,7 @@ class Container implements ArrayAccess
      */
     public function offsetExists($key)
     {
-        return isset($this->vars[$key]);
+        return isset($this->arrayVariables[$key]);
     }
 
     /**
@@ -186,7 +186,7 @@ class Container implements ArrayAccess
      */
     public function offsetUnset($key)
     {
-        unset($this->vars[$key]);
+        unset($this->arrayVariables[$key]);
     }
 
     /**
