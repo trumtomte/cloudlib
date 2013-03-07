@@ -9,6 +9,7 @@
 
 namespace cloudlib\core;
 
+use ArrayAccess;
 use cloudlib\core\Container;
 
 /**
@@ -17,7 +18,7 @@ use cloudlib\core\Container;
  * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class Response extends Container
+class Response implements ArrayAccess
 {
     /**
      * Array of HTTP Status Codes
@@ -124,7 +125,6 @@ class Response extends Container
     public function body($body = null)
     {
         $this->body = (string) $body;
-
         return $this;
     }
 
@@ -138,13 +138,11 @@ class Response extends Container
     public function status($status = null)
     {
         $this->status = (int) $status;
-
         return $this;
     }
 
     /**
-     * Set a HTTP Header (ex array('Location' => 'www.google.com')
-     * Would be: 'Location: www.google.com')
+     * Set a response header
      *
      * @access  public
      * @param   string  $key    Header attribute
@@ -154,7 +152,6 @@ class Response extends Container
     public function header($key, $value)
     {
         $this->headers[$key] = $value;
-
         return $this;
     }
 
@@ -167,8 +164,6 @@ class Response extends Container
      */
     public function sendHeaders($protocol)
     {
-        $this->headers = array_merge($this->headers, $this->arrayVariables);
-
         header(sprintf('%s %s %s', $protocol, $this->status, $this->httpStatusCodes[$this->status]));
 
         if( ! isset($this->headers['Content-Type']))
@@ -211,5 +206,54 @@ class Response extends Container
                 echo $this->body;
             }
         }
+    }
+
+    /**
+     * Sets a response header
+     *
+     * @access  public
+     * @param   $key    The response header
+     * @param   $value  The response header value
+     * @return  void
+     */
+    public function offsetSet($key, $value)
+    {
+        $this->headers[$key] = $value;
+    }
+
+    /**
+     * Gets a response header
+     *
+     * @access  public
+     * @param   $key    The response header
+     * @return  string  The response header value
+     */
+    public function offsetGet($key)
+    {
+        return $this->headers[$key];
+    }
+
+    /**
+     * Check if a response header is set
+     *
+     * @access  public
+     * @param   $key    The response header
+     * @return  bool    Returns true if the header is set
+     */
+    public function offsetExists($key)
+    {
+        return isset($this->headers[$key]);
+    }
+
+    /**
+     * Unset a response header
+     *
+     * @access  public
+     * @param   $key    The response header
+     * @return  void
+     */
+    public function offsetUnset($key)
+    {
+        unset($this->headers[$key]);
     }
 }
