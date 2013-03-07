@@ -10,7 +10,6 @@
 namespace cloudlib\core;
 
 use ArrayAccess;
-use cloudlib\core\Container;
 
 /**
  * The Response class
