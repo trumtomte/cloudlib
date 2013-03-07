@@ -327,11 +327,9 @@ class Cloudlib implements ArrayAccess
             if($route->allowsMethod($method))
             {
                 $response = $route->response($method);
-
                 $response = $response->bindTo($this);
 
                 $params = $route->parameters($request);
-
                 $body = call_user_func_array($response, $params);
 
                 if($body instanceof Response)
@@ -386,7 +384,6 @@ class Cloudlib implements ArrayAccess
     /*******************
      * HELPER METHODS
      *******************/
-
 
     /**
      * Add a flash message to the template
@@ -556,5 +553,4 @@ class Cloudlib implements ArrayAccess
     public function offsetGet($key) {}
     public function offsetExists($key) {}
     public function offsetUnset($key) {}
-
 }
