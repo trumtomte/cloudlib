@@ -25,7 +25,7 @@ class Response extends Container
      * @access  public
      * @var     array
      */
-    public $httpStatusCodes = array(
+    public $httpStatusCodes = [
         // Informational 1xx
         100 => 'Continue',
         101 => 'Switching Protocols',
@@ -72,7 +72,7 @@ class Response extends Container
         504 => 'Gateway Timeout',
         505 => 'HTTP Version Not Supported',
         509 => 'Bandwidth Limit Exceeded'
-    );
+    ];
 
     /**
      * Array of HTTP Headers to be sent
@@ -80,7 +80,7 @@ class Response extends Container
      * @access  public
      * @var     array
      */
-    public $headers = array();
+    public $headers = [];
 
     /**
      * The Response HTTP Status Code
@@ -107,7 +107,7 @@ class Response extends Container
      * @param   array   $headers    Array of HTTP Headers
      * @return  void
      */
-    public function __construct($body = '', $status = 200, array $headers = array())
+    public function __construct($body = '', $status = 200, array $headers = [])
     {
         $this->body = (string) $body;
         $this->status = (int) $status;
