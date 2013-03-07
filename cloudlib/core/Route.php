@@ -9,11 +9,6 @@
 
 namespace cloudlib\core;
 
-use Closure;
-use ReflectionFunction;
-use ReflectionMethod;
-use cloudlib\core\Cloudlib;
-
 /**
  * The Route class
  *
@@ -28,39 +23,24 @@ class Route
      * @access  public
      * @var     string
      */
-    public $route;
+    public $uri;
 
     /**
-     * The route response
+     * The route responses
      *
      * @access  public
      * @var     mixed
      */
-    public $response;
+    public $response = [];
 
     /**
-     * Allowed request method
+     * Allowed request methods
      *
      * @access  public
      * @var     string
      */
-    public $method;
+    public $methods = [];
 
-    /**
-     * Request uri
-     *
-     * @access  public
-     * @var     string
-     */
-    public $request;
-
-    /**
-     * Array of before/after filters to be run
-     *
-     * @access  public
-     * @var     array
-     */
-    public $filters = array();
 
     /**
      * Sets the $route, $method and $response
@@ -71,23 +51,25 @@ class Route
      * @param   mixed   $response   The route response
      * @return  void
      */
-    public function __construct($route, $method, $response)
+    public function __construct($uri, array $methods, callable $response)
     {
-        $this->route = $route;
-        $this->method = $method;
-        $this->response = $response;
+        $this->uri = $uri;
+        $this->methods = $methods;
+
+        foreach($methods as $method)
+        {
+            $this->response[$method] = $response;
+        }
     }
 
-    /**
-     * Sets the request uri
-     *
-     * @access  public
-     * @param   string  $request    The request uri
-     * @return  void
-     */
-    public function setRequest($request)
+    public function append(array $methods, callable $response)
     {
-        $this->request = $request;
+        $this->methods = array_merge($this->methods, $methods);
+
+        foreach($methods as $method)
+        {
+            $this->response[$method] = $response;
+        }
     }
 
     /**
@@ -97,22 +79,22 @@ class Route
      * @param   string  $route  The route uri
      * @return  string          Returns the pattern for regex matching
      */
-    public function pattern($route)
+    public function pattern($uri)
     {
-        $regex = array(
+        $regex = [
             '/:str/' => '([a-zA-Z]+)',
             '/:int/' => '(\d+)',
             '/:alpha/' => '([a-zA-Z0-9]+)',
             '/:(\w+)/' => '(\w+)',
             '/;/' => ''
-        );
+        ];
 
-        array_walk($regex, function($replacement, $pattern) use (&$route)
+        array_walk($regex, function($replacement, $pattern) use (&$uri)
         {
-            $route = preg_replace($pattern, $replacement, $route);
+            $uri = preg_replace($pattern, $replacement, $uri);
         });
 
-        return str_replace('/', '\/', $route);
+        return str_replace('/', '\/', $uri);
     }
 
     /**
@@ -121,14 +103,14 @@ class Route
      * @access  public
      * @return  array   $params The request parameters
      */
-    public function parameters()
+    public function parameters($request)
     {
-        $params = array();
+        $params = [];
 
-        $route = explode('/', $this->route);
-        $request = explode('/', $this->request);
+        $uri = explode('/', $this->uri);
+        $request = explode('/', $request);
 
-        array_walk($route, function($param, $key) use ($request, &$params)
+        array_walk($uri, function($param, $key) use ($request, &$params)
         {
             if(strpos($param, ':') !== false || strpos($param, ';') !== false)
             {
@@ -148,7 +130,7 @@ class Route
      */
     public function match($request)
     {
-        return (bool) preg_match('#^' . $this->pattern($this->route) . '$#', $request);
+        return (bool) preg_match('#^' . $this->pattern($this->uri) . '$#', $request);
     }
 
     /**
@@ -158,82 +140,13 @@ class Route
      * @param   string  $method The request method
      * return   boolean         Returns true if the method is allowed
      */
-    public function hasMethod($method)
+    public function allowsMethod($method)
     {
-        return ($this->method === $method) ? true : false;
+        return in_array($method, $this->methods);
     }
 
-    /**
-     * Add a filter that will be run before a successful request
-     *
-     * @access  public
-     * @param   Closure $callback   The filter function to be executed
-     * @return  object
-     */
-    public function before(Closure $callback)
+    public function response($method)
     {
-        $this->filters['before'] = $callback;
-        return $this;
-    }
-
-    /**
-     * Add a filter that will be run after a successful request
-     *
-     * @access  public
-     * @param   Closure $callback   The filter function to be executed
-     * @return  object
-     */
-    public function after(Closure $callback)
-    {
-        $this->filters['after'] = $callback;
-        return $this;
-    }
-
-    /**
-     * Try calling a filter based on $key
-     *
-     * @access  public
-     * @param   string  $key    The filter key identifier
-     * @return  void
-     */
-    public function callFilter($key)
-    {
-        if(isset($this->filters[$key]))
-        {
-            $this->filters[$key]();
-        }
-    }
-
-    /**
-     * Gets the route response
-     *
-     * @access  public
-     * @param   object  $app    The core framework class to be used and passed along
-     * @return  mixed           Returns the reponse of the method/function
-     */
-    public function getResponse(Cloudlib $app)
-    {
-        if($this->response instanceof Closure)
-        {
-            $reflection = new ReflectionFunction($this->response);
-
-            return $reflection->invokeArgs($this->parameters());
-        }
-
-        if(is_array($this->response))
-        {
-            if(isset($this->response['class']))
-            {
-                $classname = $this->response['class'];
-
-                $class = new $classname($app);
-
-                $method = isset($this->response['method']) ? $this->response['method'] : $app->request->method;
-
-                $reflection = new ReflectionMethod($class, $method);
-
-                return $reflection->invokeArgs($class, $this->parameters());
-            }
-        }
+        return $this->response[$method];
     }
 }
