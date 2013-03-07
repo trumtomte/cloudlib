@@ -167,7 +167,7 @@ class Response extends Container
      */
     public function sendHeaders($protocol)
     {
-        $this->headers = array_merge($this->headers, $this->vars);
+        $this->headers = array_merge($this->headers, $this->arrayVariables);
 
         header(sprintf('%s %s %s', $protocol, $this->status, $this->httpStatusCodes[$this->status]));
 
