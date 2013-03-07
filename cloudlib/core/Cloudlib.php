@@ -9,7 +9,6 @@
 
 namespace cloudlib\core;
 
-use Closure;
 use Exception;
 use ErrorException;
 use cloudlib\core\ClassLoader;
@@ -40,15 +39,6 @@ class Cloudlib extends Container
     public $errors = [];
 
     /**
-     * Array of before/after filters that are run before/after each (found)
-     * request
-     *
-     * @access  public
-     * @var     array
-     */
-    public $filters = [];
-
-    /**
      * Application base path for requests
      *
      * @access  public
@@ -66,22 +56,24 @@ class Cloudlib extends Container
      */
     public function __construct()
     {
-        set_exception_handler(function(Exception $e) use ($this)
+        $that = $this;
+
+        set_exception_handler(function(Exception $e) use ($that)
         {
-            $self->exceptionHandler($e);
+            $that->exceptionHandler($e);
         });
 
-        set_error_handler(function($code, $str, $file, $line) use ($this)
+        set_error_handler(function($code, $str, $file, $line) use ($that)
         {
-            $self->exceptionHandler(new ErrorException($str, $code, 0, $file, $line));
+            $that->exceptionHandler(new ErrorException($str, $code, 0, $file, $line));
         });
 
-        register_shutdown_function(function() use ($this)
+        register_shutdown_function(function() use ($that)
         {
             if(($e = error_get_last()) !== null)
             {
                 extract($e);
-                $self->exceptionHandler(new ErrorException($message, $type, 0, $file, $line));
+                $that->exceptionHandler(new ErrorException($message, $type, 0, $file, $line));
             }
         });
 
@@ -195,57 +187,6 @@ class Cloudlib extends Container
     }
 
     /**
-     * Add a filter that will be run before a successful request
-     *
-     * @access  public
-     * @param   Closure $callback   The filter function to be executed
-     * @return  void
-     */
-    public function before(Closure $callback)
-    {
-        $this->filters['before'] = $callback;
-    }
-
-    /**
-     * Add a filter that will be run after a successful request
-     *
-     * @access  public
-     * @param   Closure $callback   The filter function to be executed
-     * @return  void
-     */
-    public function after(Closure $callback)
-    {
-        $this->filters['after'] = $callback;
-    }
-
-    /**
-     * Add a $callback that will be called at shutdown (ex. closing of a database connection)
-     *
-     * @access  public
-     * @param   Closure $callback   The callback to be executed
-     * @return  void
-     */
-    public function teardown(Closure $callback)
-    {
-        register_shutdown_function($callback);
-    }
-
-    /**
-     * Try calling a filter based on $key
-     *
-     * @access  public
-     * @param   string  $key    The filter key identifier
-     * @return  void
-     */
-    public function callFilter($key)
-    {
-        if(isset($this->filters[$key]))
-        {
-            $this->filters[$key]();
-        }
-    }
-
-    /**
      * Add a before/after filter callback to a route
      *
      * @access  public
@@ -258,6 +199,18 @@ class Cloudlib extends Container
     public function filter($route, $method, $filter, Closure $callback)
     {
         $this->router->routes[sprintf('%s %s', $method, $route)]->filters[$filter] = $callback;
+    }
+
+    /**
+     * Add a $callback that will be called at shutdown (ex. closing of a database connection)
+     *
+     * @access  public
+     * @param   callable    $callback   The callback to be executed
+     * @return  void
+     */
+    public function teardown(callable $callback)
+    {
+        register_shutdown_function($callback);
     }
 
     /**
@@ -321,7 +274,6 @@ class Cloudlib extends Container
         }
     }
 
-    
     /**
      * Shorthand method for setting the Expires header
      *
@@ -333,18 +285,6 @@ class Cloudlib extends Container
     {
         $time = is_int($time) ? $time : strtotime($time);
         $this->header('Expires', date(DATE_RFC1123, $time));
-    }
-
-    /**
-     * Shorthand method for setting the Cache-Control header
-     *
-     * @access  public
-     * @param   string  $directive  The Cache-Control directive
-     * @return  void
-     */
-    public function cacheControl($directive)
-    {
-        $this->header('Cache-Control', $directive);
     }
 
     /**
@@ -361,14 +301,28 @@ class Cloudlib extends Container
     }
 
     /**
+     * Shorthand function for returning JSON
+     *
+     * @access  public
+     * @param   mixed   $input      The input to be converted to JSON
+     * @param   int     $options    Options for json_encode()
+     * @return  string              The encode JSON
+     */
+    public function json($input, $options = JSON_NUMERIC_CHECK)
+    {
+        $this->header('Content-Type', 'application/json');
+        return json_encode($input, $options);
+    }
+
+    /**
      * Define a custom error handler based on a HTTP status code
      *
      * @access  public
-     * @param   int     $code       The HTTP status code
-     * @param   Closure $response   The error handler
+     * @param   int         $code       The HTTP status code
+     * @param   callable    $response   The error handler
      * @return  void
      */
-    public function error($code, Closure $response)
+    public function error($code, callable $response)
     {
         $this->errors[$code] = $response;
     }
@@ -382,7 +336,7 @@ class Cloudlib extends Container
      * @param   array   $parameters Array of HTTP request parameters
      * @return  string              The complete URL (relative or absolute)
      */
-    public function urlFor($location, $absolute = false, $parameters = array())
+    public function urlFor($location, $absolute = false, $parameters = [])
     {
         if($parameters)
         {
@@ -409,7 +363,7 @@ class Cloudlib extends Container
      * @param   array   $parameters Array of HTTP request parameters
      * @return  void
      */
-    public function redirect($location, $status = 302, $parameters = array())
+    public function redirect($location, $status = 302, $parameters = [])
     {
         if($parameters)
         {
@@ -421,7 +375,7 @@ class Cloudlib extends Container
             $location = $this->urlFor($location, true);
         }
 
-        $response = new Response('', $status, array('Location' => $location));
+        $response = new Response('', $status, ['Location' => $location]);
         $response->send($this->request->method, $this->request->protocol());
 
         exit(0);
@@ -436,7 +390,7 @@ class Cloudlib extends Container
      * @param   array   $headers    Array of HTTP headers to be sent
      * @return  void
      */
-    public function abort($code, $message = null, array $headers = array())
+    public function abort($code, $message = null, array $headers = [])
     {
         $response = new Response('', $code, $headers);
 
@@ -452,11 +406,11 @@ class Cloudlib extends Container
             }
             else
             {
-                $parameter = array(
+                $parameter = [
                     'message' => $message,
                     'statusCode' => $code,
                     'statusMessage' => $response->httpStatusCodes[$code]
-                );
+                ];
             }
 
             $body = $this->errors[$code]($parameter);
@@ -489,7 +443,7 @@ class Cloudlib extends Container
         // Escape an array or an array of objects
         if(is_array($input))
         {
-            $array = array('flags' => $flags, 'enc' => $enc, 'dbl_enc' => $dbl_enc);
+            $array = ['flags' => $flags, 'enc' => $enc, 'dbl_enc' => $dbl_enc];
 
             array_walk_recursive($input, function(&$item, $key) use ($array)
             {
@@ -531,20 +485,6 @@ class Cloudlib extends Container
     }
 
     /**
-     * Shorthand function for returning JSON
-     *
-     * @access  public
-     * @param   mixed   $input      The input to be converted to JSON
-     * @param   int     $options    Options for json_encode()
-     * @return  string              The encode JSON
-     */
-    public function json($input, $options = JSON_NUMERIC_CHECK)
-    {
-        $this->header('Content-Type', 'application/json');
-        return json_encode($input, $options);
-    }
-
-    /**
      * Add a flash message to the template
      *
      * @access  public
@@ -556,13 +496,11 @@ class Cloudlib extends Container
     {
         if($category)
         {
-            $this->template->merge(array(
-                'flash' => array($category => $message)
-            ));
+            $this->template->merge(['flash' => [$category => $message]]);
             return $this;
         }
 
-        $this->template->merge(array('flash' => array($message)));
+        $this->template->merge(['flash' => [$message]]);
         return $this;
     }
 
@@ -589,7 +527,7 @@ class Cloudlib extends Container
      * @param   array   $vars       Array of template variables
      * @return  object              Returns the template object
      */
-    public function render($template, $layout = null, array $vars = array())
+    public function render($template, $layout = null, array $vars = [])
     {
         $this->template->setTemplate($template);
         
@@ -599,14 +537,15 @@ class Cloudlib extends Container
         }
 
         $that = $this;
-        
-        $this->template->set('urlFor',
-            function($locaction, $absolute = false, $params = array()) use ($that)
-            {
-                return $that->urlFor($location, $absolute, $params);
-            }
-        );
 
+        $urlFor = function($location, $absolute = false, $params = []) use ($that)
+        {
+            return $that->urlFor($location, $absolute, $params);
+        };
+
+        $urlFor->bindTo($that);
+        
+        $this->template->set('urlFor', $urlFor);
         $this->template->merge($vars);
 
         return $this->template;
@@ -634,8 +573,6 @@ class Cloudlib extends Container
         {
             if($this->router->routeHasMethod($this->request->method))
             {
-                $this->callFilter('before');
-
                 $route = $this->router->route;
 
                 $routeResponse = $route->getResponse($this);
@@ -652,8 +589,6 @@ class Cloudlib extends Container
                 $route->callFilter('before');
                 $this->response->send($this->request->method, $this->request->protocol());
                 $route->callFilter('after');
-
-                $this->callFilter('after');
 
                 exit(0);
             }
