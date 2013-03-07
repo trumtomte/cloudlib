@@ -9,6 +9,8 @@
 
 namespace cloudlib\core;
 
+use Closure;
+use ArrayAccess;
 use Exception;
 use ErrorException;
 use cloudlib\core\ClassLoader;
@@ -18,9 +20,8 @@ use cloudlib\core\Response;
 use cloudlib\core\Router;
 use cloudlib\core\Template;
 
-// TODO: require once?
-require 'ClassLoader.php';
-require 'Container.php';
+require_once 'ClassLoader.php';
+require_once 'Container.php';
 
 /**
  * The core framework class, which takes use of the other available classes
@@ -28,8 +29,10 @@ require 'Container.php';
  * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class Cloudlib extends Container
+class Cloudlib implements ArrayAccess
 {
+    use PropertyContainer;
+
     /**
      * Array of custom defined error handlers
      *
@@ -47,9 +50,8 @@ class Cloudlib extends Container
     public $base = '/';
 
     /**
-     * Defines the error handlers
-     * Initializes the ClassLoader, Request, Response, Template objects
-     * Defines the $base uri path
+     * Initialize ErrorHandlers, and add instances of the Core classes.
+     * Set the base uri.
      *
      * @access  public
      * @return  void
@@ -121,87 +123,6 @@ class Cloudlib extends Container
     }
 
     /**
-     * Adds multiple routes (or a single one)
-     *
-     * @access  public
-     * @param   string  $route      The route uri
-     * @param   array   $methods    Array of request methods
-     * @param   mixed   $response   The route response
-     * @return  void
-     */
-    public function route($route, array $methods, $response)
-    {
-        $this->router->route($route, $methods, $response);
-    }
-
-    /**
-     * Shorthand function for adding a route which allows the GET method
-     *
-     * @access  public
-     * @param   string  $route      The route uri
-     * @param   mixed   $response   The route response
-     * @return  object              The newly added route
-     */
-    public function get($route, $response)
-    {
-        return $this->router->get($route, $response);
-    }
-
-    /**
-     * Shorthand function for adding a route which allows the POST method
-     *
-     * @access  public
-     * @param   string  $route      The route uri
-     * @param   mixed   $response   The route response
-     * @return  object              The newly added route
-     */
-    public function post($route, $response)
-    {
-        return $this->router->post($route, $response);
-    }
-
-    /**
-     * Shorthand function for adding a route which allows the PUT method
-     *
-     * @access  public
-     * @param   string  $route      The route uri
-     * @param   mixed   $response   The route response
-     * @return  object              The newly added route
-     */
-    public function put($route, $response)
-    {
-        return $this->router->put($route, $response);
-    }
-
-    /**
-     * Shorthand function for adding a route which allows the DELETE method
-     *
-     * @access  public
-     * @param   string  $route      The route uri
-     * @param   mixed   $response   The route response
-     * @return  object              The newly added route
-     */
-    public function delete($route, $response)
-    {
-        return $this->router->delete($route, $response);
-    }
-
-    /**
-     * Add a before/after filter callback to a route
-     *
-     * @access  public
-     * @param   string  $route      The route uri
-     * @param   string  $method     Allowed method for the route
-     * @param   string  $filter     The filter key identifier (before/after)
-     * @param   Closure $callback   The filter callback
-     * @return void
-     */
-    public function filter($route, $method, $filter, Closure $callback)
-    {
-        $this->router->routes[sprintf('%s %s', $method, $route)]->filters[$filter] = $callback;
-    }
-
-    /**
      * Add a $callback that will be called at shutdown (ex. closing of a database connection)
      *
      * @access  public
@@ -213,92 +134,6 @@ class Cloudlib extends Container
         register_shutdown_function($callback);
     }
 
-    /**
-     * Set a HTTP Header (ex array('Location' => 'www.google.com')
-     * Would be: 'Location: www.google.com')
-     *
-     * @access  public
-     * @param   string  $key    Header attribute
-     * @param   string  $value  Header attribute value
-     * @return  Response        Returns itself, for method chaining
-     */
-    public function header($key, $value)
-    {
-        return $this->response->header($key, $value);
-    }
-
-    /**
-     * Set the response status code
-     *
-     * @access  public
-     * @param   int     $status The status code
-     * @return  Response        Returns itself, for method chaining
-     */
-    public function status($code)
-    {
-        return $this->response->status($code);
-    }
-
-    /**
-     * Shorthand method for setting the Last-Modified header
-     *
-     * @access  public
-     * @param   string|int  $time   The time since it was last modified
-     * @return  void
-     */
-    public function lastModified($time)
-    {
-        $this->header('Last-Modified', date(DATE_RFC1123, $time) . ' GMT');
-
-        if($this->request->server('HTTP_IF_MODIFIED_SINCE'))
-        {
-            if(strtotime($this->request->server('HTTP_IF_MODIFIED_SINCE')) === $time)
-            {
-                $this->abort(304);
-            }
-        }
-    }
-
-    /**
-     * Shorthand metod for setting the ETag header
-     *
-     * @access  public
-     * @param   string  $identifier ETag identifier
-     * @return  void
-     */
-    public function etag($identifier)
-    {
-        if($this->request->server('HTTP_IF_NONE_MATCH'))
-        {
-            $this->header('ETag', sprintf('"%s"', $identifier));
-        }
-    }
-
-    /**
-     * Shorthand method for setting the Expires header
-     *
-     * @access  public
-     * @param   string|int  $time   The time until the response expires
-     * @return  void
-     */
-    public function expires($time)
-    {
-        $time = is_int($time) ? $time : strtotime($time);
-        $this->header('Expires', date(DATE_RFC1123, $time));
-    }
-
-    /**
-     * Shorthand method for forcing no-cache
-     *
-     * @access  public
-     * @return  void
-     */
-    public function noCache()
-    {
-        $this->header('Cache-Control', 'no-store, no-cache, max-age=0, must-revalidate');
-        $this->header('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
-        $this->header('Pragma', 'no-cache');
-    }
 
     /**
      * Shorthand function for returning JSON
@@ -312,19 +147,6 @@ class Cloudlib extends Container
     {
         $this->header('Content-Type', 'application/json');
         return json_encode($input, $options);
-    }
-
-    /**
-     * Define a custom error handler based on a HTTP status code
-     *
-     * @access  public
-     * @param   int         $code       The HTTP status code
-     * @param   callable    $response   The error handler
-     * @return  void
-     */
-    public function error($code, callable $response)
-    {
-        $this->errors[$code] = $response;
     }
 
     /**
@@ -439,7 +261,6 @@ class Cloudlib extends Container
         {
             return htmlentities($input, $flags, $enc, $dbl_enc);
         }
-
         // Escape an array or an array of objects
         if(is_array($input))
         {
@@ -468,7 +289,6 @@ class Cloudlib extends Container
 
             return $input;
         }
-
         // Escape an object
         if(is_object($input))
         {
@@ -483,6 +303,92 @@ class Cloudlib extends Container
             return $input;
         }
     }
+
+    /**
+     * Find a matching route for the current request, if none is found/allowed
+     * we exit with the corresponding HTTP status code.
+     *
+     * @access  public
+     * @return  void
+     */
+    public function run()
+    {
+        if( ! $this->request->methodAllowed())
+        {
+            $this->abort(405);
+        }
+
+        $request = preg_replace('/\/{2,}/', '/', '/' . preg_replace('#' . $this->base . '#', '', $this->request->uri, 1));
+
+        $route = $this->router->find($request);
+
+        if($route)
+        {
+            $method = $this->request->method;
+
+            if($route->allowsMethod($method))
+            {
+                $response = $route->response($method);
+
+                $response = $response->bindTo($this);
+
+                $params = $route->parameters($request);
+
+                $body = call_user_func_array($response, $params);
+
+                if($body instanceof Response)
+                {
+                    $this->response = $body;
+                }
+                else
+                {
+                    $this->response->body($body);
+                }
+
+                $this->response->send($method, $this->request->protocol());
+
+                exit(0);
+            }
+
+            $this->abort(405);
+        }
+
+        $this->abort(404);
+    }
+
+    /**
+     * Framework exception handler
+     *
+     * If an error function for the status code 500 has been defined it will
+     * be called with the exception as a parameter instead of outputting
+     * information about the exception directly to the browser.
+     *
+     * @access  public
+     * @param   Exception   $e  The exception
+     * @return  void
+     */
+    public function exceptionHandler(Exception $e)
+    {
+        if(ob_get_contents())
+        {
+            ob_end_clean();
+        }
+
+        if(isset($this->errors[500]))
+        {
+            $this->abort(500, $e);
+        }
+
+        echo sprintf('<pre>Message: %s<br>File: %s<br>Line: %s<br>Trace: %s</pre>',
+            $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());
+
+        exit(1);
+    }
+
+    /*******************
+     * HELPER METHODS
+     *******************/
+
 
     /**
      * Add a flash message to the template
@@ -552,83 +458,105 @@ class Cloudlib extends Container
     }
 
     /**
-     * Find a matching route for the current request, if none is found/allowed
-     * we exit with the corresponding HTTP status code.
-     *
-     * Before/After filters are also run before/after the request
+     * Set a response header
      *
      * @access  public
+     * @param   string  $key    Header attribute
+     * @param   string  $value  Header attribute value
+     * @return  Response        Returns itself, for method chaining
+     */
+    public function header($key, $value)
+    {
+        return $this->response->header($key, $value);
+    }
+
+    /**
+     * Set the response status code
+     *
+     * @access  public
+     * @param   int     $status The status code
+     * @return  Response        Returns itself, for method chaining
+     */
+    public function status($code)
+    {
+        return $this->response->status($code);
+    }
+
+    /**
+     * Shorthand method for setting the Last-Modified header
+     *
+     * @access  public
+     * @param   string|int  $time   The time since it was last modified
      * @return  void
      */
-    public function run()
+    public function lastModified($time)
     {
-        // TODO: add OPTIONS/PATCH
-        // Check if the request method is allowed (GET, POST, PUT, DELETE, HEAD)
-        if( ! $this->request->methodAllowed())
-        {
-            $this->abort(405);
-        }
+        $this->header('Last-Modified', date(DATE_RFC1123, $time) . ' GMT');
 
-        if($this->router->routeExists($this->base, $this->request->uri))
+        if($this->request->server('HTTP_IF_MODIFIED_SINCE'))
         {
-            if($this->router->routeHasMethod($this->request->method))
+            if(strtotime($this->request->server('HTTP_IF_MODIFIED_SINCE')) === $time)
             {
-                $route = $this->router->route;
-
-                $routeResponse = $route->getResponse($this);
-
-                if($routeResponse instanceof Reponse)
-                {
-                    $this->response = $routeResponse;
-                }
-                else
-                {
-                    $this->response->body($routeResponse);
-                }
-
-                $route->callFilter('before');
-                $this->response->send($this->request->method, $this->request->protocol());
-                $route->callFilter('after');
-
-                exit(0);
+                $this->abort(304);
             }
-            else
-            {
-                $this->abort(405);
-            }
-        }
-        else
-        {
-            $this->abort(404);
         }
     }
 
     /**
-     * Framework exception handler
-     *
-     * If an error function for the status code 500 has been defined it will
-     * be called with the exception as a parameter instead of outputting
-     * information about the exception directly to the browser.
+     * Shorthand metod for setting the ETag header
      *
      * @access  public
-     * @param   Exception   $e  The exception
+     * @param   string  $identifier ETag identifier
      * @return  void
      */
-    public function exceptionHandler(Exception $e)
+    public function etag($identifier)
     {
-        if(ob_get_contents())
+        if($this->request->server('HTTP_IF_NONE_MATCH'))
         {
-            ob_end_clean();
+            $this->header('ETag', sprintf('"%s"', $identifier));
         }
-
-        if(isset($this->errors[500]))
-        {
-            $this->abort(500, $e);
-        }
-
-        echo sprintf('<pre>Message: %s<br>File: %s<br>Line: %s<br>Trace: %s</pre>',
-            $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());
-
-        exit(1);
     }
+
+    /**
+     * Shorthand method for setting the Expires header
+     *
+     * @access  public
+     * @param   string|int  $time   The time until the response expires
+     * @return  void
+     */
+    public function expires($time)
+    {
+        $time = is_int($time) ? $time : strtotime($time);
+        $this->header('Expires', date(DATE_RFC1123, $time));
+    }
+
+    /**
+     * Shorthand method for forcing no-cache
+     *
+     * @access  public
+     * @return  void
+     */
+    public function noCache()
+    {
+        $this->header('Cache-Control', 'no-store, no-cache, max-age=0, must-revalidate');
+        $this->header('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
+        $this->header('Pragma', 'no-cache');
+    }
+
+    public function offsetSet($key, $response)
+    {
+        if(is_int($key) && array_key_exists($key, $this->response->httpStatusCodes))
+        {
+            $this->errors[$key] = $response;
+        }
+        else
+        {
+            $this->router->add(trim($key), $response);
+        }
+    }
+
+    public function offsetGet($key) {}
+    public function offsetExists($key) {}
+    public function offsetUnset($key) {}
+
 }
