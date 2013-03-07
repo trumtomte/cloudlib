@@ -166,14 +166,14 @@ class Response implements ArrayAccess
     {
         header(sprintf('%s %s %s', $protocol, $this->status, $this->httpStatusCodes[$this->status]));
 
-        if( ! isset($this->headers['Content-Type']))
+        if( ! isset($this['Content-Type']))
         {
-            $this->header('Content-Type', 'text/html; charset=utf8');
+            $this['Content-Type'] = 'text/html; charset=utf8';
         }
 
-        if( ! isset($this->headers['Content-Length']))
+        if( ! isset($this['Content-Length']))
         {
-            $this->header('Content-Length', strlen( (string) $this->body));
+            $this['Content-Length'] = strlen( (string) $this->body);
         }
 
         foreach($this->headers as $key => $value)
