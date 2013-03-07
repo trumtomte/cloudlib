@@ -19,6 +19,7 @@ use cloudlib\core\Response;
 use cloudlib\core\Router;
 use cloudlib\core\Template;
 
+// TODO: require once?
 require 'ClassLoader.php';
 require 'Container.php';
 
@@ -36,7 +37,7 @@ class Cloudlib extends Container
      * @access  public
      * @var     array
      */
-    public $errors = array();
+    public $errors = [];
 
     /**
      * Array of before/after filters that are run before/after each (found)
@@ -45,16 +46,7 @@ class Cloudlib extends Container
      * @access  public
      * @var     array
      */
-    public $filters = array();
-
-    /**
-     * Array of request variables (based on the request method, ex POST would
-     * put $_POST in this array)
-     *
-     * @access  public
-     * @var     array
-     */
-    public $args = array();
+    public $filters = [];
 
     /**
      * Application base path for requests
@@ -74,19 +66,17 @@ class Cloudlib extends Container
      */
     public function __construct()
     {
-        $self = $this;
-
-        set_exception_handler(function(Exception $e) use ($self)
+        set_exception_handler(function(Exception $e) use ($this)
         {
             $self->exceptionHandler($e);
         });
 
-        set_error_handler(function($code, $str, $file, $line) use ($self)
+        set_error_handler(function($code, $str, $file, $line) use ($this)
         {
             $self->exceptionHandler(new ErrorException($str, $code, 0, $file, $line));
         });
 
-        register_shutdown_function(function() use ($self)
+        register_shutdown_function(function() use ($this)
         {
             if(($e = error_get_last()) !== null)
             {
@@ -100,9 +90,9 @@ class Cloudlib extends Container
             return new ClassLoader();
         });
 
-        $this->loader->registerNamespaces(array(
+        $this->loader->registerNamespaces([
             'cloudlib\\core' => dirname(dirname(__DIR__))
-        ));
+        ]);
 
         $this->loader->register();
 
@@ -121,8 +111,6 @@ class Cloudlib extends Container
             // Set the base to the script path excluding the script name
             $this->base = substr($scriptPath, 0, (strlen($scriptPath) - (strlen($scriptName) + 1)));
         }
-
-        $this->args = $this->request->arguments;
 
         $this->router = $this->instance(function()
         {
@@ -434,7 +422,6 @@ class Cloudlib extends Container
         }
 
         $response = new Response('', $status, array('Location' => $location));
-
         $response->send($this->request->method, $this->request->protocol());
 
         exit(0);
@@ -572,11 +559,11 @@ class Cloudlib extends Container
             $this->template->merge(array(
                 'flash' => array($category => $message)
             ));
+            return $this;
         }
-        else
-        {
-            $this->template->merge(array('flash' => array($message)));
-        }
+
+        $this->template->merge(array('flash' => array($message)));
+        return $this;
     }
 
     /**
@@ -590,6 +577,7 @@ class Cloudlib extends Container
     public function set($key, $value)
     {
         $this->template->set($key, $value);
+        return $this;
     }
 
     /**
@@ -635,6 +623,7 @@ class Cloudlib extends Container
      */
     public function run()
     {
+        // TODO: add OPTIONS/PATCH
         // Check if the request method is allowed (GET, POST, PUT, DELETE, HEAD)
         if( ! $this->request->methodAllowed())
         {
