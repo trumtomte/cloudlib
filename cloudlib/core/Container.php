@@ -14,39 +14,22 @@ use ReflectionFunction;
 use InvalidArgumentException;
 
 /**
- * The Dependency Injection Container
+ * Make setting object properties available to a class.
  *
- * The container variables can be set as array items ($class['item']) or as
- * object properties ($class->property)
+ * Also makes it able to define properties as singletons.
  *
  * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class Container implements ArrayAccess
-{
-    /**
-     * Array of all stored array variables
-     *
-     * @access  public
-     * @var     array
-     */
-    public $arrayVariables = [];
+trait PropertyContainer {
 
     /**
-     * Array of all stored object properties
+     * Array of properties
      *
-     * @access  public
+     * @access  protected
      * @var     array
      */
-    public $objectProperties = [];
-
-    /**
-     * Constructor
-     *
-     * @access  public
-     * @return  void
-     */
-    public function __construct() {}
+    protected $_objectProperties = [];
 
     /**
      * Define a class property
@@ -58,7 +41,7 @@ class Container implements ArrayAccess
      */
     public function __set($key, $value)
     {
-        $this->objectProperties[$key] = $value;
+        $this->_objectProperties[$key] = $value;
     }
 
     /**
@@ -74,17 +57,17 @@ class Container implements ArrayAccess
      */
     public function __get($key)
     {
-        if( ! array_key_exists($key, $this->objectProperties))
+        if( ! array_key_exists($key, $this->_objectProperties))
         {
             throw new InvalidArgumentException(sprintf('Key [%s] does not exist', $key));
         }
 
-        if(is_callable($this->objectProperties[$key]))
+        if(is_callable($this->_objectProperties[$key]))
         {
-            return $this->objectProperties[$key]($this);
+            return $this->_objectProperties[$key]($this);
         }
 
-        return $this->objectProperties[$key];
+        return $this->_objectProperties[$key];
     }
 
     /**
@@ -96,7 +79,7 @@ class Container implements ArrayAccess
      */
     public function __isset($key)
     {
-        return isset($this->objectProperties[$key]);
+        return isset($this->_objectProperties[$key]);
     }
 
     /**
@@ -108,7 +91,7 @@ class Container implements ArrayAccess
      */
     public function __unset($key)
     {
-        unset($this->objectProperties[$key]);
+        unset($this->_objectProperties[$key]);
     }
 
     /**
@@ -124,83 +107,19 @@ class Container implements ArrayAccess
      */
     public function __call($key, $args)
     {
-        if( ! array_key_exists($key, $this->objectProperties))
+        if( ! array_key_exists($key, $this->_objectProperties))
         {
             throw new InvalidArgumentException(sprintf('Key [%s] does not exist', $key));
         }
 
-        if( ! is_callable($this->objectProperties[$key]))
+        if( ! is_callable($this->_objectProperties[$key]))
         {
             throw new InvalidArgumentException(sprintf('Key [%s] is not callable', $key));
         }
 
         array_unshift($args, $this);
 
-        $reflection = new ReflectionFunction($this->objectProperties[$key]);
-
-        return $reflection->invokeArgs($args);
-    }
-
-    /**
-     * Define an array property
-     *
-     * @access  public
-     * @param   string  $key    The variable identifier (name)
-     * @param   mixed   $value  The variable value
-     * @return  void
-     */
-    public function offsetSet($key, $value)
-    {
-        $this->arrayVariables[$key] = $value;
-    }
-
-    /**
-     * Get an array property
-     *
-     * If the property is an anonymous function the first parameter will be the Container object
-     *
-     * @access  public
-     * @param   string  $key    The variable identifier (name)
-     * @throws  InvalidArgumentException    If the key does not exist
-     * @return  mixed           Return the variable value or, if its an anonymous function, call it
-     */
-    public function offsetGet($key)
-    {
-        if( ! array_key_exists($key, $this->arrayVariables))
-        {
-            throw new InvalidArgumentException(sprintf('Key [%s] does not exist', $key));
-        }
-
-        if(is_callable($this->arrayVariables[$key]))
-        {
-            return $this->arrayVariables[$key]($this);
-        }
-
-        return $this->arrayVariables[$key];
-    }
-
-    /**
-     * Check if an array property has been set
-     *
-     * @access  public
-     * @param   string  $key    The variable identifier (name)
-     * @return  boolean         True if it is set, else false
-     */
-    public function offsetExists($key)
-    {
-        return isset($this->arrayVariables[$key]);
-    }
-
-    /**
-     * Unset an array property
-     *
-     * @access  public
-     * @param   string  $key    The variable identifier (name)
-     * @return  void
-     */
-    public function offsetUnset($key)
-    {
-        unset($this->arrayVariables[$key]);
+        return call_user_func_array($this->_objectProperties[$key], $args);
     }
 
     /**
