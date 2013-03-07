@@ -9,19 +9,17 @@
 
 namespace cloudlib\core;
 
-use Closure;
 use ArrayAccess;
 use Exception;
 use ErrorException;
 use cloudlib\core\ClassLoader;
-use cloudlib\core\Container;
 use cloudlib\core\Request;
 use cloudlib\core\Response;
 use cloudlib\core\Router;
 use cloudlib\core\Template;
 
 require_once 'ClassLoader.php';
-require_once 'Container.php';
+require_once 'PropertyContainer.php';
 
 /**
  * The core framework class, which takes use of the other available classes
