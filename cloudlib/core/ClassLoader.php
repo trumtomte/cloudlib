@@ -25,7 +25,7 @@ class ClassLoader
      * @access  public
      * @var     array
      */
-    public $namespaces = array();
+    public $namespaces = [];
 
     /**
      * Array of class aliases
@@ -33,7 +33,7 @@ class ClassLoader
      * @access  public
      * @var     array
      */
-    public $aliases = array();
+    public $aliases = [];
 
     /**
      * Define the namespaces and aliases array at creation.
@@ -43,7 +43,7 @@ class ClassLoader
      * @param   array   $aliases    Array of Alias:Class(namespaced) pairs
      * @return  void
      */
-    public function __construct(array $namespaces = array(), array $aliases = array())
+    public function __construct(array $namespaces = [], array $aliases = [])
     {
         $this->namespaces = $namespaces;
         $this->aliases = $aliases;
@@ -88,7 +88,7 @@ class ClassLoader
      */
     public function register($prepend = false)
     {
-        spl_autoload_register(array($this, 'loadClass'), true, $prepend);
+        spl_autoload_register([$this, 'loadClass'], true, $prepend);
     }
 
     /**
@@ -99,7 +99,7 @@ class ClassLoader
      */
     public function unregister()
     {
-        spl_autoload_unregister(array($this, 'loadClass'));
+        spl_autoload_unregister([$this, 'loadClass']);
     }
 
     /**
