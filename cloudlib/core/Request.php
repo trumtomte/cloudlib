@@ -92,8 +92,8 @@ class Request
      * @param   array   $cookies    The $_COOKIE array
      * @return  void
      */
-    public function __construct(array $server = array(), array $get = array(),
-        array $post = array(), array $files = array(), array $cookies = array())
+    public function __construct(array $server = [], array $get = [],
+        array $post = [], array $files = [], array $cookies = [])
     {
         $this->server = $server;
         $this->get = $get;
@@ -123,7 +123,7 @@ class Request
     }
 
     /**
-     * Get a GET/POST/PUT/DELETE variable based on $key
+     * Get a request variable based on $key
      *
      * @access  public
      * @param   string              $key    The array key identifier
@@ -208,7 +208,7 @@ class Request
      */
     public function methodAllowed()
     {
-        return in_array($this->method(), array('GET', 'POST', 'PUT', 'DELETE', 'HEAD')) ? true : false;
+        return in_array($this->method(), ['GET', 'POST', 'PUT', 'DELETE', 'HEAD']) ? true : false;
     }
 
     /**
@@ -253,24 +253,6 @@ class Request
     public function isJson()
     {
         return ($this->server('CONTENT_TYPE') == 'application/json') ? true : false;
-    }
-
-    /**
-     * Return a filtered uri
-     *
-     * @access  public
-     * @return  string  Return an filtered uri string if an request uri as been set, else '/'
-     */
-    public function filterUri()
-    {
-        $uri = $this->server('REQUEST_URI');
-
-        if($uri)
-        {
-            return parse_url(preg_replace('/\/{2,}/', '/', filter_var($uri, FILTER_SANITIZE_URL)), PHP_URL_PATH);
-        }
-
-        return '/';
     }
 
     /**
@@ -336,12 +318,25 @@ class Request
      */
     public function ip()
     {
-        if($this->server('X_FORWARDED_FOR'))
+        return $this->server('X_FORWARDED_FOR') ? $this->server('X_FORWARDED_FOR') : $this->server('REMOTE_ADDR');
+    }
+
+    /**
+     * Return a filtered uri
+     *
+     * @access  public
+     * @return  string  Return an filtered uri string if an request uri as been set, else '/'
+     */
+    public function filterUri()
+    {
+        $uri = $this->server('REQUEST_URI');
+
+        if($uri)
         {
-            return $this->server('X_FORWARDED_FOR');
+            return parse_url(preg_replace('/\/{2,}/', '/', filter_var($uri, FILTER_SANITIZE_URL)), PHP_URL_PATH);
         }
 
-        return $this->server('REMOTE_ADDR');
+        return '/';
     }
 
     /**
@@ -352,7 +347,7 @@ class Request
      */
     public function getArguments()
     {
-        if(in_array($this->method, array('POST', 'PUT', 'DELETE')) && $this->isJson())
+        if(in_array($this->method, ['POST', 'PUT', 'DELETE']) && $this->isJson())
         {
             return file_get_contents('php://input');
         }
@@ -370,7 +365,7 @@ class Request
                 parse_str(file_get_contents('php://input'), $args);
                 break;
             default:
-                $args = array();
+                $args = [];
                 break;
         }
 
