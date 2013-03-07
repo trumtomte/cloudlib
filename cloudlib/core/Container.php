@@ -9,7 +9,6 @@
 
 namespace cloudlib\core;
 
-use Closure;
 use ArrayAccess;
 use ReflectionFunction;
 use InvalidArgumentException;
@@ -26,15 +25,20 @@ use InvalidArgumentException;
 class Container implements ArrayAccess
 {
     /**
-     * Array of all stored variables
+     * Array of all stored array variables
      *
-     * @access  protected
+     * @access  public
      * @var     array
      */
-    protected $vars = [];
+    public $arrayVariables = [];
 
-    protected $arrayVariables = [];
-    protected $objectProperties = [];
+    /**
+     * Array of all stored object properties
+     *
+     * @access  public
+     * @var     array
+     */
+    public $objectProperties = [];
 
     /**
      * Constructor
@@ -75,7 +79,12 @@ class Container implements ArrayAccess
             throw new InvalidArgumentException(sprintf('Key [%s] does not exist', $key));
         }
 
-        return ($this->objectProperties[$key] instanceof Closure) ? $this->objectProperties[$key]($this) : $this->objectProperties[$key];
+        if(is_callable($this->objectProperties[$key]))
+        {
+            return $this->objectProperties[$key]($this);
+        }
+
+        return $this->objectProperties[$key];
     }
 
     /**
@@ -120,9 +129,9 @@ class Container implements ArrayAccess
             throw new InvalidArgumentException(sprintf('Key [%s] does not exist', $key));
         }
 
-        if( ! ($this->objectProperties[$key] instanceof Closure))
+        if( ! is_callable($this->objectProperties[$key]))
         {
-            throw new InvalidArgumentException(sprintf('Key [%s] is not a function', $key));
+            throw new InvalidArgumentException(sprintf('Key [%s] is not callable', $key));
         }
 
         array_unshift($args, $this);
@@ -162,7 +171,12 @@ class Container implements ArrayAccess
             throw new InvalidArgumentException(sprintf('Key [%s] does not exist', $key));
         }
 
-        return ($this->arrayVariables[$key] instanceof Closure) ? $this->arrayVariables[$key]($this) : $this->arrayVariables[$key];
+        if(is_callable($this->arrayVariables[$key]))
+        {
+            return $this->arrayVariables[$key]($this);
+        }
+
+        return $this->arrayVariables[$key];
     }
 
     /**
@@ -196,7 +210,7 @@ class Container implements ArrayAccess
      * @param   object  $callable   The object of which an instance will be created
      * @return  Closure             Returns a Closure that returns a single instance of the class
      */
-    public function instance(Closure $callable)
+    public function instance(callable $callable)
     {
         return function($self) use ($callable)
         {
