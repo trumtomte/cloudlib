@@ -2,8 +2,8 @@
 /**
  * Cloudlib
  *
- * @author      Sebastian Book <cloudlibframework@gmail.com>
- * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
+ * @author      Sebastian Bengtegård <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2013 Sebastian Bengtegård <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -12,6 +12,7 @@ namespace cloudlib\core;
 use ArrayAccess;
 use Exception;
 use ErrorException;
+
 use cloudlib\core\ClassLoader;
 use cloudlib\core\Request;
 use cloudlib\core\Response;
@@ -24,11 +25,14 @@ require_once 'PropertyContainer.php';
 /**
  * The core framework class, which takes use of the other available classes
  *
- * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2013 Sebastian Bengtegård <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class Cloudlib implements ArrayAccess
 {
+    /**
+     * @see PropertyContainer.php
+     */
     use PropertyContainer;
 
     /**
@@ -130,21 +134,6 @@ class Cloudlib implements ArrayAccess
     public function teardown(callable $callback)
     {
         register_shutdown_function($callback);
-    }
-
-
-    /**
-     * Shorthand function for returning JSON
-     *
-     * @access  public
-     * @param   mixed   $input      The input to be converted to JSON
-     * @param   int     $options    Options for json_encode()
-     * @return  string              The encode JSON
-     */
-    public function json($input, $options = JSON_NUMERIC_CHECK)
-    {
-        $this->header('Content-Type', 'application/json');
-        return json_encode($input, $options);
     }
 
     /**
@@ -381,9 +370,61 @@ class Cloudlib implements ArrayAccess
         exit(1);
     }
 
-    /*******************
-     * HELPER METHODS
-     *******************/
+    /**
+     * ArrayAccess method used to set error/route handlers
+     *
+     * @access  public
+     * @param   str|int     $key    The route/error handler identifier
+     * @param   callable    $response   The route/error handler
+     * @return  void
+     */
+    public function offsetSet($key, $response)
+    {
+        if(is_int($key) && array_key_exists($key, $this->response->httpStatusCodes))
+        {
+            $this->errors[$key] = $response;
+        }
+        else
+        {
+            $this->router->add(trim($key), $response);
+        }
+    }
+
+    /**
+     * Get a route/error handler
+     *
+     * @access  public
+     * @param   str|int $key    The route/error handler identifier
+     * @return  callable        Returns the handler
+     */
+    public function offsetGet($key)
+    {
+        //...
+    }
+
+    /**
+     * Check if a route/error handler is set
+     *
+     * @access  public
+     * @param   str|int $key    The route/error handler identifier
+     * @return  boolean
+     */
+    public function offsetExists($key)
+    {
+        //...
+    }
+
+    /**
+     * Unset a route/error handler
+     * @param   str|int $key    The route/error handler identifier
+     * @return  void
+     */
+    public function offsetUnset($key)
+    {
+        //...
+    }
+
+    /************************************************************/
 
     /**
      * Add a flash message to the template
@@ -478,6 +519,20 @@ class Cloudlib implements ArrayAccess
     }
 
     /**
+     * Shorthand function for returning JSON
+     *
+     * @access  public
+     * @param   mixed   $input      The input to be converted to JSON
+     * @param   int     $options    Options for json_encode()
+     * @return  string              The encode JSON
+     */
+    public function json($input, $options = JSON_NUMERIC_CHECK)
+    {
+        $this->header('Content-Type', 'application/json');
+        return json_encode($input, $options);
+    }
+
+    /**
      * Shorthand method for setting the Last-Modified header
      *
      * @access  public
@@ -537,20 +592,4 @@ class Cloudlib implements ArrayAccess
         $this->header('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
         $this->header('Pragma', 'no-cache');
     }
-
-    public function offsetSet($key, $response)
-    {
-        if(is_int($key) && array_key_exists($key, $this->response->httpStatusCodes))
-        {
-            $this->errors[$key] = $response;
-        }
-        else
-        {
-            $this->router->add(trim($key), $response);
-        }
-    }
-
-    public function offsetGet($key) {}
-    public function offsetExists($key) {}
-    public function offsetUnset($key) {}
 }
