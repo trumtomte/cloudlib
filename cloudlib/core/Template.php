@@ -2,8 +2,8 @@
 /**
  * Cloudlib
  *
- * @author      Sebastian Book <cloudlibframework@gmail.com>
- * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
+ * @author      Sebastian Bengtegård <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2013 Sebastian Bengtegård <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -14,7 +14,7 @@ use RuntimeException;
 /**
  * The Template class
  *
- * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2013 Sebastian Bengtegård <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class Template
@@ -52,7 +52,7 @@ class Template
      * @param   array   $vars       Array of template variables
      * @return  void
      */
-    public function __construct($template = null, $layout = null, array $vars = array())
+    public function __construct($template = null, $layout = null, array $vars = [])
     {
         if($template)
         {

@@ -2,8 +2,8 @@
 /**
  * Cloudlib
  *
- * @author      Sebastian Book <cloudlibframework@gmail.com>
- * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
+ * @author      Sebastian Bengtegård <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2013 Sebastian Bengtegård <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -12,7 +12,7 @@ namespace cloudlib\core;
 /**
  * The Route class
  *
- * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2013 Sebastian Bengtegård <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class Route
@@ -26,18 +26,18 @@ class Route
     public $uri;
 
     /**
-     * The route responses
+     * The route responses (Method => Response)
      *
      * @access  public
-     * @var     mixed
+     * @var     array
      */
     public $response = [];
 
     /**
-     * Allowed request methods
+     * Array of allowed request methods
      *
      * @access  public
-     * @var     string
+     * @var     array
      */
     public $methods = [];
 
@@ -46,7 +46,7 @@ class Route
      * Sets the $route, $method and $response
      *
      * @access  public
-     * @param   string  $route      The route uri
+     * @param   string  $uri        The route uri
      * @param   string  $method     Allowed request method
      * @param   mixed   $response   The route response
      * @return  void
@@ -62,6 +62,14 @@ class Route
         }
     }
 
+    /**
+     * Append more route responses based on $methods to the Route
+     *
+     * @access  public
+     * @param   array       $methods    The http methods
+     * @param   callable    $response   The route response
+     * @return  void
+     */
     public function append(array $methods, callable $response)
     {
         $this->methods = array_merge($this->methods, $methods);
@@ -76,7 +84,7 @@ class Route
      * Create a pattern for regex matching of this route uri
      *
      * @access  public
-     * @param   string  $route  The route uri
+     * @param   string  $uri    The route uri
      * @return  string          Returns the pattern for regex matching
      */
     public function pattern($uri)
@@ -101,7 +109,8 @@ class Route
      * Extract the request parameters from the route uri
      *
      * @access  public
-     * @return  array   $params The request parameters
+     * @param   string  $request    The request uri
+     * @return  array   $params     The request parameters
      */
     public function parameters($request)
     {
@@ -145,6 +154,13 @@ class Route
         return in_array($method, $this->methods);
     }
 
+    /**
+     * Get a route response based on $method
+     *
+     * @access  public
+     * @param   string  $method The http method
+     * @return  callable        Returns the callable set to $method
+     */
     public function response($method)
     {
         return $this->response[$method];

@@ -2,8 +2,8 @@
 /**
  * Cloudlib
  *
- * @author      Sebastian Book <cloudlibframework@gmail.com>
- * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
+ * @author      Sebastian Bengtegård <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2013 Sebastian Bengtegård <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -14,19 +14,11 @@ use cloudlib\core\Route;
 /**
  * The Router class
  *
- * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2013 Sebastian Bengtegård <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class Router
 {
-    /**
-     * The found route
-     *
-     * @access  public
-     * @var     object
-     */
-    public $route = null;
-
     /**
      * Array of available routes
      *
@@ -36,21 +28,12 @@ class Router
     public $routes = [];
 
     /**
-     * Array of matching routes for the current request
+     * Add a new route
      *
      * @access  public
-     * @var     array
-     */
-    public $matchingRoutes = array();
-
-    /**
-     * Add a new route (route + method + response)
-     *
-     * @access  public
-     * @param   string  $route      The route uri
-     * @param   string  $method     Allowed method for the route
-     * @param   mixed   $response   The route response
-     * @return  object              The newly added route
+     * @param   string      $route      The route uri (and methods)
+     * @param   callable    $response   The route response
+     * @return  void
      */
     public function add($route, callable $response)
     {
@@ -73,6 +56,13 @@ class Router
         }
     }
 
+    /**
+     * Finds a given route based on $request
+     *
+     * @access  public
+     * @param   string      $request    The request uri
+     * @return  object|null             Returns the found route (or null if none was found)
+     */
     public function find($request)
     {
         $match = null;

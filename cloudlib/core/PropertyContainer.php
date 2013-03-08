@@ -2,34 +2,32 @@
 /**
  * Cloudlib
  *
- * @author      Sebastian Book <cloudlibframework@gmail.com>
- * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
+ * @author      Sebastian Bengtegård <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2013 Sebastian Bengtegård <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 namespace cloudlib\core;
 
 use ArrayAccess;
-use ReflectionFunction;
 use InvalidArgumentException;
 
 /**
  * Make setting object properties available to a class.
- *
  * Also makes it able to define properties as singletons.
  *
- * @copyright   Copyright (c) 2012 Sebastian Book <cloudlibframework@gmail.com>
+ * @copyright   Copyright (c) 2013 Sebastian Bengtegård <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 trait PropertyContainer {
 
     /**
-     * Array of properties
+     * Array of object properties
      *
      * @access  protected
      * @var     array
      */
-    protected $_objectProperties = [];
+    protected $objectProperties = [];
 
     /**
      * Define a class property
@@ -41,7 +39,7 @@ trait PropertyContainer {
      */
     public function __set($key, $value)
     {
-        $this->_objectProperties[$key] = $value;
+        $this->objectProperties[$key] = $value;
     }
 
     /**
@@ -51,23 +49,23 @@ trait PropertyContainer {
      * Container object
      *
      * @access  public
-     * @param   string  $key    The variable identifier (name)
+     * @param   string  $key                The variable identifier (name)
      * @throws  InvalidArgumentException    If the key does not exist
-     * @return  mixed           Return the variable value or, if its an anonymous function, call it
+     * @return  mixed                       Return the variable value or, if its an anonymous function, call it
      */
     public function __get($key)
     {
-        if( ! array_key_exists($key, $this->_objectProperties))
+        if( ! array_key_exists($key, $this->objectProperties))
         {
             throw new InvalidArgumentException(sprintf('Key [%s] does not exist', $key));
         }
 
-        if(is_callable($this->_objectProperties[$key]))
+        if(is_callable($this->objectProperties[$key]))
         {
-            return $this->_objectProperties[$key]($this);
+            return $this->objectProperties[$key]($this);
         }
 
-        return $this->_objectProperties[$key];
+        return $this->objectProperties[$key];
     }
 
     /**
@@ -79,7 +77,7 @@ trait PropertyContainer {
      */
     public function __isset($key)
     {
-        return isset($this->_objectProperties[$key]);
+        return isset($this->objectProperties[$key]);
     }
 
     /**
@@ -91,7 +89,7 @@ trait PropertyContainer {
      */
     public function __unset($key)
     {
-        unset($this->_objectProperties[$key]);
+        unset($this->objectProperties[$key]);
     }
 
     /**
@@ -107,19 +105,19 @@ trait PropertyContainer {
      */
     public function __call($key, $args)
     {
-        if( ! array_key_exists($key, $this->_objectProperties))
+        if( ! array_key_exists($key, $this->objectProperties))
         {
             throw new InvalidArgumentException(sprintf('Key [%s] does not exist', $key));
         }
 
-        if( ! is_callable($this->_objectProperties[$key]))
+        if( ! is_callable($this->objectProperties[$key]))
         {
             throw new InvalidArgumentException(sprintf('Key [%s] is not callable', $key));
         }
 
         array_unshift($args, $this);
 
-        return call_user_func_array($this->_objectProperties[$key], $args);
+        return call_user_func_array($this->objectProperties[$key], $args);
     }
 
     /**
