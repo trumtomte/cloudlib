@@ -25,20 +25,20 @@ class Router
      * @access  public
      * @var     array
      */
-    public $routes = [];
+    public $routes = array();
 
     /**
      * Add a new route
      *
      * @access  public
      * @param   string      $route      The route uri (and methods)
-     * @param   callable    $response   The route response
+     * @param   Closure     $response   The route response
      * @return  void
      */
-    public function add($route, callable $response)
+    public function add($route, Closure $response)
     {
         $uri = $route;
-        $methods = ['GET'];
+        $methods = array('GET');
 
         if($route[0] !== '/')
         {

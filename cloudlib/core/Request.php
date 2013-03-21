@@ -92,8 +92,8 @@ class Request
      * @param   array   $cookies    The $_COOKIE array
      * @return  void
      */
-    public function __construct(array $server = [], array $get = [],
-        array $post = [], array $files = [], array $cookies = [])
+    public function __construct(array $server = array(), array $get = array(),
+        array $post = array(), array $files = array(), array $cookies = array())
     {
         $this->server = $server;
         $this->get = $get;
@@ -208,7 +208,7 @@ class Request
      */
     public function methodAllowed()
     {
-        return in_array($this->method(), ['GET', 'POST', 'PUT', 'DELETE', 'HEAD']) ? true : false;
+        return in_array($this->method(), array('GET', 'POST', 'PUT', 'DELETE', 'HEAD')) ? true : false;
     }
 
     /**
@@ -347,7 +347,7 @@ class Request
      */
     public function getArguments()
     {
-        if(in_array($this->method, ['POST', 'PUT', 'DELETE']) && $this->isJson())
+        if(in_array($this->method, array'POST', 'PUT', 'DELETE')) && $this->isJson())
         {
             return file_get_contents('php://input');
         }
@@ -365,7 +365,7 @@ class Request
                 parse_str(file_get_contents('php://input'), $args);
                 break;
             default:
-                $args = [];
+                $args = array();
                 break;
         }
 

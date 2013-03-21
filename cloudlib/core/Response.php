@@ -25,7 +25,7 @@ class Response implements ArrayAccess
      * @access  public
      * @var     array
      */
-    public $httpStatusCodes = [
+    public $httpStatusCodes = array(
         // Informational 1xx
         100 => 'Continue',
         101 => 'Switching Protocols',
@@ -72,7 +72,7 @@ class Response implements ArrayAccess
         504 => 'Gateway Timeout',
         505 => 'HTTP Version Not Supported',
         509 => 'Bandwidth Limit Exceeded'
-    ];
+    );
 
     /**
      * Array of HTTP Headers to be sent
@@ -80,7 +80,7 @@ class Response implements ArrayAccess
      * @access  public
      * @var     array
      */
-    public $headers = [];
+    public $headers = array();
 
     /**
      * The Response HTTP Status Code
@@ -107,7 +107,7 @@ class Response implements ArrayAccess
      * @param   array   $headers    Array of HTTP Headers
      * @return  void
      */
-    public function __construct($body = '', $status = 200, array $headers = [])
+    public function __construct($body = '', $status = 200, array $headers = array())
     {
         $this->body = (string) $body;
         $this->status = (int) $status;

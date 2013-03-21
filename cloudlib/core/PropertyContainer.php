@@ -10,6 +10,7 @@
 namespace cloudlib\core;
 
 use ArrayAccess;
+use Closure;
 use InvalidArgumentException;
 
 /**
@@ -19,7 +20,7 @@ use InvalidArgumentException;
  * @copyright   Copyright (c) 2013 Sebastian Bengtegård <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-trait PropertyContainer {
+class PropertyContainer {
 
     /**
      * Array of object properties
@@ -27,7 +28,7 @@ trait PropertyContainer {
      * @access  protected
      * @var     array
      */
-    protected $objectProperties = [];
+    protected $objectProperties = array();
 
     /**
      * Define a class property
@@ -127,7 +128,7 @@ trait PropertyContainer {
      * @param   object  $callable   The object of which an instance will be created
      * @return  Closure             Returns a Closure that returns a single instance of the class
      */
-    public function instance(callable $callable)
+    public function instance(Closure $callable)
     {
         return function($self) use ($callable)
         {

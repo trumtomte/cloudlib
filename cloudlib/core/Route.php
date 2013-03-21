@@ -31,7 +31,7 @@ class Route
      * @access  public
      * @var     array
      */
-    public $response = [];
+    public $response = array();
 
     /**
      * Array of allowed request methods
@@ -39,7 +39,7 @@ class Route
      * @access  public
      * @var     array
      */
-    public $methods = [];
+    public $methods = array();
 
 
     /**
@@ -51,7 +51,7 @@ class Route
      * @param   mixed   $response   The route response
      * @return  void
      */
-    public function __construct($uri, array $methods, callable $response)
+    public function __construct($uri, array $methods, Closure $response)
     {
         $this->uri = $uri;
         $this->methods = $methods;
@@ -67,10 +67,10 @@ class Route
      *
      * @access  public
      * @param   array       $methods    The http methods
-     * @param   callable    $response   The route response
+     * @param   Closure     $response   The route response
      * @return  void
      */
-    public function append(array $methods, callable $response)
+    public function append(array $methods, Closure $response)
     {
         $this->methods = array_merge($this->methods, $methods);
 
@@ -114,7 +114,7 @@ class Route
      */
     public function parameters($request)
     {
-        $params = [];
+        $params = array();
 
         $uri = explode('/', $this->uri);
         $request = explode('/', $request);
@@ -159,7 +159,7 @@ class Route
      *
      * @access  public
      * @param   string  $method The http method
-     * @return  callable        Returns the callable set to $method
+     * @return  Closure         Returns the Closure set to $method
      */
     public function response($method)
     {

@@ -10,6 +10,7 @@
 namespace cloudlib\core;
 
 use ArrayAccess;
+use Closure;
 use Exception;
 use ErrorException;
 
@@ -28,20 +29,15 @@ require_once 'PropertyContainer.php';
  * @copyright   Copyright (c) 2013 Sebastian Bengtegård <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class Cloudlib implements ArrayAccess
+class Cloudlib implements ArrayAccess extends PropertyContainer
 {
-    /**
-     * @see PropertyContainer.php
-     */
-    use PropertyContainer;
-
     /**
      * Array of custom defined error handlers
      *
      * @access  public
      * @var     array
      */
-    public $errors = [];
+    public $errors = array();
 
     /**
      * Application base path for requests
@@ -128,10 +124,10 @@ class Cloudlib implements ArrayAccess
      * Add a $callback that will be called at shutdown (ex. closing of a database connection)
      *
      * @access  public
-     * @param   callable    $callback   The callback to be executed
+     * @param   Closure    $callback   The callback to be executed
      * @return  void
      */
-    public function teardown(callable $callback)
+    public function teardown(Closure $callback)
     {
         register_shutdown_function($callback);
     }
@@ -145,7 +141,7 @@ class Cloudlib implements ArrayAccess
      * @param   array   $parameters Array of HTTP request parameters
      * @return  string              The complete URL (relative or absolute)
      */
-    public function urlFor($location, $absolute = false, $parameters = [])
+    public function urlFor($location, $absolute = false, $parameters = array())
     {
         if($parameters)
         {
@@ -172,7 +168,7 @@ class Cloudlib implements ArrayAccess
      * @param   array   $parameters Array of HTTP request parameters
      * @return  void
      */
-    public function redirect($location, $status = 302, $parameters = [])
+    public function redirect($location, $status = 302, $parameters = array())
     {
         if($parameters)
         {
@@ -184,7 +180,7 @@ class Cloudlib implements ArrayAccess
             $location = $this->urlFor($location, true);
         }
 
-        $response = new Response('', $status, ['Location' => $location]);
+        $response = new Response('', $status, array('Location' => $location));
         $response->send($this->request->method, $this->request->protocol());
 
         exit(0);
@@ -199,7 +195,7 @@ class Cloudlib implements ArrayAccess
      * @param   array   $headers    Array of HTTP headers to be sent
      * @return  void
      */
-    public function abort($code, $message = null, array $headers = [])
+    public function abort($code, $message = null, array $headers = array())
     {
         $response = new Response('', $code, $headers);
 
@@ -215,11 +211,11 @@ class Cloudlib implements ArrayAccess
             }
             else
             {
-                $parameter = [
+                $parameter = array( 
                     'message' => $message,
                     'statusCode' => $code,
                     'statusMessage' => $response->httpStatusCodes[$code]
-                ];
+                );
             }
 
             $body = $this->errors[$code]($parameter);
@@ -251,7 +247,7 @@ class Cloudlib implements ArrayAccess
         // Escape an array or an array of objects
         if(is_array($input))
         {
-            $array = ['flags' => $flags, 'enc' => $enc, 'dbl_enc' => $dbl_enc];
+            $array = array('flags' => $flags, 'enc' => $enc, 'dbl_enc' => $dbl_enc);
 
             array_walk_recursive($input, function(&$item, $key) use ($array)
             {
@@ -316,7 +312,6 @@ class Cloudlib implements ArrayAccess
             if($route->allowsMethod($method))
             {
                 $response = $route->response($method);
-                $response = $response->bindTo($this);
 
                 $params = $route->parameters($request);
                 $body = call_user_func_array($response, $params);
@@ -375,7 +370,7 @@ class Cloudlib implements ArrayAccess
      *
      * @access  public
      * @param   str|int     $key    The route/error handler identifier
-     * @param   callable    $response   The route/error handler
+     * @param   Closure    $response   The route/error handler
      * @return  void
      */
     public function offsetSet($key, $response)
@@ -395,7 +390,7 @@ class Cloudlib implements ArrayAccess
      *
      * @access  public
      * @param   str|int $key    The route/error handler identifier
-     * @return  callable        Returns the handler
+     * @return  Closure        Returns the handler
      */
     public function offsetGet($key)
     {
@@ -438,11 +433,11 @@ class Cloudlib implements ArrayAccess
     {
         if($category)
         {
-            $this->template->merge(['flash' => [$category => $message]]);
+            $this->template->merge(array('flash' => array($category => $message)));
             return $this;
         }
 
-        $this->template->merge(['flash' => [$message]]);
+        $this->template->merge(array('flash' => array($message)));
         return $this;
     }
 
@@ -469,7 +464,7 @@ class Cloudlib implements ArrayAccess
      * @param   array   $vars       Array of template variables
      * @return  object              Returns the template object
      */
-    public function render($template, $layout = null, array $vars = [])
+    public function render($template, $layout = null, array $vars = array())
     {
         $this->template->setTemplate($template);
         
@@ -480,12 +475,10 @@ class Cloudlib implements ArrayAccess
 
         $that = $this;
 
-        $urlFor = function($location, $absolute = false, $params = []) use ($that)
+        $urlFor = function($location, $absolute = false, $params = array()) use ($that)
         {
             return $that->urlFor($location, $absolute, $params);
         };
-
-        $urlFor->bindTo($that);
         
         $this->template->set('urlFor', $urlFor);
         $this->template->merge($vars);

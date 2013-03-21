@@ -52,7 +52,7 @@ class Template
      * @param   array   $vars       Array of template variables
      * @return  void
      */
-    public function __construct($template = null, $layout = null, array $vars = [])
+    public function __construct($template = null, $layout = null, array $vars = array())
     {
         if($template)
         {
