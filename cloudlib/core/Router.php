@@ -9,6 +9,7 @@
 
 namespace cloudlib\core;
 
+use Closure;
 use cloudlib\core\Route;
 
 /**

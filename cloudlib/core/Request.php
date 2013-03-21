@@ -347,7 +347,7 @@ class Request
      */
     public function getArguments()
     {
-        if(in_array($this->method, array'POST', 'PUT', 'DELETE')) && $this->isJson())
+        if(in_array($this->method, array('POST', 'PUT', 'DELETE')) && $this->isJson())
         {
             return file_get_contents('php://input');
         }

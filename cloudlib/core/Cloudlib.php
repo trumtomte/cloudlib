@@ -29,7 +29,7 @@ require_once 'PropertyContainer.php';
  * @copyright   Copyright (c) 2013 Sebastian Bengtegård <cloudlibframework@gmail.com>
  * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class Cloudlib implements ArrayAccess extends PropertyContainer
+class Cloudlib extends PropertyContainer implements ArrayAccess
 {
     /**
      * Array of custom defined error handlers

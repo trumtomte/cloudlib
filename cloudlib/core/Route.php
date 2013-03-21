@@ -9,6 +9,8 @@
 
 namespace cloudlib\core;
 
+use Closure;
+
 /**
  * The Route class
  *
