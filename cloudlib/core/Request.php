@@ -82,6 +82,11 @@ class Request
     public $arguments;
 
     /**
+     * @see $arguments
+     */
+    public $args;
+
+    /**
      * Set all global arrays, request uri, request method and request variables
      *
      * @access  public
@@ -104,6 +109,7 @@ class Request
         $this->uri = $this->filterUri();
         $this->method = $this->method();
         $this->arguments = $this->getArguments();
+        $this->args = $this->arguments;
     }
 
     /**
