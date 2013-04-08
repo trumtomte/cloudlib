@@ -82,9 +82,9 @@ class Cloudlib extends PropertyContainer implements ArrayAccess
             return new ClassLoader();
         });
 
-        $this->loader->registerNamespaces([
+        $this->loader->registerNamespaces(array(
             'cloudlib\\core' => dirname(dirname(__DIR__))
-        ]);
+        ));
 
         $this->loader->register();
 

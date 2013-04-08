@@ -91,13 +91,13 @@ class Route
      */
     public function pattern($uri)
     {
-        $regex = [
+        $regex = array(
             '/:str/' => '([a-zA-Z]+)',
             '/:int/' => '(\d+)',
             '/:alpha/' => '([a-zA-Z0-9]+)',
             '/:(\w+)/' => '(\w+)',
             '/;/' => ''
-        ];
+        );
 
         array_walk($regex, function($replacement, $pattern) use (&$uri)
         {
