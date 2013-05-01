@@ -121,33 +121,21 @@ class ClassLoader
             return;
         }
 
-        // Class is namespaced
         if(($pos = strrpos($class, '\\')) !== false)
         {
             $namespace = substr($class, 0, $pos);
             $className = substr($class, $pos + 1);
             $fileName = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
 
-            if( ! file_exists($fileName))
+            if(array_key_exists($namespace, $this->namespaces))
             {
-                if( ! array_key_exists($namespace, $this->namespaces))
-                {
-                    // No directory was assigned to the namespace
-                    return;
-                }
-
-                // The directory assigned to the namespace is prepended
                 $fileName = $this->namespaces[$namespace] . DIRECTORY_SEPARATOR . $fileName;
-
-                if( ! file_exists($fileName))
-                {
-                    // File does Really not exist
-                    return;
-                }
             }
 
-            require $fileName;
+            if(file_exists($fileName))
+            {
+                require $fileName;
+            }
         }
-        // Class was not namespaced
     }
 }
