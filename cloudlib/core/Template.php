@@ -44,6 +44,14 @@ class Template
     public $vars = null;
 
     /**
+     * Base path for templates
+     *
+     * @access  public
+     * @var     string
+     */
+    public $templateRoot = '';
+
+    /**
      * Set the Template/Layout/Variables that will be used
      *
      * @access  public
@@ -65,6 +73,18 @@ class Template
         }
 
         $this->vars = $vars;
+    }
+
+    /**
+     * Set the base path for template
+     * 
+     * @access  public
+     * @param   string  $templateRoot   The base path for templates
+     * @return  void
+     */
+    public function setTemplateRoot($templateRoot)
+    {
+        $this->templateRoot = $templateRoot;
     }
 
     /**

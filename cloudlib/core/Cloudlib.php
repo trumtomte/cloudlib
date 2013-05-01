@@ -447,6 +447,18 @@ class Cloudlib implements ArrayAccess
     }
 
     /**
+     * Shorthand method for Template::setTemplateRoot
+     *
+     * @access  public
+     * @param   string  $templateRoot   The base path for templates
+     * @return  void
+     */
+    public function setTemplateRoot($templateRoot)
+    {
+        $this->template->setTemplateRoot($templateRoot);
+    }
+
+    /**
      * Define a template variable
      *
      * @access  public
