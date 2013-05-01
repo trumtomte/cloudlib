@@ -44,6 +44,14 @@ class Template
     public $vars = null;
 
     /**
+     * Root path for templates
+     *
+     * @access  public
+     * @var     string
+     */
+    public $templateRoot = '';
+
+    /**
      * Set the Template/Layout/Variables that will be used
      *
      * @access  public
@@ -65,6 +73,18 @@ class Template
         }
 
         $this->vars = $vars;
+    }
+
+    /**
+     * Sets the base path for template files
+     *
+     * @access  public
+     * @param   string  $templateRoot   The base path
+     * @return  void
+     */
+    public function setTemplateRoot($templateRoot)
+    {
+        $this->templateRoot = $templateRoot;
     }
 
     /**
@@ -127,10 +147,7 @@ class Template
      */
     public function find($filename)
     {
-        if(strpos($filename, '/') === false)
-        {
-            $filename = 'templates/' . $filename;
-        }
+        $filename = $this->templateRoot . $filename;
 
         if( ! file_exists($filename))
         {
