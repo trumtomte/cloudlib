@@ -147,10 +147,7 @@ class Template
      */
     public function find($filename)
     {
-        if(strpos($filename, '/') === false)
-        {
-            $filename = 'templates/' . $filename;
-        }
+        $filename = $this->templateRoot . $filename;
 
         if( ! file_exists($filename))
         {
