@@ -86,9 +86,7 @@ class Cloudlib implements ArrayAccess
             return new ClassLoader();
         });
 
-        $this->loader->registerNamespaces([
-            'cloudlib\\core' => dirname(dirname(__DIR__))
-        ]);
+        $this->loader->registerNamespaces(['cloudlib\\core' => dirname(dirname(__DIR__))]);
 
         $this->loader->register();
 
