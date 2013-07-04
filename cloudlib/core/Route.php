@@ -18,151 +18,105 @@ namespace cloudlib\core;
 class Route
 {
     /**
-     * The route uri
+     * The uri path
      *
-     * @access  public
-     * @var     string
+     * @var string
      */
-    public $uri;
+    public $path = '';
 
     /**
-     * The route responses (Method => Response)
+     * The route callbacks
      *
-     * @access  public
-     * @var     array
+     * @var array
      */
-    public $response = [];
+    public $callbacks = [];
 
     /**
-     * Array of allowed request methods
+     * Route method
      *
-     * @access  public
-     * @var     array
+     * @var array
      */
-    public $methods = [];
-
+    public $method = '';
 
     /**
-     * Sets the $route, $method and $response
+     * Route path regexp
      *
-     * @access  public
-     * @param   string  $uri        The route uri
+     * @var string
+     */
+    public $regexp = '';
+
+    /**
+     * Route parameters
+     *
+     * @var array
+     */
+    public $params = [];
+
+    /**
+     * Create a new Route object
+     *
+     * @param   string  $path       The route uri
      * @param   string  $method     Allowed request method
-     * @param   mixed   $response   The route response
+     * @param   mixed   $callbacks  The route response
      * @return  void
      */
-    public function __construct($uri, array $methods, callable $response)
+    public function __construct($path, $method, array $callbacks)
     {
-        $this->uri = $uri;
-        $this->methods = $methods;
-
-        foreach($methods as $method)
-        {
-            $this->response[$method] = $response;
-        }
+        $this->path = $path;
+        $this->method = $method;
+        $this->callbacks = $callbacks;
+        $this->regexp = $this->pattern($path);
     }
 
     /**
-     * Append more route responses based on $methods to the Route
+     * Create a pattern for regexp matching of this route path
      *
-     * @access  public
-     * @param   array       $methods    The http methods
-     * @param   callable    $response   The route response
+     * @param   string  $path   The route path
+     * @return  string          Returns the pattern for regexp matching
+     */
+    public function pattern($path)
+    {
+        return str_replace('/', '\/', 
+            preg_replace('/;/', '',
+            preg_replace('/:(\w+)/', '(\w+)', $path)));
+    }
+
+    /**
+     * Set the request parameters
+     *
+     * @param   string  $request    The request path
      * @return  void
      */
-    public function append(array $methods, callable $response)
+    public function setParams($request)
     {
-        $this->methods = array_merge($this->methods, $methods);
+        $pathParts = explode('/', $this->path);
+        $requestParts = explode('/', $request);
 
-        foreach($methods as $method)
+        foreach($pathParts as $index => $part)
         {
-            $this->response[$method] = $response;
-        }
-    }
-
-    /**
-     * Create a pattern for regex matching of this route uri
-     *
-     * @access  public
-     * @param   string  $uri    The route uri
-     * @return  string          Returns the pattern for regex matching
-     */
-    public function pattern($uri)
-    {
-        $regex = [
-            '/:str/' => '([a-zA-Z]+)',
-            '/:int/' => '(\d+)',
-            '/:alpha/' => '([a-zA-Z0-9]+)',
-            '/:(\w+)/' => '(\w+)',
-            '/;/' => ''
-        ];
-
-        array_walk($regex, function($replacement, $pattern) use (&$uri)
-        {
-            $uri = preg_replace($pattern, $replacement, $uri);
-        });
-
-        return str_replace('/', '\/', $uri);
-    }
-
-    /**
-     * Extract the request parameters from the route uri
-     *
-     * @access  public
-     * @param   string  $request    The request uri
-     * @return  array   $params     The request parameters
-     */
-    public function parameters($request)
-    {
-        $params = [];
-
-        $uri = explode('/', $this->uri);
-        $request = explode('/', $request);
-
-        array_walk($uri, function($param, $key) use ($request, &$params)
-        {
-            if(strpos($param, ':') !== false || strpos($param, ';') !== false)
+            // Named
+            if(strpos($part, ':') !== false)
             {
-                $params[] = $request[$key];
+                $this->params[substr($part, 1)] = $requestParts[$index];
             }
-        });
+            // Regexp
+            if(strpos($part, ';') !== false)
+            {
+                $this->params[] = $requestParts[$index];
+            }
+        } 
 
-        return $params;
+        return $this;
     }
 
     /**
-     * Check if $request matches the route uri
+     * Check if a given request path matches the route regexp (path)
      *
-     * @access  public
-     * @param   string  $request    The request uri
-     * @return  boolean             Returns true if the request matches the route uri
+     * @param   string  $path   The request path
+     * @return  bool            True if the request path matches the route regexp
      */
-    public function match($request)
+    public function match($path)
     {
-        return (bool) preg_match('#^' . $this->pattern($this->uri) . '$#', $request);
-    }
-
-    /**
-     * Check if the route allows $method
-     *
-     * @access  public
-     * @param   string  $method The request method
-     * return   boolean         Returns true if the method is allowed
-     */
-    public function allowsMethod($method)
-    {
-        return in_array($method, $this->methods);
-    }
-
-    /**
-     * Get a route response based on $method
-     *
-     * @access  public
-     * @param   string  $method The http method
-     * @return  callable        Returns the callable set to $method
-     */
-    public function response($method)
-    {
-        return $this->response[$method];
+        return (bool) preg_match('#^' . $this->regexp . '$#', $path);
     }
 }

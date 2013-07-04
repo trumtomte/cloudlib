@@ -22,23 +22,20 @@ class ClassLoader
     /**
      * Array of namespaces and their corresponding directory path.
      *
-     * @access  public
-     * @var     array
+     * @var array
      */
     public $namespaces = [];
 
     /**
      * Array of class aliases
      *
-     * @access  public
-     * @var     array
+     * @var array
      */
     public $aliases = [];
 
     /**
      * Define the namespaces and aliases array at creation.
      *
-     * @access  public
      * @param   array   $namespaces Array of Namespace:Directory pairs
      * @param   array   $aliases    Array of Alias:Class(namespaced) pairs
      * @return  void
@@ -52,7 +49,6 @@ class ClassLoader
     /**
      * Register class aliases
      *
-     * @access  public
      * @param   array   $aliases Array of Alias:Class(namespaced) pairs
      * @return  void
      */
@@ -67,7 +63,6 @@ class ClassLoader
     /**
      * Register namespaces
      *
-     * @access  public
      * @param   array   $namespaces Array of Namespace:Directory pairs
      * @return  void
      */
@@ -82,7 +77,6 @@ class ClassLoader
     /**
      * Register the autoloader
      *
-     * @access  public
      * @param   boolean $prepend    If ClassLoader should be prepended to the autoload stack
      * @return  void
      */
@@ -94,7 +88,6 @@ class ClassLoader
     /**
      * Unregister the autoloader
      *
-     * @access  public
      * @return  void
      */
     public function unregister()
@@ -105,7 +98,6 @@ class ClassLoader
     /**
      * Load a namespaced class via the PSR-0 Standard
      *
-     * @access  public
      * @param   string  $class  The namespaced class to be loaded
      * @return  string          The file path (if found)
      */

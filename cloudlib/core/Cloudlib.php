@@ -12,15 +12,15 @@ namespace cloudlib\core;
 use ArrayAccess;
 use Exception;
 use ErrorException;
+use InvalidArgumentException;
+use ArrayObject;
 
 use cloudlib\core\ClassLoader;
 use cloudlib\core\Request;
 use cloudlib\core\Response;
 use cloudlib\core\Router;
-use cloudlib\core\Template;
 
 require_once 'ClassLoader.php';
-require_once 'PropertyContainer.php';
 
 /**
  * The core framework class, which takes use of the other available classes
@@ -31,31 +31,22 @@ require_once 'PropertyContainer.php';
 class Cloudlib implements ArrayAccess
 {
     /**
-     * @see PropertyContainer.php
+     * Array of closures used to lazyload classes
+     *
+     * @var array
      */
-    use PropertyContainer;
+    public $vars = [];
 
     /**
      * Array of custom defined error handlers
      *
-     * @access  public
-     * @var     array
+     * @var array
      */
     public $errors = [];
 
     /**
-     * Application base path for requests
+     * Initializes the application, defines error handlers and the core classes.
      *
-     * @access  public
-     * @var     string
-     */
-    public $base = '/';
-
-    /**
-     * Initialize ErrorHandlers, and add instances of the Core classes.
-     * Set the base uri.
-     *
-     * @access  public
      * @return  void
      */
     public function __construct()
@@ -81,51 +72,41 @@ class Cloudlib implements ArrayAccess
             }
         });
 
-        $this->loader = $this->instance(function()
-        {
-            return new ClassLoader();
-        });
-
+        $this->loader = new ClassLoader();
         $this->loader->registerNamespaces(['cloudlib\\core' => dirname(dirname(__DIR__))]);
-
         $this->loader->register();
 
-        $this->request = $this->instance(function()
-        {
-            return new Request($_SERVER, $_GET, $_POST, $_FILES, $_COOKIE);
-        });
+        $this->request = new Request($_SERVER, $_GET, $_POST, $_FILES, $_COOKIE);
+        $this->response = new Response();
+        $this->router = new Router();
 
-        // Get current script path
-        $scriptPath = $this->request->server('SCRIPT_NAME');
-
-        if($scriptPath)
-        {
-            // Get current script name
-            $scriptName = basename($scriptPath);
-            // Set the base to the script path excluding the script name
-            $this->base = substr($scriptPath, 0, (strlen($scriptPath) - (strlen($scriptName) + 1)));
-        }
-
-        $this->router = $this->instance(function()
-        {
-            return new Router();
-        });
-
-        $this->template = $this->instance(function()
-        {
-            return new Template();
-        });
-
-        $this->response = $this->instance(function()
-        {
-            return new Response();
-        });
+        $this->response->prepare($this->request);
     }
 
     /**
-     * Add a $callback that will be called at shutdown (ex. closing of a database connection)
+     * Add a class ($key) for lazy loading
      *
-     * @access  public
+     * @param   string      $key    The class name
+     * @param   callable    $callback   The closure
+     * @return  void
+     */
+    public function lazy($key, callable $callback)
+    {
+        $this->vars[$key] = function($app) use ($callback) {
+            static $instance = null;
+
+            if($instance === null)
+            {
+                $instance = $callback($app);
+            }
+
+            return $instance;
+        };
+    }
+
+    /**
+     * Add a $callback that will be called at shutdown
+     *
      * @param   callable    $callback   The callback to be executed
      * @return  void
      */
@@ -135,218 +116,119 @@ class Cloudlib implements ArrayAccess
     }
 
     /**
-     * Returns an URL relative to the application (absolute if $absolute is true)
+     * Terminate the current response
      *
-     * @access  public
-     * @param   string  $location   The URL end point
-     * @param   boolean $absolute   If we should return an absolute URL
-     * @param   array   $parameters Array of HTTP request parameters
-     * @return  string              The complete URL (relative or absolute)
-     */
-    public function urlFor($location, $absolute = false, $parameters = [])
-    {
-        if($parameters)
-        {
-            $location .= sprintf('?%s', http_build_query($parameters));
-        }
-
-        if($absolute)
-        {
-            $protocol = $this->request->isSecure() ? 'https' : 'http';
-
-            return sprintf('%s://%s%s', $protocol, $this->request->host(),
-                preg_replace('/\/{2,}/', '/', $this->base . '/' . $location));
-        }
-
-        return preg_replace('/\/{2,}/', '/', $this->base . '/' . $location);
-    }
-
-    /**
-     * Create a new response with a location header
-     *
-     * @access  public
-     * @param   string  $location   The destination (Location: 'destinaton')
-     * @param   int     $status     The redirect http status
-     * @param   array   $parameters Array of HTTP request parameters
-     * @return  void
-     */
-    public function redirect($location, $status = 302, $parameters = [])
-    {
-        if($parameters)
-        {
-            $location .= sprintf('?%s', http_build_query($parameters));
-        }
-
-        if( ! filter_var($location, FILTER_VALIDATE_URL))
-        {
-            $location = $this->urlFor($location, true);
-        }
-
-        $response = new Response('', $status, ['Location' => $location]);
-        $response->send($this->request->method, $this->request->protocol());
-
-        exit(0);
-    }
-
-    /**
-     * Create a new response that will terminate the current request (with a status header = $code)
-     *
-     * @access  public
-     * @param   int     $code       The status code
-     * @param   mixed   $message    Data that will be passed to the response function
+     * @param   int     $status     The status code
+     * @param   mixed   $message    Abort message or exception
      * @param   array   $headers    Array of HTTP headers to be sent
      * @return  void
      */
-    public function abort($code, $message = null, array $headers = [])
+    public function abort($status, $message = null, array $headers = [])
     {
-        $response = new Response('', $code, $headers);
-
-        if( ! isset($this->errors[$code]))
-        {
-            $body = $message;
-        }
-        else
+        if(isset($this->errors[$status]))
         {
             if($message instanceof Exception)
             {
-                $parameter = $message;
+                $parameters = [$message];
             }
             else
             {
-                $parameter = [
-                    'message' => $message,
-                    'statusCode' => $code,
-                    'statusMessage' => $response->httpStatusCodes[$code]
+                $parameters = [
+                    $message,
+                    $status,
+                    $this->response->httpStatusCodes[$status]
                 ];
             }
 
-            $body = $this->errors[$code]($parameter);
+            $message = call_user_func_array($this->errors[$status], $parameters);
         }
 
-        $response->body($body);
-        $response->send($this->request->method, $this->request->protocol());
-
-        exit(0);
+        $this->response->abort($status, $message, $headers);
     }
 
     /**
-     * Escape a string, array, object or an array of objects from html entities
+     * Create complete URLs from route paths (ex. /home => http://host.com/home)
      *
-     * @access  public
-     * @param   mixed   $input      The input to be escaped
-     * @param   int     $flags      How to handle the quotes
-     * @param   string  $enc        The charset encoding
-     * @param   boolean $dbl_enc    If we should convert everything
-     * @return  mixed               Returns the escaped input
+     * @param   string  $location   URL path
+     * @return  string              The complete URL
      */
-    public function escape($input, $flags = ENT_COMPAT, $enc = 'UTF-8', $dbl_enc = true)
+    public function urlFor($location)
     {
-        // Escape a string
-        if(is_string($input))
+        if( ! filter_var($location, FILTER_VALIDATE_URL))
         {
-            return htmlentities($input, $flags, $enc, $dbl_enc);
-        }
-        // Escape an array or an array of objects
-        if(is_array($input))
-        {
-            $array = ['flags' => $flags, 'enc' => $enc, 'dbl_enc' => $dbl_enc];
+            $path = preg_replace('/\/{2,}/', '/', sprintf('%s/%s', $this->request->base, $location));
 
-            array_walk_recursive($input, function(&$item, $key) use ($array)
+            if(strpos($location, '://') !== false)
             {
-                extract($array);
-
-                if(is_string($item))
-                {
-                    $item = htmlentities($item, $flags, $enc, $dbl_enc);
-                }
-
-                if(is_object($item))
-                {
-                    foreach($item as &$value)
-                    {
-                        if(is_string($value))
-                        {
-                            $value = htmlentities($value, $flags, $enc, $dbl_enc);
-                        }
-                    }
-                }
-            });
-
-            return $input;
-        }
-        // Escape an object
-        if(is_object($input))
-        {
-            foreach($input as &$value)
-            {
-                if(is_string($value))
-                {
-                    $value = htmlentities($value, $flags, $enc, $dbl_enc);
-                }
+                $location = $path;
             }
-
-            return $input;
+            else
+            {
+                $protocol = $this->request->secure ? 'https' : 'http';
+                $location = sprintf('%s://%s%s', $protocol, $this->request->host, $path);
+            }
         }
+
+        return $location;
     }
 
     /**
-     * Find a matching route for the current request, if none is found/allowed
-     * we exit with the corresponding HTTP status code.
+     * Make a response for the current request
      *
-     * @access  public
      * @return  void
      */
-    public function run()
+    public function listen()
     {
-        if( ! $this->request->methodAllowed())
+        if( ! in_array($this->request->method, ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD']))
         {
             $this->abort(405);
         }
 
-        $request = preg_replace('/\/{2,}/', '/', '/' . preg_replace('#' . $this->base . '#', '', $this->request->uri, 1));
+        $path = preg_replace('/\/{2,}/', '/', '/' . preg_replace('#' . $this->request->base . '#', '', $this->request->path, 1));
 
-        $route = $this->router->find($request);
+        $routes = $this->router->findMatchingRoutes($path);
 
-        if($route)
+        // No matching route
+        if( ! $routes)
         {
-            $method = $this->request->method;
+            $this->abort(404);
+        }
 
-            if($route->allowsMethod($method))
+        $foundRoute = false;
+
+        foreach($routes as $route)
+        {
+            // HEAD is the same as GET but only outputs headers
+            $method = $this->request->method == 'HEAD' ? 'GET' : $this->request->method;
+
+            if($route->method == $method)
             {
-                $response = $route->response($method);
-                $response = $response->bindTo($this);
-
-                $params = $route->parameters($request);
-                $body = call_user_func_array($response, $params);
-
-                if($body instanceof Response)
-                {
-                    $this->response = $body;
-                }
-                else
-                {
-                    $this->response->body($body);
-                }
-
-                $this->response->send($method, $this->request->protocol());
-
-                exit(0);
+                $foundRoute = $route;
             }
+        }
 
+        // Invalid HTTP method
+        if( ! $foundRoute)
+        {
             $this->abort(405);
         }
 
-        $this->abort(404);
+        $this->request->params = (object) $foundRoute->params;
+
+        foreach($foundRoute->callbacks as $callback)
+        {
+            $callback = $callback->bindTo($this, $this);
+            $callback($this->request, $this->response);
+        }
+
+        $this->response->respond();
     }
 
     /**
-     * Framework exception handler
+     * Framework exception handler,
      *
-     * If an error function for the status code 500 has been defined it will
-     * be called with the exception as a parameter instead of outputting
-     * information about the exception directly to the browser.
+     * If a HTTP status handler for "Internal Server Error" (500) was defined it will be used.
      *
-     * @access  public
      * @param   Exception   $e  The exception
      * @return  void
      */
@@ -369,237 +251,66 @@ class Cloudlib implements ArrayAccess
     }
 
     /**
+     * Enable calling property closures as class methods
+     *
+     * @access  public
+     * @param   string  $key    Method name
+     * @param   array   $args   Method arguments
+     * @return  mixed
+     */
+    public function __call($key, $args)
+    {
+        if( ! property_exists($this, $key))
+        {
+            throw new InvalidArgumentException(sprintf('Property [%s] does not exist', $key));
+        }
+
+        $closure = $this->$key->bindTo($this, $this);
+        return call_user_func_array($closure, $args);
+    }
+
+    /**
+     * Enable access to lazy loadable classes
+     *
+     * @param   string  $key    The class name
+     * @return  mixed           The lazy loaded class
+     */
+    public function __get($key)
+    {
+        if( ! array_key_exists($key, $this->vars))
+        {
+            throw new InvalidArgumentException(sprintf('Key [%s] does not exist', $key));
+        }
+
+        return is_callable($this->vars[$key]) ? $this->vars[$key]($this) : $this->vars[$key];
+    }
+
+    /**
      * ArrayAccess method used to set error/route handlers
      *
      * @access  public
-     * @param   str|int     $key    The route/error handler identifier
-     * @param   callable    $response   The route/error handler
+     * @param   mixed   $key        The route/error handler identifier
+     * @param   mixed   $callback   The route/error handler callback(s)
      * @return  void
      */
-    public function offsetSet($key, $response)
+    public function offsetSet($key, $callback)
     {
-        if(is_int($key) && array_key_exists($key, $this->response->httpStatusCodes))
+        if(is_int($key))
         {
-            $this->errors[$key] = $response;
-        }
-        else
-        {
-            $this->router->add(trim($key), $response);
-        }
-    }
-
-    /**
-     * Get a route/error handler
-     *
-     * @access  public
-     * @param   str|int $key    The route/error handler identifier
-     * @return  callable        Returns the handler
-     */
-    public function offsetGet($key)
-    {
-        //...
-    }
-
-    /**
-     * Check if a route/error handler is set
-     *
-     * @access  public
-     * @param   str|int $key    The route/error handler identifier
-     * @return  boolean
-     */
-    public function offsetExists($key)
-    {
-        //...
-    }
-
-    /**
-     * Unset a route/error handler
-     * @param   str|int $key    The route/error handler identifier
-     * @return  void
-     */
-    public function offsetUnset($key)
-    {
-        //...
-    }
-
-    /************************************************************/
-
-    /**
-     * Add a flash message to the template
-     *
-     * @access  public
-     * @param   string  $message    The message to be flashed
-     * @param   string  $category   The message category
-     * @return  void
-     */
-    public function flash($message, $category = null)
-    {
-        if($category)
-        {
-            $this->template->merge(['flash' => [$category => $message]]);
-            return $this;
+            $this->errors[$key] = $callback;
         }
 
-        $this->template->merge(['flash' => [$message]]);
-        return $this;
-    }
-
-    /**
-     * Shorthand method for Template::setTemplateRoot
-     *
-     * @access  public
-     * @param   string  $templateRoot   The base path for templates
-     * @return  void
-     */
-    public function setTemplateRoot($templateRoot)
-    {
-        $this->template->setTemplateRoot($templateRoot);
-    }
-
-    /**
-     * Define a template variable
-     *
-     * @access  public
-     * @param   string  $key    The template variable name
-     * @param   mixed   $value  The template variable value
-     * @return  void
-     */
-    public function set($key, $value)
-    {
-        $this->template->set($key, $value);
-        return $this;
-    }
-
-    /**
-     * Create a rendered template with the defined template variables
-     *
-     * @access  public
-     * @param   string  $template   The template file path
-     * @param   string  $layout     The layout file path
-     * @param   array   $vars       Array of template variables
-     * @return  object              Returns the template object
-     */
-    public function render($template, $layout = null, array $vars = [])
-    {
-        $this->template->setTemplate($template);
-        
-        if($layout)
+        if(is_string($key))
         {
-            $this->template->setLayout($layout);
-        }
-
-        $that = $this;
-
-        $urlFor = function($location, $absolute = false, $params = []) use ($that)
-        {
-            return $that->urlFor($location, $absolute, $params);
-        };
-
-        $urlFor->bindTo($that);
-        
-        $this->template->set('urlFor', $urlFor);
-        $this->template->merge($vars);
-
-        return $this->template;
-    }
-
-    /**
-     * Set a response header
-     *
-     * @access  public
-     * @param   string  $key    Header attribute
-     * @param   string  $value  Header attribute value
-     * @return  Response        Returns itself, for method chaining
-     */
-    public function header($key, $value)
-    {
-        return $this->response->header($key, $value);
-    }
-
-    /**
-     * Set the response status code
-     *
-     * @access  public
-     * @param   int     $status The status code
-     * @return  Response        Returns itself, for method chaining
-     */
-    public function status($code)
-    {
-        return $this->response->status($code);
-    }
-
-    /**
-     * Shorthand function for returning JSON
-     *
-     * @access  public
-     * @param   mixed   $input      The input to be converted to JSON
-     * @param   int     $options    Options for json_encode()
-     * @return  string              The encode JSON
-     */
-    public function json($input, $options = JSON_NUMERIC_CHECK)
-    {
-        $this->header('Content-Type', 'application/json');
-        return json_encode($input, $options);
-    }
-
-    /**
-     * Shorthand method for setting the Last-Modified header
-     *
-     * @access  public
-     * @param   string|int  $time   The time since it was last modified
-     * @return  void
-     */
-    public function lastModified($time)
-    {
-        $this->header('Last-Modified', date(DATE_RFC1123, $time) . ' GMT');
-
-        if($this->request->server('HTTP_IF_MODIFIED_SINCE'))
-        {
-            if(strtotime($this->request->server('HTTP_IF_MODIFIED_SINCE')) === $time)
-            {
-                $this->abort(304);
-            }
+            $this->router->add($key, $callback);
         }
     }
 
     /**
-     * Shorthand metod for setting the ETag header
-     *
-     * @access  public
-     * @param   string  $identifier ETag identifier
-     * @return  void
+     * Unused ArrayAccess methods
      */
-    public function etag($identifier)
-    {
-        if($this->request->server('HTTP_IF_NONE_MATCH'))
-        {
-            $this->header('ETag', sprintf('"%s"', $identifier));
-        }
-    }
+    public function offsetGet($key) {}
+    public function offsetExists($key) {}
+    public function offsetUnset($key) {}
 
-    /**
-     * Shorthand method for setting the Expires header
-     *
-     * @access  public
-     * @param   string|int  $time   The time until the response expires
-     * @return  void
-     */
-    public function expires($time)
-    {
-        $time = is_int($time) ? $time : strtotime($time);
-        $this->header('Expires', date(DATE_RFC1123, $time));
-    }
-
-    /**
-     * Shorthand method for forcing no-cache
-     *
-     * @access  public
-     * @return  void
-     */
-    public function noCache()
-    {
-        $this->header('Cache-Control', 'no-store, no-cache, max-age=0, must-revalidate');
-        $this->header('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
-        $this->header('Pragma', 'no-cache');
-    }
 }

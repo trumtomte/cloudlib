@@ -9,6 +9,7 @@
 
 namespace cloudlib\core;
 
+use InvalidArgumentException;
 use ArrayAccess;
 
 /**
@@ -22,8 +23,7 @@ class Response implements ArrayAccess
     /**
      * Array of HTTP Status Codes
      *
-     * @access  public
-     * @var     array
+     * @var array
      */
     public $httpStatusCodes = [
         // Informational 1xx
@@ -77,31 +77,41 @@ class Response implements ArrayAccess
     /**
      * Array of HTTP Headers to be sent
      *
-     * @access  public
-     * @var     array
+     * @var array
      */
     public $headers = [];
 
     /**
      * The Response HTTP Status Code
      *
-     * @access  public
-     * @var     int
+     * @var int
      */
-    public $status;
+    public $status = 200;
 
     /**
      * The Response body
      *
-     * @access  public
-     * @var     string
+     * @var string
      */
-    public $body;
+    public $body = '';
 
     /**
-     * Create a new Response object, defining the body, status and the array of headers
+     * The Response charset
      *
-     * @access  public
+     * @var string
+     */
+    public $charset = 'utf-8';
+
+    /**
+     * Request variables
+     *
+     * @var array
+     */
+    public $request = [];
+
+    /**
+     * Create a new Response object
+     *
      * @param   string  $body       The Response body
      * @param   int     $status     The status code
      * @param   array   $headers    Array of HTTP Headers
@@ -117,9 +127,8 @@ class Response implements ArrayAccess
     /**
      * Set the body content
      *
-     * @access  public
      * @param   string  $body   The body content
-     * @return  Response        Returns itself, for method chaining
+     * @return  Response
      */
     public function body($body = null)
     {
@@ -130,9 +139,8 @@ class Response implements ArrayAccess
     /**
      * Set the status code
      *
-     * @access  public
      * @param   int     $status The status code
-     * @return  Response        Returns itself, for method chaining
+     * @return  Response
      */
     public function status($status = null)
     {
@@ -143,10 +151,9 @@ class Response implements ArrayAccess
     /**
      * Set a response header
      *
-     * @access  public
      * @param   string  $key    Header attribute
      * @param   string  $value  Header attribute value
-     * @return  Response        Returns itself, for method chaining
+     * @return  Response
      */
     public function header($key, $value)
     {
@@ -155,64 +162,247 @@ class Response implements ArrayAccess
     }
 
     /**
+     * Set multiple response headers
+     *
+     * @param   string  $headers    Headers
+     * @return  Response
+     */
+    public function headers(array $headers)
+    {
+        $this->headers = array_merge($this->headers, $headers);
+        return $this;
+    }
+
+    /**
+     * Prepare the response
+     *
+     * @param   Request     $request    The request object
+     * @return  Response
+     */
+    public function prepare($request)
+    {
+        $this->request = [
+            'protocol' => $request->protocol,
+            'method' => $request->method,
+            'HTTP_IF_MODIFIED_SINCE' => $request->server('HTTP_IF_MODIFIED_SINCE'),
+            'HTTP_IF_NONE_MATCH' => $request->server('HTTP_IF_NONE_MATCH')
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Prepare headers
+     *
+     * @return  Response
+     */
+    public function prepareHeaders()
+    {
+        if( ! isset($this->headers['Content-Type']))
+        {
+            $this->header('Content-Type', 'text/html; charset=' . $this->charset);
+        }
+        elseif(strpos($this->headers['Content-Type'], 'text/') === 0 &&
+            strpos($this->headers['Content-Type'], 'charset') === false)
+        {
+            $this->headers['Content-Type'] .= '; charset=' . $this->charset;
+        }
+
+        $this->headers['Content-Length'] = strlen( (string) $this->body);
+
+        return $this;
+    }
+
+    /**
      * Send all headers
      *
-     * @access  public
-     * @param   string  $protocol   The current HTTP protocol version
-     * @return  void
+     * @return  Response
      */
-    public function sendHeaders($protocol)
+    public function sendHeaders()
     {
-        header(sprintf('%s %s %s', $protocol, $this->status, $this->httpStatusCodes[$this->status]));
-
-        if( ! isset($this['Content-Type']))
-        {
-            $this['Content-Type'] = 'text/html; charset=utf8';
-        }
-
-        if( ! isset($this['Content-Length']))
-        {
-            $this['Content-Length'] = strlen( (string) $this->body);
-        }
+        header(sprintf('%s %s %s', $this->request['protocol'], $this->status, $this->httpStatusCodes[$this->status]));
 
         foreach($this->headers as $key => $value)
         {
-            header($key . ': ' . $value);
+            header(sprintf('%s: %s', $key, $value));
         }
+
+        return $this;
     }
 
     /**
-     * Echo out the response body
+     * Redirect the request
      *
-     * Send headers if they have not been sent already
-     *
-     * @access  public
-     * @param   string  $method     The request method
-     * @param   string  $protocol   The current HTTP protocol version
+     * @param   string  $location   The location URL
+     * @param   int     $status     The HTTP status code
+     * @param   array   $parameters The HTTP parameters
      * @return  void
      */
-    public function send($method, $protocol)
+    public function redirect($location, $status = 302, $parameters = [])
+    {
+        if(empty($location))
+        {
+            throw new InvalidArgumentException('Cannot redirect to an empty URL');
+        }
+
+        if($parameters)
+        {
+            $location .= sprintf('?%s', http_build_query($parameters));
+        }
+
+        $this->header('Location', $location);
+        $this->send($status);
+        $this->respond();
+    }
+
+    /**
+     * Abort the request
+     *
+     * @param   int     $status     The HTTP status code
+     * @param   string  $message    The abort message
+     * @param   array   $headers    HTTP headers
+     * @return  void
+     */
+    public function abort($status, $message = null, array $headers)
+    {
+        if( ! isset($this->httpStatusCodes[$status]))
+        {
+            throw new InvalidArgumentException(sprintf('[%s] is not a valid HTTP status code', $status));
+        }
+
+        if( ! $message)
+        {
+            $message = $this->httpStatusCodes[$status];
+        }
+
+        $this->headers($headers);
+        $this->send($message, $status);
+        $this->respond();
+    }
+
+    /**
+     * Helper method for defining the response body
+     *
+     * @param   string  $body   The response body
+     * @param   int     $status The HTTP Status code
+     * @return  Response
+     */
+    public function send($body = '', $status = 200)
+    {
+        $contentType = 'text/html';
+
+        if(is_int($body))
+        {
+            $status = $body;
+
+            if( ! isset($this->httpStatusCodes[$status]))
+            {
+                throw new InvalidArgumentException(sprintf('[%s] is not a valid HTTP status code', $status));
+            }
+
+            $body = $this->httpStatusCodes[$status];
+        }
+        elseif(is_object($body) || is_array($body))
+        {
+            $contentType = 'application/json';
+            $body = json_encode($body, JSON_NUMERIC_CHECK);
+        }
+
+        $this->status($status);
+        $this->header('Content-Type', $contentType);
+        $this->body($body);
+
+        return $this;
+    }
+
+    /**
+     * Helper method for defining the response body (JSON)
+     *
+     * @param   string  $body   The response body
+     * @param   int     $status The HTTP Status code
+     * @return  Response
+     */
+    public function json($body = '', $status = 200)
+    {
+        if(is_int($body))
+        {
+            $status = $body;
+
+            if( ! isset($this->httpStatusCodes[$status]))
+            {
+                throw new InvalidArgumentException(sprintf('[%s] is not a valid HTTP status code', $status));
+            }
+
+            $body = $this->httpStatusCodes[$status];
+        }
+
+        $body = json_encode($body, JSON_NUMERIC_CHECK);
+
+        $this->status($status);
+        $this->header('Content-Type', 'application/json');
+        $this->body($body);
+
+        return $this;
+    }
+
+    /**
+     * Helper method for defining the response body, with templating
+     *
+     * @param   string  $template   The template filename
+     * @param   mixed   $layout     The template layout filename, or template variables
+     * @param   array   $vars       Template variables
+     * @return  Response
+     */
+    public function render($template, $layout = null, array $vars = [])
+    {
+        if(is_array($layout) && ! $vars)
+        {
+            $vars = $layout;
+            $layout = null;
+        }
+
+        ob_start();
+        extract($vars);
+        require $template;
+
+        if($layout)
+        {
+            $template = ob_get_contents();
+            ob_clean();
+            require $layout;
+        }
+
+        return $this->send(ob_get_clean());
+    }
+
+    /**
+     * Send the response body to the browser and exit
+     *
+     * @return  void
+     */
+    public function respond()
     {
         if( ! headers_sent())
         {
-            $this->sendHeaders($protocol);
+            $this->prepareHeaders();
+            $this->sendHeaders();
         }
 
-        if($method !== 'HEAD')
+        if($this->request['method'] == 'HEAD')
         {
-            if(strlen( (string) $this->body) > 0)
-            {
-                echo $this->body;
-            }
+            $this->body('');
         }
+
+        echo $this->body;
+
+        exit(0);
     }
 
     /**
-     * Sets a response header
+     * ArrayAccess method for defining a response header
      *
-     * @access  public
-     * @param   $key    The response header
-     * @param   $value  The response header value
+     * @param   string  $key    The response header
+     * @param   string  $value  The response header value
      * @return  void
      */
     public function offsetSet($key, $value)
@@ -221,38 +411,91 @@ class Response implements ArrayAccess
     }
 
     /**
-     * Gets a response header
+     * ArrayAccess method for retrieving a response header
      *
-     * @access  public
-     * @param   $key    The response header
-     * @return  string  The response header value
+     * @param   string  $key    The response header
+     * @return  mixed           Returns the response header if it exists, else false
      */
     public function offsetGet($key)
     {
-        return $this->headers[$key];
+        return isset($this->headers[$key]) ? $this->headers[$key] : false; 
     }
 
     /**
-     * Check if a response header is set
+     * ArrayAccess method for checking if a response header was set
      *
-     * @access  public
-     * @param   $key    The response header
-     * @return  bool    Returns true if the header is set
+     * @param   string  $key    The response header
+     * @return  bool            True if the header exists, else false
      */
     public function offsetExists($key)
     {
-        return isset($this->headers[$key]);
+        return (bool) isset($this->headers[$key]); 
     }
 
     /**
-     * Unset a response header
+     * ArrayAccess method for unsetting a response header
      *
-     * @access  public
-     * @param   $key    The response header
      * @return  void
      */
     public function offsetUnset($key)
     {
-        unset($this->headers[$key]);
+        unset($this->headers[$key]); 
+    }
+
+    /**
+     * Shorthand method for setting the Expires header
+     *
+     * @param   mixed   $time   The time until the response expires
+     * @return  void
+     */
+    public function expires($time)
+    {
+        $time = is_int($time) ? $time : strtotime($time);
+        $this->header('Expires', date(DATE_RFC1123, $time));
+    }
+
+    /**
+     * Shorthand method for forcing no-cache
+     *
+     * @return  void
+     */
+    public function noCache()
+    {
+        $this->header('Cache-Control', 'no-store, no-cache, max-age=0, must-revalidate');
+        $this->header('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
+        $this->header('Pragma', 'no-cache');
+    }
+
+    /**
+     * Shorthand method for setting the Last-Modified header
+     *
+     * @param   mixed   $time   The time since it was last modified
+     * @return  void
+     */
+    public function lastModified($time)
+    {
+        $this->header('Last-Modified', date(DATE_RFC1123, $time) . ' GMT');
+
+        if($this->request['HTTP_IF_MODIFIED_SINCE'])
+        {
+            if(strtotime($this->request['HTTP_IF_MODIFIED_SINCE']) === $time)
+            {
+                $this->abort(304);
+            }
+        }
+    }
+
+    /**
+     * Shorthand metod for setting the ETag header
+     *
+     * @param   string  $identifier ETag identifier
+     * @return  void
+     */
+    public function etag($identifier)
+    {
+        if($this->request['HTTP_IF_NONE_MATCH'])
+        {
+            $this->header('ETag', sprintf('"%s"', $identifier));
+        }
     }
 }

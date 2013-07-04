@@ -20,355 +20,303 @@ class Request
     /**
      * Array of $_SERVER variables
      *
-     * @access  public
-     * @var     array
+     * @var array
      */
-    public $server;
+    public $server = [];
 
     /**
-     * Array of $_GET variables
+     * $_GET variables
      *
-     * @access  public
-     * @var     array
+     * @var object
      */
-    public $get;
+    public $query;
 
     /**
-     * Array of $_POST variables
+     * $_POST variables
      *
-     * @access  public
-     * @var     array
+     * @var object
      */
-    public $post;
+    public $body;
 
     /**
      * Array of $_FILES variables
      *
-     * @access  public
-     * @var     array
+     * @var array
      */
-    public $files;
+    public $files = [];
 
     /**
      * Array of $_COOKIE variables
      *
-     * @access  public
-     * @var     array
+     * @var array
      */
-    public $cookies;
+    public $cookies = [];
 
     /**
-     * The request uri
+     * The request path
      *
-     * @access  public
-     * @var     string
+     * @var string
      */
-    public $uri;
+    public $path = '';
+
+    /**
+     * The request base path
+     *
+     * @var string
+     */
+    public $base = '/';
 
     /**
      * The request method
      *
-     * @access  public
-     * @var     string
+     * @var string
      */
-    public $method;
+    public $method = '';
 
     /**
-     * Request arguments (GET, POST, PUT, DELETE)
+     * Request uri parameters
      *
-     * @access  public
-     * @var     array
+     * @var object
      */
-    public $arguments;
+    public $params;
 
     /**
-     * Set all global arrays, request uri, request method and request variables
+     * If request was ajax
      *
-     * @access  public
+     * @var boolean
+     */
+    public $xhr = false;
+
+    /**
+     * If request was via HTTPS
+     *
+     * @var boolean
+     */
+    public $secure = false;
+
+    /**
+     * Request protocol
+     *
+     * @var string
+     */
+    public $protocol = '';
+
+    /**
+     * Request host
+     *
+     * @var string
+     */
+    public $host = '';
+
+    /**
+     * Request ip
+     *
+     * @var string
+     */
+    public $ip = '';
+
+    /**
+     * Request Content-Type
+     *
+     * @var string
+     */
+    public $type = '';
+
+    /**
+     * If request was json
+     *
+     * @var boolean
+     */
+    public $json = false;
+
+    /**
+     * Creates a new Request object from PHP Global arrays
+     *
      * @param   array   $server     The $_SERVER array
-     * @param   array   $get        The $_GET array
-     * @param   array   $post       The $_POST array
+     * @param   array   $query      The $_GET array
+     * @param   array   $body       The $_POST array
      * @param   array   $files      The $_FILES array
      * @param   array   $cookies    The $_COOKIE array
      * @return  void
      */
-    public function __construct(array $server = [], array $get = [],
-        array $post = [], array $files = [], array $cookies = [])
+    public function __construct(array $server = [], array $query = [],
+        array $body = [], array $files = [], array $cookies = [])
     {
         $this->server = $server;
-        $this->get = $get;
-        $this->post = $post;
+        $this->query = (object) $query;
+        $this->body = $this->getRequestBody($body);
         $this->files = $files;
         $this->cookies = $cookies;
 
-        $this->uri = $this->filterUri();
-        $this->method = $this->method();
-        $this->arguments = $this->getArguments();
+        $this->base = $this->getBase();
+        $this->path = $this->getPath();
+        $this->method = $this->getMethod();
+        $this->xhr = $this->isXhr();
+        $this->secure = $this->isSecure();
+        $this->protocol = $this->getProtocol();
+        $this->host = $this->getHost();
+        $this->ip = $this->getIp();
+        $this->type = $this->getType();
+        $this->json = $this->isJson();
     }
 
     /**
      * Get a $_SERVER variable
      *
-     * @access  public
-     * @param   string              $key    The array key identifier
-     * @return  string|array|false          Return $_SERVER array if $key=null, else return the $_SERVER[$key] if set, else false
+     * @param   string  $key    The $_SERVER key
+     * @return  mixed           Returns the found item if found, else null
      */
-    public function server($key = null)
+    public function server($key)
     {
-        if($key === null)
+        return isset($this->server[$key]) ? $this->server[$key] : null;
+    }
+
+    /**
+     * Gets the base request path
+     *
+     * @return  string  The base request path
+     */
+    public function getBase()
+    {
+        $base = '/';
+
+        if($this->server('SCRIPT_NAME'))
         {
-            return $this->server;
+            $scriptPath = $this->server('SCRIPT_NAME');
+            $scriptName = basename($scriptPath);
+            $base = substr($scriptPath, 0, (strlen($scriptPath) - (strlen($scriptName) + 1)));
         }
-        return isset($this->server[$key]) ? $this->server[$key] : false;
+
+        return $base;
     }
 
     /**
-     * Get a request variable based on $key
+     * Gets the request path
      *
-     * @access  public
-     * @param   string              $key    The array key identifier
-     * @return  string|array|false          Return the input variable value if found, else false
+     * @return  string  The request path
      */
-    public function get($key)
+    public function getPath()
     {
-        return isset($this->arguments[$key]) ? $this->arguments[$key] : false;
+        $path = '/';
+
+        if($this->server('REQUEST_URI'))
+        {
+            $path = parse_url(preg_replace('/\/{2,}/', '/', filter_var($this->server['REQUEST_URI'], FILTER_SANITIZE_URL)), PHP_URL_PATH);
+        }
+
+        return $path;
     }
 
     /**
-     * Get the current request method
+     * Gets the request method
      *
-     * @access  public
-     * @return  string|null Return the request method, else null
+     * @return  string  The request method
      */
-    public function method()
+    public function getMethod()
     {
-        return $this->server('REQUEST_METHOD') ? strtoupper($this->server('REQUEST_METHOD')) : null;
+        return $this->server('REQUEST_METHOD');
     }
 
     /**
-     * Check if the request method is GET
+     * Tries to check if the request is XHR
      *
-     * @access  public
-     * @return  boolean Return true if the request method is GET, else false
+     * @return  bool    True if the request is XHR, else false
      */
-    public function isGet()
+    public function isXhr() 
     {
-        return ($this->method() === 'GET') ? true : false;
+        $xhr = $this->server('HTTP_X_REQUESTED_WITH');
+        return ($xhr && strtolower($xhr) === 'xmlhttprequest') ? true : false;
     }
 
     /**
-     * Check if the request method is POST
+     * Tries to check if the request was made through HTTPS
      *
-     * @access  public
-     * @return  boolean Return true if the request method is POST, else false
-     */
-    public function isPost()
-    {
-        return ($this->method() === 'POST') ? true : false;
-    }
-
-    /**
-     * Check if the request method is PUT
-     *
-     * @access  public
-     * @return  boolean Return true if the request method is PUT, else false
-     */
-    public function isPut()
-    {
-        return ($this->method() === 'PUT') ? true : false;
-    }
-
-    /**
-     * Check if the request method is DELETE
-     *
-     * @access  public
-     * @return  boolean Return true if the request method is DELETE, else false
-     */
-    public function isDelete()
-    {
-        return ($this->method() === 'DELETE') ? true : false;
-    }
-
-    /**
-     * Check if the request method is HEAD
-     *
-     * @access  public
-     * @return  boolean Return true if the request method is HEAD, else false
-     */
-    public function isHead()
-    {
-        return ($this->method() === 'HEAD') ? true : false;
-    }
-
-    /**
-     * Check if the requested method is allowed, (GET, POST, PUT, DELETE, HEAD)
-     *
-     * @access  public
-     * @return  boolean Return true if the request method is allowed, else false
-     */
-    public function methodAllowed()
-    {
-        return in_array($this->method(), ['GET', 'POST', 'PUT', 'DELETE', 'HEAD']) ? true : false;
-    }
-
-    /**
-     * Check if the request method is XHR
-     *
-     * @access  public
-     * @return  boolean Return true if XHR has been set, else false
-     */
-    public function isXhr()
-    {
-        return ($this->server('HTTP_X_REQUESTED_WITH') === 'XMLHttpRequest') ? true : false;
-    }
-
-    /**
-     * Same as Request::isXhr()
-     *
-     * @access  public
-     * @return  boolean Return true if XHR has been set, else false
-     */
-    public function isAjax()
-    {
-        return $this->isXhr();
-    }
-
-    /**
-     * Check if we're using HTTPS
-     *
-     * @access  public
-     * @return  boolean Return true if the server variable HTTPS is set, else false
+     * @return  bool    True if the request was made through HTTPS, else false
      */
     public function isSecure()
     {
-        return ($this->server('HTTPS') !== false && $this->server('HTTPS') !== 'off') ? true : false;
+        $https = $this->server('HTTPS');
+        return ($https && $https !== false && $https !== 'off') ? true : false;
     }
 
     /**
-     * Check if the content type is JSON
+     * Gets the request protocol
      *
-     * @access  public
-     * @return  boolean Return true if the content type is json, else false
+     * @return  string  The request protocol
+     */
+    public function getProtocol()
+    {
+        return $this->server('SERVER_PROTOCOL') ? $this->server('SERVER_PROTOCOL') : 'HTTP/1.1';   
+    }
+
+    /**
+     * Gets the request host
+     *
+     * @return  string  The request host
+     */
+    public function getHost()
+    {
+       return $this->server('HTTP_HOST'); 
+    }
+
+    /**
+     * Tries to get the request IP
+     *
+     * @return  string  The request IP
+     */
+    public function getIp()
+    {
+        return $this->server('X_FORWARDED_FOR') ? $this->server('X_FORWARDED_FOR') : $this->server('REMOTE_ADDR'); 
+    }
+
+    /**
+     * Gets the request content type
+     *
+     * @return  string  The request content type
+     */
+    public function getType()
+    {
+        return $this->server('CONTENT_TYPE') ? $this->server('CONTENT_TYPE') : '';
+    }
+
+    /**
+     * Tries to check if the request was JSON
+     *
+     * @return  bool    True if the request was JSON, else false
      */
     public function isJson()
     {
-        return ($this->server('CONTENT_TYPE') == 'application/json') ? true : false;
+        $type = $this->getType();
+        return ($type == 'application/json' || $type == 'application/x-json') ? true : false; 
     }
 
     /**
-     * Return the current protocol
+     * Gets the request body
      *
      * @access  public
-     * @return  string  Return the current server protocol, else HTTP/1.1
+     * @param   array   $input  The $_POST variable
+     * @return  object          The request body as an object
      */
-    public function protocol()
+    public function getRequestBody($input)
     {
-        return $this->server('SERVER_PROTOCOL') ? $this->server('SERVER_PROTOCOL') : 'HTTP/1.1';
-    }
+        $method = $this->getMethod();
 
-    /**
-     * Get the current User Agent
-     *
-     * @access  public
-     * @return  string|boolean  Return the user agent, else false
-     */
-    public function userAgent()
-    {
-        return $this->server('USER_AGENT');
-    }
-
-    /**
-     * Get the current HTTP Host
-     *
-     * @access  public
-     * @return  string|boolean  Return the HTTP Host, else false
-     */
-    public function host()
-    {
-        return $this->server('HTTP_HOST');
-    }
-
-    /**
-     * Get the current Server Port
-     *
-     * @access  public
-     * @return  int     Returns the current Server Port, else false
-     */
-    public function port()
-    {
-        return (int) $this->server('SERVER_PORT');
-    }
-
-    /**
-     * Get the current Content Type
-     *
-     * @access  public
-     * @return  string|boolean  Return the current Content Type, else false
-     */
-    public function contentType()
-    {
-        return $this->server('CONTENT_TYPE');
-    }
-
-    /**
-     * Get the current IP adress being used (with a grain of salt)
-     *
-     * @access  public
-     * @return  string|boolean  Return the IP, else false
-     */
-    public function ip()
-    {
-        return $this->server('X_FORWARDED_FOR') ? $this->server('X_FORWARDED_FOR') : $this->server('REMOTE_ADDR');
-    }
-
-    /**
-     * Return a filtered uri
-     *
-     * @access  public
-     * @return  string  Return an filtered uri string if an request uri as been set, else '/'
-     */
-    public function filterUri()
-    {
-        $uri = $this->server('REQUEST_URI');
-
-        if($uri)
+        if($this->isJson())
         {
-            return parse_url(preg_replace('/\/{2,}/', '/', filter_var($uri, FILTER_SANITIZE_URL)), PHP_URL_PATH);
+            return json_decode(file_get_contents('php://input'));
         }
 
-        return '/';
-    }
-
-    /**
-     * Returns an array of HTTP request variables based on the request method
-     *
-     * @access  public
-     * @return  array   Return an array of HTTP request variables
-     */
-    public function getArguments()
-    {
-        if(in_array($this->method, ['POST', 'PUT', 'DELETE']) && $this->isJson())
+        if(in_array($method, ['PUT', 'DELETE', 'PATCH']))
         {
-            return file_get_contents('php://input');
+            parse_str(file_get_contents('php://input'), $body);
+            return (object) $body;
         }
 
-        switch($this->method())
+        if($method == 'POST')
         {
-            case 'GET':
-                $args = $this->get;
-                break;
-            case 'POST':
-                $args = $this->post;
-                break;
-            case 'PUT':
-            case 'DELETE':
-                parse_str(file_get_contents('php://input'), $args);
-                break;
-            default:
-                $args = [];
-                break;
+            return (object) $input;
         }
 
-        return $args;
+        return null;
     }
 }

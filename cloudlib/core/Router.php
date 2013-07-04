@@ -20,61 +20,54 @@ use cloudlib\core\Route;
 class Router
 {
     /**
-     * Array of available routes
+     * Array of routes
      *
-     * @access  public
-     * @var     array
+     * @var array
      */
     public $routes = [];
 
     /**
      * Add a new route
      *
-     * @access  public
-     * @param   string      $route      The route uri (and methods)
-     * @param   callable    $response   The route response
+     * @param   string  $path       The route path
+     * @param   mixed   $callback   The route callback(s)
      * @return  void
      */
-    public function add($route, callable $response)
+    public function add($path, $callbacks)
     {
-        $uri = $route;
         $methods = ['GET'];
+        $callbacks = is_array($callbacks) ? $callbacks : [$callbacks];
 
-        if($route[0] !== '/')
+        if($path[0] !== '/')
         {
-            list($methods, $uri) = explode(' ', $route);
+            list($methods, $path) = explode(' ', $path);
             $methods = explode('|', $methods);
         }
 
-        if(isset($this->routes[$uri]))
+        foreach($methods as $method)
         {
-            $this->routes[$uri]->append($methods, $response);
-        }
-        else
-        {
-            $this->routes[$uri] = new Route($uri, $methods, $response);
+            $this->routes[] = new Route($path, $method, $callbacks);
         }
     }
 
     /**
-     * Finds a given route based on $request
+     * Gets the matching routes based on a given request path
      *
-     * @access  public
-     * @param   string      $request    The request uri
-     * @return  object|null             Returns the found route (or null if none was found)
+     * @param   string  $path   The request path
+     * @return  mixed           Returns the matching routes, else false
      */
-    public function find($request)
+    public function findMatchingRoutes($path)
     {
-        $match = null;
+        $routes = [];
 
         foreach($this->routes as $route)
         {
-            if($route->match($request))
+            if($route->match($path))
             {
-                $match = $route;
+                $routes[] = $route->setParams($path);
             }
         }
 
-        return $match;
+        return $routes ? $routes : false;
     }
 }
