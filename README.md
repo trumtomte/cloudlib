@@ -3,10 +3,6 @@ Cloudlib is a simple router framework for rapid web development.
 
 Cloudlib conforms to the [PSR-0 standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md) which makes it easy to use external libraries.
 
-Cloudlib matches route patterns to anonymous functions (Closures) or namespaced classes (because of this you are able to, for example, simulate the MVC design pattern).
-
-`note` Since Cloudlib uses the same syntax as all other micro/lightweight/mini - frameworks it is easy to learn and understand.
-
 ## Installation
 
 #### Github
@@ -44,7 +40,7 @@ Cloudlib matches route patterns to anonymous functions (Closures) or namespaced 
 ```
 
 #### Requirements
-Cloudlib requires PHP >= 5.3.6
+Cloudlib requires PHP >= 5.4.4
 
 ## Examples
 
