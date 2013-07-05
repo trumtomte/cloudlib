@@ -17,7 +17,6 @@ Cloudlib conforms to the [PSR-0 standard](https://github.com/php-fig/fig-standar
 
 #### Composer
 
-
 ```json
 {
     "require": {
