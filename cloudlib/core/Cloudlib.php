@@ -92,7 +92,8 @@ class Cloudlib implements ArrayAccess
      */
     public function lazy($key, callable $callback)
     {
-        $this->vars[$key] = function($app) use ($callback) {
+        $this->vars[$key] = function($app) use ($callback)
+        {
             static $instance = null;
 
             if($instance === null)
