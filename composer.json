@@ -6,13 +6,10 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Sebastian Book",
-            "email": "cloudlibframework@gmail.com"
+            "name": "Sebastian Bengtegård",
+            "email": "sebastianbengtegard@gmail.com"
         }
     ],
-    "require": {
-        "php": ">=5.4.4"
-    },
     "autoload": {
         "psr-0": {
             "cloudlib": "/"
