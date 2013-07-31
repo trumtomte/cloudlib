@@ -117,6 +117,11 @@ class Route
      */
     public function match($path)
     {
+        if($path[strlen($path) - 1]) == '/')
+        {
+            $path = substr($path, 0, -1);
+        }
+
         return (bool) preg_match('#^' . $this->regexp . '$#', $path);
     }
 }
