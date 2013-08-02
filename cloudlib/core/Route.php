@@ -117,7 +117,7 @@ class Route
      */
     public function match($path)
     {
-        if($path[strlen($path) - 1]) == '/')
+        if($path !== '/' && $path[strlen($path) - 1]) == '/')
         {
             $path = substr($path, 0, -1);
         }
