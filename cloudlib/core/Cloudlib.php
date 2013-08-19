@@ -141,7 +141,9 @@ class Cloudlib implements ArrayAccess
                 ];
             }
 
-            $message = call_user_func_array($this->errors[$status], $parameters);
+            $func = $this->errors[$status]->bindTo($this, $this);
+
+            $message = call_user_func_array($func, $parameters);
         }
 
         $this->response->abort($status, $message, $headers);
