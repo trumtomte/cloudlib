@@ -92,6 +92,8 @@ class Cloudlib implements ArrayAccess
      */
     public function lazy($key, callable $callback)
     {
+        $callback = $callback->bindTo($this, $this);
+
         $this->vars[$key] = function($app) use ($callback)
         {
             static $instance = null;
@@ -113,6 +115,7 @@ class Cloudlib implements ArrayAccess
      */
     public function teardown(callable $callback)
     {
+        $callback = $callback->bindTo($this, $this);
         register_shutdown_function($callback);
     }
 

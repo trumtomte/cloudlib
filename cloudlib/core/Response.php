@@ -221,6 +221,7 @@ class Response implements ArrayAccess
     public function sendHeaders()
     {
         header(sprintf('%s %s %s', $this->request['protocol'], $this->status, $this->httpStatusCodes[$this->status]));
+        header(sprintf('Status: %s', $this->status));
 
         foreach($this->headers as $key => $value)
         {
@@ -263,7 +264,7 @@ class Response implements ArrayAccess
      * @param   array   $headers    HTTP headers
      * @return  void
      */
-    public function abort($status, $message = null, array $headers)
+    public function abort($status, $message = null, array $headers = [])
     {
         if( ! isset($this->httpStatusCodes[$status]))
         {

@@ -287,7 +287,12 @@ class Request
     public function isJson()
     {
         $type = $this->getType();
-        return ($type == 'application/json' || $type == 'application/x-json') ? true : false; 
+
+        if(preg_match('#^application/(json|x-json)#', $type)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
